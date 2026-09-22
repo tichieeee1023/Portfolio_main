@@ -1,0 +1,1370 @@
+.yoojinHero {
+  position: relative;
+
+  width: 100%;
+
+  /*
+    GSAP pinSpacing이 추가되기 때문에
+    여기서 과도하게 600vh를 또 줄 필요 없음.
+  */
+
+  background: #e8e0d4;
+}
+
+/* =========================================
+   STAGE
+========================================= */
+
+.heroStage {
+  --ink: #191715;
+
+  --paper: #eee7dc;
+
+  --bronze: #ac7948;
+
+  --bronze-dark: #775039;
+
+  position: relative;
+
+  width: 100%;
+  height: 100svh;
+
+  overflow: hidden;
+
+  color: var(--ink);
+
+  background: var(--paper);
+
+  isolation: isolate;
+}
+
+/* =========================================
+   IMAGES
+========================================= */
+
+.imageStack {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+}
+
+.heroImageLayer {
+  position: absolute;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  will-change:
+    opacity,
+    clip-path;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  object-position: center;
+
+  pointer-events: none;
+
+  user-select: none;
+}
+
+.imageWash {
+  position: absolute;
+
+  z-index: 3;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(
+        241,
+        234,
+        222,
+        0.34
+      )
+        0%,
+      rgba(
+        241,
+        234,
+        222,
+        0.07
+      )
+        30%,
+      transparent
+        55%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(
+        24,
+        18,
+        13,
+        0.12
+      ),
+      transparent
+        32%
+    );
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.heroHeader {
+  position: absolute;
+
+  z-index: 60;
+
+  top: 0;
+  left: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  width: 100%;
+
+  padding:
+    25px
+    clamp(
+      26px,
+      3.5vw,
+      64px
+    );
+}
+
+.headerBrand {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 17px;
+}
+
+.headerBrand a {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 17px;
+
+  font-weight: 900;
+
+  letter-spacing: -0.05em;
+}
+
+.headerBrand span {
+  font-size: 9px;
+
+  letter-spacing: 0.14em;
+
+  opacity: 0.52;
+}
+
+.heroHeader nav {
+  display: flex;
+
+  gap:
+    clamp(
+      19px,
+      2.5vw,
+      40px
+    );
+}
+
+.heroHeader nav a {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.16em;
+}
+
+/* =========================================
+   GIANT NUMBER
+========================================= */
+
+.giantNumber {
+  position: absolute;
+
+  z-index: 5;
+
+  left: -0.04em;
+
+  top: 49%;
+
+  transform:
+    translateY(-50%);
+
+  font-size:
+    clamp(
+      280px,
+      37vw,
+      680px
+    );
+
+  font-weight: 900;
+
+  line-height: 0.7;
+
+  letter-spacing: -0.12em;
+
+  color: transparent;
+
+  -webkit-text-stroke:
+    2px
+    rgba(
+      39,
+      32,
+      26,
+      0.24
+    );
+
+  pointer-events: none;
+}
+
+/*
+  마지막에서는 거대한 숫자 제거.
+*/
+
+.scene-4
+.giantNumber {
+  opacity: 0 !important;
+}
+
+/* =========================================
+   TYPOGRAPHY
+========================================= */
+
+.kineticTypography {
+  position: absolute;
+
+  z-index: 20;
+
+  left:
+    clamp(
+      26px,
+      4.5vw,
+      82px
+    );
+
+  top: 47%;
+
+  transform:
+    translateY(-50%);
+
+  width:
+    min(
+      64vw,
+      1060px
+    );
+
+  pointer-events: none;
+}
+
+.keywordMask {
+  overflow: hidden;
+
+  padding: 12px 0;
+}
+
+.keywordFilled {
+  margin: 0;
+
+  font-size:
+    clamp(
+      84px,
+      10.3vw,
+      190px
+    );
+
+  font-weight: 900;
+
+  line-height: 0.74;
+
+  letter-spacing: -0.085em;
+
+  text-transform: uppercase;
+}
+
+.keywordOutline {
+  margin-top: -0.02em;
+
+  font-size:
+    clamp(
+      70px,
+      8vw,
+      150px
+    );
+
+  font-weight: 900;
+
+  line-height: 0.82;
+
+  letter-spacing: -0.065em;
+
+  white-space: nowrap;
+
+  color: transparent;
+
+  -webkit-text-stroke:
+    1.7px
+    rgba(
+      25,
+      23,
+      21,
+      0.9
+    );
+}
+
+.scenePhrase {
+  margin:
+    20px 0 0;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.22em;
+}
+
+/*
+  마지막은 조금 더 여백 확보.
+*/
+
+.scene-4
+.keywordFilled {
+  font-size:
+    clamp(
+      76px,
+      8.6vw,
+      160px
+    );
+}
+
+.scene-4
+.keywordOutline {
+  font-size:
+    clamp(
+      64px,
+      6.8vw,
+      128px
+    );
+}
+
+/* =========================================
+   MARQUEE
+========================================= */
+
+.marquee {
+  position: absolute;
+
+  z-index: 10;
+
+  left: 0;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  opacity: 0.07;
+}
+
+.marqueeTop {
+  top: 19%;
+}
+
+.marqueeBottom {
+  bottom: 17%;
+}
+
+.marqueeTrack {
+  width: max-content;
+
+  white-space: nowrap;
+
+  font-size:
+    clamp(
+      30px,
+      3.6vw,
+      67px
+    );
+
+  font-weight: 900;
+
+  letter-spacing: -0.04em;
+}
+
+.outlineMarquee {
+  color: transparent;
+
+  -webkit-text-stroke:
+    1px
+    var(--ink);
+}
+
+/*
+  최종 화면에서는 마키 퇴장.
+*/
+
+.scene-4
+.marquee {
+  opacity: 0;
+}
+
+/* =========================================
+   CHARACTER
+========================================= */
+
+.characterHitbox {
+  position: absolute;
+
+  z-index: 30;
+
+  left: 38%;
+
+  top: 13%;
+
+  width: 35%;
+
+  height: 62%;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.characterHitbox span {
+  position: absolute;
+
+  right: 13%;
+
+  top: 45%;
+
+  padding:
+    7px 10px;
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(
+      25,
+      22,
+      18,
+      0.72
+    );
+
+  color: white;
+
+  font-size: 7px;
+
+  letter-spacing:
+    0.16em;
+
+  opacity: 0;
+
+  transform:
+    translateY(5px);
+
+  transition:
+    180ms ease;
+}
+
+.characterHitbox:hover
+span {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+/* =========================================
+   DIALOGUE
+========================================= */
+
+.dialogueBox {
+  position: absolute;
+
+  z-index: 100;
+
+  left: 50%;
+
+  bottom: 116px;
+
+  transform:
+    translateX(-50%);
+
+  display: grid;
+
+  grid-template-columns:
+    auto
+    1fr
+    auto;
+
+  align-items: center;
+
+  gap: 22px;
+
+  width:
+    min(
+      720px,
+      calc(
+        100% - 48px
+      )
+    );
+
+  padding:
+    17px 20px;
+
+  border:
+    1px solid
+    rgba(
+      29,
+      24,
+      19,
+      0.14
+    );
+
+  background:
+    rgba(
+      246,
+      240,
+      229,
+      0.92
+    );
+
+  color: var(--ink);
+
+  backdrop-filter:
+    blur(15px);
+
+  box-shadow:
+    0 18px 55px
+    rgba(
+      39,
+      30,
+      22,
+      0.1
+    );
+
+  cursor: pointer;
+}
+
+.dialogueBox p {
+  margin: 0;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+.navigationControl {
+  position: absolute;
+
+  z-index: 90;
+
+  right:
+    clamp(
+      28px,
+      4vw,
+      72px
+    );
+
+  top: 47%;
+
+  transform:
+    translateY(-50%);
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 12px;
+}
+
+.nextControl {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 40px;
+
+  min-width: 230px;
+
+  padding:
+    18px 20px;
+
+  border:
+    1px solid
+    rgba(
+      28,
+      23,
+      18,
+      0.15
+    );
+
+  background:
+    rgba(
+      247,
+      241,
+      230,
+      0.91
+    );
+
+  color: var(--ink);
+
+  backdrop-filter:
+    blur(15px);
+
+  box-shadow:
+    0 13px 38px
+    rgba(
+      53,
+      40,
+      29,
+      0.1
+    );
+
+  cursor: pointer;
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    opacity 180ms ease;
+}
+
+.nextControl:hover {
+  transform:
+    translateX(6px);
+}
+
+.nextControl.isWaiting {
+  opacity: 0.55;
+
+  cursor: default;
+}
+
+.nextControl.isWaiting:hover {
+  transform: none;
+}
+
+.nextControl div {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 5px;
+}
+
+.nextControl small {
+  font-size: 7px;
+
+  letter-spacing:
+    0.18em;
+
+  opacity: 0.43;
+}
+
+.nextControl strong {
+  font-size: 14px;
+
+  letter-spacing:
+    0.15em;
+}
+
+.nextArrow {
+  font-size: 30px;
+}
+
+.prevControl {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 7px 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  opacity: 0.58;
+}
+
+/* =========================================
+   SLIM STATUS BAR
+========================================= */
+
+.gameFooter {
+  position: absolute;
+
+  z-index: 80;
+
+  left: 32px;
+
+  bottom: 28px;
+
+  width:
+    min(
+      800px,
+      calc(
+        100% - 64px
+      )
+    );
+
+  min-height: 64px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 28px;
+
+  padding:
+    0 22px;
+
+  border:
+    1px solid
+    rgba(
+      34,
+      28,
+      22,
+      0.13
+    );
+
+  background:
+    rgba(
+      246,
+      240,
+      229,
+      0.83
+    );
+
+  backdrop-filter:
+    blur(14px);
+
+  box-shadow:
+    0 10px 34px
+    rgba(
+      44,
+      34,
+      25,
+      0.08
+    );
+}
+
+.footerLevel {
+  width: 100px;
+}
+
+.footerMiniLabel {
+  font-size: 7px;
+
+  font-weight: 900;
+
+  letter-spacing:
+    0.19em;
+
+  opacity: 0.4;
+}
+
+.levelNumber {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 5px;
+}
+
+.levelNumber span {
+  font-size: 8px;
+
+  font-weight: 900;
+
+  opacity: 0.45;
+}
+
+.levelNumber strong {
+  font-size: 27px;
+
+  line-height: 1;
+}
+
+.footerInfo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 26px;
+}
+
+.footerInfoItem {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 10px;
+}
+
+.footerInfoItem strong {
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing:
+    0.07em;
+
+  white-space: nowrap;
+}
+
+.footerDivider {
+  width: 1px;
+
+  height: 25px;
+
+  background:
+    rgba(
+      25,
+      21,
+      17,
+      0.13
+    );
+}
+
+/* =========================================
+   REVOLUTION
+========================================= */
+
+.revolutionScreen {
+  position: absolute;
+
+  z-index: 130;
+
+  inset: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  overflow: hidden;
+
+  background:
+    rgba(
+      240,
+      233,
+      220,
+      0.56
+    );
+
+  backdrop-filter:
+    blur(5px);
+
+  pointer-events: none;
+}
+
+.revolutionSmall {
+  position: relative;
+
+  z-index: 4;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing:
+    0.3em;
+
+  color:
+    #75523b;
+}
+
+.revolutionTitle {
+  position: relative;
+
+  z-index: 4;
+
+  font-size:
+    clamp(
+      78px,
+      12vw,
+      220px
+    );
+
+  font-weight: 900;
+
+  line-height: 0.76;
+
+  letter-spacing:
+    -0.085em;
+
+  color:
+    #714d36;
+
+  animation:
+    revolutionPop
+    2.55s
+    cubic-bezier(
+      0.16,
+      1,
+      0.3,
+      1
+    )
+    both;
+}
+
+@keyframes revolutionPop {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateY(110px)
+      scale(0.74);
+  }
+
+  17% {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1.08);
+  }
+
+  36% {
+    transform:
+      scale(0.97);
+  }
+
+  53% {
+    transform:
+      scale(1.015);
+  }
+
+  78% {
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      scale(1);
+  }
+}
+
+.revolutionRings {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 32vw;
+
+  aspect-ratio: 1;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+}
+
+.revolutionRings i {
+  position: absolute;
+
+  inset: 0;
+
+  border:
+    1px solid
+    rgba(
+      130,
+      89,
+      55,
+      0.28
+    );
+
+  border-radius: 50%;
+
+  animation:
+    revolutionRing
+    2s
+    ease-out
+    both;
+}
+
+.revolutionRings
+i:nth-child(2) {
+  animation-delay:
+    0.2s;
+}
+
+.revolutionRings
+i:nth-child(3) {
+  animation-delay:
+    0.4s;
+}
+
+@keyframes revolutionRing {
+  from {
+    opacity: 0.8;
+
+    transform:
+      scale(0.1);
+  }
+
+  to {
+    opacity: 0;
+
+    transform:
+      scale(1.8);
+  }
+}
+
+/* =========================================
+   SSR REWARD
+========================================= */
+
+.ssrReward {
+  position: absolute;
+
+  z-index: 100;
+
+  right:
+    clamp(
+      38px,
+      5vw,
+      90px
+    );
+
+  top: 20%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  pointer-events: none;
+
+  animation:
+    ssrRewardIn
+    1s
+    cubic-bezier(
+      0.16,
+      1,
+      0.3,
+      1
+    )
+    both;
+}
+
+.ssrRewardStars {
+  display: flex;
+
+  gap: 8px;
+
+  margin-bottom: 7px;
+}
+
+.ssrRewardStars span {
+  font-size: 28px;
+
+  color:
+    var(--bronze);
+
+  opacity: 0;
+
+  animation:
+    starAcquire
+    0.5s
+    cubic-bezier(
+      0.34,
+      1.56,
+      0.64,
+      1
+    )
+    forwards;
+}
+
+.ssrRewardStars
+span:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.ssrRewardStars
+span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.ssrRewardStars
+span:nth-child(3) {
+  animation-delay: 0.26s;
+}
+
+.ssrRewardStars
+span:nth-child(4) {
+  animation-delay: 0.34s;
+}
+
+.ssrRewardStars
+span:nth-child(5) {
+  animation-delay: 0.42s;
+}
+
+@keyframes starAcquire {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(12px)
+      scale(0)
+      rotate(-25deg);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1)
+      rotate(0);
+  }
+}
+
+.ssrReward > strong {
+  font-size:
+    clamp(
+      68px,
+      6.5vw,
+      118px
+    );
+
+  line-height: 0.78;
+
+  letter-spacing:
+    -0.07em;
+
+  color:
+    var(--bronze-dark);
+}
+
+.ssrReward > small {
+  margin-top: 12px;
+
+  font-size: 8px;
+
+  font-weight: 900;
+
+  letter-spacing:
+    0.29em;
+}
+
+@keyframes ssrRewardIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .heroHeader {
+    padding: 18px;
+  }
+
+  .headerBrand span {
+    display: none;
+  }
+
+  .heroHeader nav {
+    gap: 13px;
+  }
+
+  .heroHeader nav a {
+    font-size: 7px;
+  }
+
+  .heroImage {
+    object-position:
+      58% center;
+  }
+
+  .kineticTypography {
+    left: 17px;
+
+    top: 21%;
+
+    transform: none;
+
+    width:
+      calc(
+        100% - 34px
+      );
+  }
+
+  .keywordFilled {
+    font-size: 18vw;
+  }
+
+  .keywordOutline {
+    font-size: 13vw;
+
+    -webkit-text-stroke:
+      1.1px
+      var(--ink);
+  }
+
+  .scenePhrase {
+    margin-top: 9px;
+
+    font-size: 7px;
+  }
+
+  .navigationControl {
+    top: auto;
+
+    left: 18px;
+    right: 18px;
+
+    bottom: 110px;
+
+    transform: none;
+
+    align-items: stretch;
+  }
+
+  .nextControl {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .prevControl {
+    position: absolute;
+
+    left: 0;
+
+    bottom: 67px;
+  }
+
+  .gameFooter {
+    left: 12px;
+    right: 12px;
+
+    bottom: 12px;
+
+    width: auto;
+
+    min-height: 72px;
+
+    padding:
+      0 14px;
+
+    gap: 15px;
+  }
+
+  .footerLevel {
+    width: 70px;
+  }
+
+  .levelNumber strong {
+    font-size: 23px;
+  }
+
+  .footerInfo {
+    gap: 13px;
+  }
+
+  .footerInfoItem strong {
+    font-size: 8px;
+  }
+
+  .footerInfoItem:nth-child(3) {
+    display: none;
+  }
+
+  .footerDivider {
+    display: none;
+  }
+
+  .ssrReward {
+    top: 15%;
+
+    right: 18px;
+  }
+
+  .ssrRewardStars {
+    gap: 4px;
+  }
+
+  .ssrRewardStars span {
+    font-size: 20px;
+  }
+
+  .ssrReward > strong {
+    font-size: 58px;
+  }
+
+  .revolutionTitle {
+    font-size: 17vw;
+  }
+
+  .revolutionRings {
+    width: 72vw;
+  }
+}

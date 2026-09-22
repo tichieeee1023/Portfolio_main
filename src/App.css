@@ -1,0 +1,64 @@
+.portfolioSection {
+  min-height: 100vh;
+
+  padding:
+    110px
+    clamp(
+      24px,
+      6vw,
+      100px
+    );
+
+  background:
+    #f1eadf;
+
+  color:
+    #171513;
+
+  border-top:
+    1px solid
+    rgba(
+      20,
+      18,
+      15,
+      0.1
+    );
+}
+
+.portfolioSection:nth-child(
+  even
+) {
+  background:
+    #e4dbce;
+}
+
+.sectionNumber {
+  display: block;
+
+  margin-bottom:
+    20px;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing:
+    0.14em;
+
+  opacity: 0.45;
+}
+
+.portfolioSection h2 {
+  margin: 0;
+
+  font-size:
+    clamp(
+      64px,
+      11vw,
+      180px
+    );
+
+  line-height: 0.8;
+
+  letter-spacing:
+    -0.08em;
+}
