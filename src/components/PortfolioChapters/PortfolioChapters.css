@@ -1,0 +1,639 @@
+.portfolioChapters {
+  --paper: #f3eee3;
+  --paper-deep: #e9e1d3;
+  --ink: #191715;
+  --brown: #49362b;
+  --warm: #94593b;
+  --line: rgba(73, 54, 43, .2);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.portfolioChapters a { text-decoration: none; }
+.portfolioChapters :focus-visible { outline: 3px solid #ad6949; outline-offset: 4px; }
+.chapterShell { width: min(1400px, calc(100% - 96px)); margin: 0 auto; }
+.chapter { position: relative; padding: clamp(100px, 11vw, 168px) 0; scroll-margin-top: 66px; overflow: clip; }
+/* 이동 후 프로그램적으로 포커스를 받는 섹션에는 링을 그리지 않는다 */
+.chapter:focus { outline: none; }
+.chapter + .chapter { border-top: 1px solid var(--line); }
+.chapterDot { color: var(--warm); }
+.chapterNav {
+  position: sticky; top: 0; z-index: 30; height: 66px;
+  display: grid; grid-template-columns: 90px minmax(0, 1fr) 150px;
+  align-items: center; gap: 28px; padding: 0 48px;
+  background: rgba(243, 238, 227, .94); border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+.chapterBrand { font-size: 29px; font-weight: 900; letter-spacing: -.13em; line-height: 1; }
+.chapterBrand span { color: var(--warm); }
+.chapterNavLinks { display: flex; justify-content: center; gap: clamp(12px, 2.4vw, 40px); }
+.chapterNavLinks a, .chapterNavContact { font-size: 10px; font-weight: 800; letter-spacing: .12em; white-space: nowrap; }
+.chapterNavLinks a { display: flex; align-items: center; gap: 5px; color: #66564a; transition: color .25s; }
+.chapterNavLinks a span { font-size: 9px; opacity: .65; }
+.chapterNavLinks a:hover, .chapterNavLinks a[aria-current] { color: var(--ink); }
+.chapterNavLinks a[aria-current]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--warm); }
+.chapterNavContact { text-align: right; }
+.chapterNavContact span { color: var(--warm); font-size: 16px; margin-left: 8px; }
+.chapterHeading { margin-bottom: clamp(48px, 6vw, 96px); }
+.chapterHeadingTop { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 800; letter-spacing: .17em; }
+.chapterHeadingTop span:first-child { color: var(--warm); }
+.chapterHeading h2 { margin: 25px 0 18px; font-size: clamp(58px, 9.7vw, 148px); line-height: .95; letter-spacing: -.09em; font-weight: 800; word-break: keep-all; }
+.chapterHeading p { margin: 0; max-width: 600px; color: #746558; font-size: clamp(14px, 1.25vw, 18px); line-height: 1.65; word-break: keep-all; }
+.textLink { display: inline-flex; align-items: center; gap: 30px; width: fit-content; padding-bottom: 7px; border-bottom: 1px solid currentColor; font-size: 12px; font-weight: 800; letter-spacing: .04em; transition: gap .25s, color .25s; }
+.textLink:hover { gap: 40px; color: var(--warm); }
+.textLink span { font-size: 18px; }
+
+.chapterAbout { background: var(--paper); }
+.aboutGrid { display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); gap: clamp(44px, 8vw, 140px); align-items: center; }
+.aboutPortrait { position: relative; padding: 20px 20px 15px; background: #e5d9c6; border: 1px solid rgba(73, 54, 43, .2); box-shadow: 18px 20px 0 rgba(73, 54, 43, .07); transform: rotate(-1.2deg); }
+.aboutPortrait::before { content: "SSR / CHARACTER FILE"; position: absolute; z-index: 1; top: 36px; left: 34px; color: #4b382d; font-size: 10px; font-weight: 900; letter-spacing: .14em; }
+.aboutPortraitImage { aspect-ratio: 4 / 4.5; overflow: hidden; background: radial-gradient(circle at 50% 30%, #f7e9cf, #cdb69e); }
+.aboutPortraitImage img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.aboutPortraitMeta { display: flex; justify-content: space-between; gap: 8px; padding-top: 15px; font-size: 9px; font-weight: 800; letter-spacing: .11em; }
+.aboutStory { padding: 10px 0; }
+.aboutKicker { margin: 0 0 24px; color: var(--warm); font-size: 11px; font-weight: 800; letter-spacing: .22em; }
+.aboutStory h3 { margin: 0 0 32px; font-size: clamp(40px, 5.1vw, 78px); line-height: 1.02; letter-spacing: -.065em; }
+.aboutStory h3 em { color: var(--warm); font-style: normal; }
+.aboutHeadlineLine { display: block; width: fit-content; max-width: 100%; white-space: nowrap; }
+.aboutHeadlineAccent { position: relative; color: var(--warm); padding-bottom: .02em; }
+.aboutHeadlineAccent::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -.04em;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+.aboutLead { max-width: 580px; margin: 0 0 18px; color: #625549; font-size: clamp(15px, 1.25vw, 18px); line-height: 1.8; word-break: keep-all; }
+.aboutTraits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 35px 0; }
+.aboutTraits span { padding-top: 13px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.5; font-weight: 700; }
+.aboutTraits b { display: block; margin-bottom: 7px; color: var(--warm); font-size: 10px; }
+
+.aboutLead--strong { color: var(--ink); font-weight: 700; }
+
+.aboutDetail { margin-top: clamp(110px, 13vw, 190px); }
+.aboutDetailHead { display: flex; justify-content: space-between; gap: 24px; padding: 0 0 15px; border-bottom: 1px solid var(--line); color: #66564a; font-size: 10px; font-weight: 900; letter-spacing: .16em; }
+.aboutDetailHead span:first-child { color: var(--warm); }
+
+.aboutTranscreation { padding-top: 4px; }
+.transcreationTitle { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; gap: clamp(16px, 3vw, 42px); padding: clamp(42px, 6vw, 82px) 0 24px; border-bottom: 1px solid var(--line); font-size: clamp(52px, 8.6vw, 132px); font-weight: 900; line-height: .82; letter-spacing: -.085em; }
+.transcreationTitle > span:last-child { text-align: right; }
+.transcreationTitle b { color: var(--warm); font-size: .52em; line-height: 1; font-weight: 500; transform: translateY(-.14em); }
+.transcreationLight { color: transparent; -webkit-text-stroke: 1.3px rgba(25, 23, 21, .46); }
+.transcreationResult { display: grid; grid-template-columns: minmax(220px, .48fr) minmax(0, 1.52fr); gap: clamp(30px, 6vw, 90px); align-items: end; padding: clamp(28px, 4vw, 56px) 0 clamp(42px, 6vw, 84px); }
+.transcreationResult p { margin: 0 0 8px; color: #68594e; font-size: clamp(15px, 1.5vw, 21px); line-height: 1.55; font-weight: 700; word-break: keep-all; }
+.transcreationResult strong { text-align: right; font-size: clamp(54px, 9vw, 140px); line-height: .8; letter-spacing: -.09em; white-space: nowrap; }
+.transcreationResult strong em { color: var(--warm); font-style: normal; }
+.transcreationNotes { display: grid; grid-template-columns: 1fr 1fr auto 1.15fr; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+.transcreationNotes article { min-width: 0; min-height: 220px; padding: clamp(24px, 3vw, 42px); border-right: 1px solid var(--line); }
+.transcreationNotes article > span { color: var(--warm); font-size: 9px; font-weight: 900; letter-spacing: .17em; }
+.transcreationNotes h4 { margin: clamp(48px, 5vw, 72px) 0 9px; font-size: clamp(20px, 2.2vw, 32px); line-height: 1.16; letter-spacing: -.045em; word-break: keep-all; }
+.transcreationNotes p { margin: 0; color: #6e5f53; font-size: 12px; line-height: 1.6; word-break: keep-all; }
+.transcreationArrow { display: grid; place-items: center; min-width: 82px; color: var(--warm); border-right: 1px solid var(--line); font-size: clamp(30px, 4vw, 58px); }
+.transcreationNotes .transcreationFrontend { border-right: 0; background: #26211d; color: #f3eee3; }
+.transcreationNotes .transcreationFrontend > span { color: #d7a77f; }
+.transcreationNotes .transcreationFrontend p { color: #c9bbae; }
+
+.aboutBackground { margin-bottom: clamp(10px, 3vw, 30px); }
+.backgroundIntro { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; padding: clamp(38px, 5vw, 70px) 0 clamp(32px, 5vw, 62px); }
+.backgroundIntro p { margin: 0; max-width: 720px; font-size: clamp(34px, 5.1vw, 76px); font-weight: 800; line-height: .98; letter-spacing: -.065em; }
+.backgroundIntro > span { max-width: 280px; padding-bottom: 5px; color: #746558; font-size: 12px; line-height: 1.6; word-break: keep-all; }
+.backgroundGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-left: 1px solid var(--line); }
+.backgroundCard { position: relative; min-height: clamp(330px, 31vw, 440px); display: flex; flex-direction: column; padding: clamp(28px, 4vw, 52px); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; transition: background .28s, transform .28s; }
+.backgroundCard:hover { background: #ebe1d1; }
+.backgroundIndex { color: var(--warm); font-size: 9px; font-weight: 900; letter-spacing: .17em; }
+.backgroundCard h4 { margin: auto 0 34px; font-size: clamp(42px, 5.7vw, 86px); line-height: .86; font-weight: 900; letter-spacing: -.075em; }
+.backgroundCard p { margin: 0 0 12px; color: #625549; font-size: clamp(13px, 1.2vw, 16px); line-height: 1.65; word-break: keep-all; }
+.backgroundCard p b { color: var(--ink); font-weight: 800; }
+.backgroundCard small { color: #6f6054; font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+.backgroundCard:nth-child(3) h4 { color: var(--warm); }
+.backgroundCard:nth-child(4) { background: #e8ddcc; }
+.backgroundCard:nth-child(4):hover { background: #e1d3bf; }
+
+.chapterProjects { --paper: #312a24; --ink: #f4ecdd; --warm: #d7a77f; --line: rgba(244, 236, 221, .21); background: var(--paper); color: var(--ink); }
+.chapterProjects .chapterHeading p { color: #c0b4a8; }
+.workGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; }
+.workCard { scroll-margin-top: 84px; display: grid; grid-template-columns: 1.15fr .85fr; min-width: 0; border: 1px solid var(--line); background: #3c342d; overflow: hidden; transition: border-color .3s, transform .35s, box-shadow .35s; }
+.workCard:hover { border-color: #d7a77f; transform: translateY(-5px); box-shadow: 0 22px 45px rgba(12, 8, 5, .17); }
+.workCard:first-child, .workCard:last-child { grid-column: 1 / -1; }
+.workCard:nth-child(2), .workCard:nth-child(3) { grid-template-columns: 1fr; }
+.workCard:last-child .workCardImage { order: 2; }
+.workCardImage { position: relative; min-height: 390px; overflow: hidden; background: #26221f; }
+.workCard:nth-child(2) .workCardImage, .workCard:nth-child(3) .workCardImage { min-height: 270px; height: 270px; }
+.workCardImage::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 70%, rgba(20, 14, 10, .42)); pointer-events: none; }
+.workCardImage img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.workCardImageIndex { position: absolute; z-index: 1; left: 20px; bottom: 20px; color: white; font-size: 10px; letter-spacing: .16em; font-weight: 800; }
+.workCardBody { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(24px, 3.2vw, 52px); }
+.workCardMeta { width: 100%; display: flex; justify-content: space-between; gap: 10px; padding-bottom: 13px; border-bottom: 1px solid var(--line); color: #d7a77f; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.workCard h3 { margin: 30px 0 4px; font-size: clamp(27px, 3vw, 47px); font-weight: 700; line-height: 1.05; letter-spacing: -.06em; }
+.workCardKo { margin: 0 0 28px; color: #c5b7a8; font-size: 13px; }
+.workCardSummary { max-width: 470px; margin: 0 0 24px; font-size: 15px; line-height: 1.7; word-break: keep-all; }
+.workCardPoint { margin: 0 0 20px; color: #c8b9a7; font-size: 12px; line-height: 1.6; word-break: keep-all; }
+.workCardPoint span { display: block; margin-bottom: 6px; color: #d7a77f; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.workCardTags { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 25px; }
+.workCardTags span { padding: 6px 9px; border: 1px solid var(--line); border-radius: 100px; color: #d9cabc; font-size: 10px; }
+.workCardLinks { display: flex; gap: 20px; }
+.workCardLinks a { border-bottom: 1px solid currentColor; padding-bottom: 5px; font-size: 10px; font-weight: 800; letter-spacing: .13em; transition: color .2s; }
+.workCardLinks a:hover { color: #d7a77f; }
+.workCardLinks a span { font-size: 14px; margin-left: 4px; }
+
+.chapterSkills { background: var(--paper); }
+.skillGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.skillCard { min-width: 0; display: flex; flex-direction: column; min-height: 445px; padding: clamp(24px, 3vw, 42px); background: #eae2d4; border: 1px solid var(--line); transition: background .3s, transform .3s; }
+.skillCard:hover { background: #e4d7c5; transform: translateY(-5px); }
+.skillCardTop { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; letter-spacing: .12em; }
+.skillCardTop span:last-child { color: var(--warm); font-size: 20px; }
+.skillCardEnglish { margin: 78px 0 8px; color: var(--warm); font-size: 10px; font-weight: 900; letter-spacing: .18em; }
+.skillCard h3 { margin: 0 0 15px; font-size: clamp(24px, 2.8vw, 40px); letter-spacing: -.05em; }
+.skillCardDescription { margin: 0 0 26px; color: #67594d; font-size: 14px; line-height: 1.7; word-break: keep-all; }
+.skillTags { display: flex; flex-wrap: wrap; gap: 8px; margin: auto 0 32px; }
+.skillTags span { padding: 8px 10px; border: 1px solid var(--line); background: rgba(255,255,255,.32); font-size: 11px; font-weight: 700; }
+.skillEvidence { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; padding-top: 16px; border-top: 1px solid var(--line); font-size: 11px; font-weight: 800; }
+.skillEvidence span:nth-child(1) { color: #66564a; font-size: 10px; font-weight: 500; text-align: right; }
+.skillEvidence span:last-child { color: var(--warm); font-size: 18px; }
+.skillFootnote { margin: 34px 0 0; padding: 28px 0 0; border-top: 1px solid var(--line); font-size: clamp(15px, 1.8vw, 25px); font-weight: 700; letter-spacing: -.03em; }
+
+.chapterPlay { background: #e6dbc9; }
+.playGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.playCard { min-width: 0; border: 1px solid var(--line); background: #f3eee3; }
+.playCardVisual { position: relative; height: 360px; overflow: hidden; }
+.playSceneStrip { display: flex; align-items: flex-end; justify-content: center; gap: 8px; padding: 28px 40px 0; background: radial-gradient(circle at 50% 55%, #f7dcb2, #a77155); }
+.playSceneStrip img { width: 32%; height: 85%; object-fit: cover; object-position: top; filter: drop-shadow(0 12px 12px rgba(44, 27, 17, .18)); transition: transform .4s; }
+.playSceneStrip img:nth-child(1) { transform: translateY(16px) rotate(-7deg); }
+.playSceneStrip img:nth-child(2) { transform: translateY(5px); }
+.playSceneStrip img:nth-child(3) { transform: translateY(16px) rotate(7deg); }
+.playCard--motion:hover .playSceneStrip img:nth-child(1) { transform: translateY(0) rotate(-9deg); }
+.playCard--motion:hover .playSceneStrip img:nth-child(2) { transform: translateY(-14px); }
+.playCard--motion:hover .playSceneStrip img:nth-child(3) { transform: translateY(0) rotate(9deg); }
+.playVisualLabel { position: absolute; left: 20px; bottom: 20px; padding: 8px 10px; background: rgba(244, 237, 224, .88); color: #49362b; font-size: 10px; font-weight: 900; letter-spacing: .15em; }
+.brickScene { background: #243029; }
+.brickScene::before { content: ""; position: absolute; inset: 14px; border: 1px solid rgba(244,236,221,.25); }
+.brickRows { position: absolute; left: 16%; right: 16%; top: 15%; display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+.brickRows i { height: 21px; background: #c68969; box-shadow: inset 0 -4px rgba(0,0,0,.14); }
+.brickRows i:nth-child(3n) { background: #e7c994; }
+.brickRows i:nth-child(4n) { background: #9db69b; }
+.brickBall { position: absolute; left: 48%; top: 59%; width: 17px; height: 17px; border-radius: 50%; background: #f5e8cd; box-shadow: 0 0 22px #f5e8cd99; animation: brickFloat 2.8s ease-in-out infinite alternate; }
+.brickPaddle { position: absolute; left: 42%; bottom: 45px; width: 16%; height: 10px; border-radius: 12px; background: #e7c994; }
+@keyframes brickFloat { to { transform: translate(30px, -45px); } }
+.playCardBody { padding: 30px 34px 36px; }
+.playCardBody > span { color: var(--warm); font-size: 10px; font-weight: 900; letter-spacing: .14em; }
+.playCardBody h3 { margin: 18px 0 14px; font-size: clamp(25px, 2.6vw, 38px); line-height: 1.2; letter-spacing: -.05em; }
+.playCardBody p { max-width: 520px; min-height: 80px; margin: 0 0 25px; color: #6b5b4d; font-size: 14px; line-height: 1.7; word-break: keep-all; }
+
+.chapterContact { --paper: #49362b; --ink: #f3eee3; --warm: #d8ac85; --line: rgba(243,238,227,.28); min-height: 85svh; display: flex; align-items: center; background: var(--paper); color: var(--ink); }
+.chapterContact .chapterShell { display: flex; flex-direction: column; }
+.contactOverline { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 17px; border-bottom: 1px solid var(--line); color: #d8ac85; font-size: 10px; font-weight: 800; letter-spacing: .18em; }
+.contactPrelude { margin: clamp(70px, 10vw, 140px) 0 20px; color: #d0c0b3; font-size: clamp(15px, 1.6vw, 23px); }
+.chapterContact h2 { margin: 0; font-size: clamp(58px, 10vw, 150px); line-height: 1.06; font-weight: 800; letter-spacing: -.085em; word-break: keep-all; }
+.chapterContact h2 em { color: #d8ac85; font-style: normal; }
+.contactBottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 35px; margin: clamp(55px, 7vw, 100px) 0 clamp(70px, 10vw, 140px); }
+.contactMail { display: inline-flex; align-items: center; gap: 60px; padding: 20px 25px; background: #f3eee3; color: #49362b; font-size: 15px; font-weight: 800; transition: background .25s, transform .25s; }
+.contactMail:hover { background: #ddad87; transform: translateY(-4px); }
+.contactMail span { font-size: 25px; }
+.contactDetails { display: flex; gap: 25px; flex-wrap: wrap; font-size: 12px; font-weight: 700; }
+.contactDetails a { border-bottom: 1px solid currentColor; padding-bottom: 6px; }
+.chapterEnd { display: flex; justify-content: space-between; gap: 20px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+.chapterEnd a:hover { color: #d8ac85; }
+
+@media (max-width: 1100px) {
+  .chapterNav { grid-template-columns: 45px 1fr; padding: 0 24px; gap: 15px; }
+  .chapterNavContact { display: none; }
+  .chapterNavLinks { justify-content: flex-end; }
+  .chapterShell { width: min(100% - 56px, 1400px); }
+  .aboutGrid { gap: 46px; }
+  .aboutTraits { grid-template-columns: 1fr; gap: 6px; }
+  .aboutTraits span { display: flex; gap: 12px; }
+  .aboutTraits b { margin: 0; }
+  .transcreationTitle { grid-template-columns: 1fr auto 1fr; font-size: clamp(48px, 8vw, 92px); }
+  .transcreationNotes { grid-template-columns: 1fr 1fr; }
+  .transcreationNotes article { border-bottom: 1px solid var(--line); }
+  .transcreationNotes article:nth-child(2) { border-right: 0; }
+  .transcreationArrow { display: none; }
+  .transcreationNotes .transcreationFrontend { grid-column: 1 / -1; min-height: 180px; border-bottom: 0; }
+  .transcreationNotes .transcreationFrontend h4 { margin-top: 34px; }
+  .skillGrid { gap: 10px; }
+  .skillCard { padding: 25px; }
+}
+@media (max-width: 760px) {
+  .chapter { padding: 86px 0; scroll-margin-top: 58px; }
+  .chapterShell { width: calc(100% - 38px); }
+  .chapterNav { height: 58px; grid-template-columns: 34px minmax(0, 1fr); padding: 0 18px; }
+  .chapterBrand { font-size: 25px; }
+  .chapterNavLinks { justify-content: flex-start; gap: 19px; overflow-x: auto; scrollbar-width: none; }
+  .chapterNavLinks::-webkit-scrollbar { display: none; }
+  .chapterNavLinks a { font-size: 9px; }
+  .chapterNavLinks a span { display: none; }
+  .chapterHeading { margin-bottom: 44px; }
+  .chapterHeading h2 { font-size: clamp(50px, 13vw, 82px); }
+  .chapterHeadingTop { font-size: 9px; }
+  .aboutGrid { grid-template-columns: 1fr; gap: 55px; }
+  .aboutPortrait { max-width: 500px; margin: auto; }
+  .aboutStory h3 { font-size: clamp(43px, 9vw, 68px); }
+  .aboutTraits { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .aboutTraits span { display: block; font-size: 11px; }
+  .aboutDetail { margin-top: 100px; }
+  .aboutDetailHead { font-size: 8px; }
+  .transcreationTitle { grid-template-columns: 1fr; gap: 8px; padding: 42px 0 26px; font-size: clamp(54px, 17vw, 92px); }
+  .transcreationTitle > span:last-child { text-align: left; }
+  .transcreationTitle b { display: none; }
+  .transcreationResult { grid-template-columns: 1fr; gap: 34px; padding: 30px 0 48px; }
+  .transcreationResult strong { text-align: left; font-size: clamp(50px, 15vw, 86px); white-space: normal; }
+  .transcreationNotes { grid-template-columns: 1fr; }
+  .transcreationNotes article, .transcreationNotes article:nth-child(2), .transcreationNotes .transcreationFrontend { grid-column: auto; min-height: 180px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .transcreationNotes .transcreationFrontend { border-bottom: 0; }
+  .transcreationNotes h4 { margin-top: 38px; }
+  .backgroundIntro { align-items: flex-start; flex-direction: column; gap: 24px; }
+  .backgroundIntro > span { max-width: 100%; }
+  .backgroundGrid { grid-template-columns: 1fr; }
+  .backgroundCard { min-height: 320px; }
+  .backgroundCard h4 { font-size: clamp(50px, 16vw, 82px); }
+  .workGrid { grid-template-columns: 1fr; gap: 17px; }
+  .workCard, .workCard:nth-child(2), .workCard:nth-child(3) { display: flex; flex-direction: column; grid-column: auto; }
+  .workCard:last-child .workCardImage { order: 0; }
+  .workCardImage, .workCard:nth-child(2) .workCardImage, .workCard:nth-child(3) .workCardImage { height: clamp(230px, 60vw, 410px); min-height: 0; }
+  .workCard h3 { font-size: clamp(27px, 6vw, 43px); }
+  .skillGrid, .playGrid { grid-template-columns: 1fr; }
+  .skillCard { min-height: 355px; }
+  .skillCardEnglish { margin-top: 36px; }
+  .playCardVisual { height: 300px; }
+  .playCardBody p { min-height: 0; }
+  .contactBottom { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 430px) {
+  .chapterNavLinks { gap: 13px; }
+  .chapterNavLinks a { font-size: 9px; }
+  .chapterHeading h2 { font-size: 12.8vw; }
+  .aboutPortraitMeta { font-size: 8px; }
+  .aboutTraits { grid-template-columns: 1fr; }
+  .aboutTraits span { display: flex; }
+  .workCardBody { padding: 22px; }
+  .workCardImage, .workCard:nth-child(2) .workCardImage, .workCard:nth-child(3) .workCardImage { height: 220px; }
+  .playCardVisual { height: 235px; }
+  .playCardBody { padding: 23px; }
+  .contactMail { gap: 30px; }
+  .chapterEnd { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolioChapters *, .portfolioChapters *::before, .portfolioChapters *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* =========================================================
+   HERO DNA — 히어로의 문법(고스트 넘버, 마스크 타이포, 사선 컷, 마키)을 챕터로 이어받기
+========================================================= */
+.chapter { --seam-h: clamp(40px, 5vw, 90px); }
+
+/* ---- 챕터 제목 ---- */
+.chapterHeading { position: relative; }
+.chapterHeading::before {
+  content: attr(data-no);
+  content: attr(data-no) / "";   /* 장식이므로 스크린리더에서 제외 */
+  position: absolute; z-index: 0; right: -.03em; top: -.28em;
+  font-size: clamp(150px, 25vw, 400px); font-weight: 900; line-height: .8; letter-spacing: -.08em;
+  color: transparent; -webkit-text-stroke: 1px var(--line);
+  transform: translateX(var(--ghostX, 0)); opacity: var(--ghostO, 1);
+  pointer-events: none; user-select: none;
+}
+.chapterHeading > * { position: relative; z-index: 1; }
+.hWord { display: inline-block; overflow: hidden; vertical-align: top; padding: .06em .08em .14em; margin: -.06em -.08em -.14em; }
+.hWordInner { display: inline-block; }
+.hWord--outline .hWordInner { color: transparent; -webkit-text-stroke: 2px var(--ink); }
+.hWord--outline .chapterDot { color: var(--warm); -webkit-text-stroke: 0; }
+
+/* ---- 마키 띠 ---- */
+.chapterSeam { overflow: hidden; background: #191715; color: #d9a95e; border-block: 1px solid rgba(217, 169, 94, .35); padding: 13px 0; font-size: 13px; font-weight: 900; letter-spacing: .24em; white-space: nowrap; }
+.chapterSeamTrack { display: inline-block; animation: seamRun 32s linear infinite; }
+@keyframes seamRun { to { transform: translateX(-50%); } }
+.chapterSeam--outline { background: transparent; border: 0; padding: 0; margin-bottom: clamp(40px, 5vw, 80px); color: transparent; font-size: clamp(64px, 12vw, 190px); line-height: 1; letter-spacing: -.04em; -webkit-text-stroke: 1px rgba(243, 238, 227, .38); }
+.chapterSeam--outline .chapterSeamTrack { animation-direction: reverse; animation-duration: 48s; }
+
+/* ---- 사선 이음새: 섹션 경계를 히어로 패널 모양으로 자른다 ---- */
+.chapter.chapterProjects, .chapter.chapterSkills, .chapter.chapterPlay,
+.chapter.chapterContact { border-top: 0; }
+.chapterProjects::before, .chapterSkills::before, .chapterPlay::before,
+.chapterContact::before {
+  content: ""; position: absolute; z-index: 0; top: -1px; left: 0; right: 0; height: var(--seam-h);
+  background: var(--seam); clip-path: polygon(0 0, 100% 0, 0 100%); pointer-events: none;
+}
+.chapterSkills::before { clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.chapterProjects, .chapterPlay, .chapterContact { --seam: #f3eee3; }
+.chapterSkills { --seam: #312a24; }
+
+/* ---- 리듬: 밝음 / 어두움 교차 (Play 를 어둡게) ---- */
+.chapterPlay { --paper: #191715; --ink: #f4ecdd; --warm: #d9a95e; --line: rgba(244, 236, 221, .2); background: var(--paper); color: var(--ink); }
+.chapterPlay .chapterHeading p { color: #c0b4a8; }
+.chapterPlay .playCard { background: #26221f; }
+.chapterPlay .playCardBody p { color: #c9bcae; }
+
+/* ---- 마지막 챕터: 히어로의 마무리처럼 크게 ---- */
+.chapterContact { flex-direction: column; align-items: stretch; justify-content: center; }
+.chapterContact h2 { font-size: clamp(64px, 11.4vw, 176px); }
+
+/* ---- 내비게이션: 히어로 헤더처럼 굵게 + 진행 바 ---- */
+.chapterNavLinks a { font-weight: 900; }
+.chapterProgress { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--warm); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+
+@media (max-width: 760px) {
+  .chapterHeading::before { font-size: clamp(110px, 42vw, 220px); top: -.2em; }
+  .hWord--outline .hWordInner { -webkit-text-stroke: 1.5px var(--ink); }
+  .chapterSeam { font-size: 11px; }
+}
+
+/* =========================================================
+   ABOUT / VIEWPORT EDITION
+   Desktop: 한 장면 = 한 viewport. IntersectionObserver reveal로
+   '읽기 → 재해석 → 배경'이 장면처럼 넘어가도록 구성한다.
+========================================================= */
+.chapterAbout { padding: 0; }
+.chapterShell--about { width: min(1400px, calc(100% - 96px)); }
+.aboutScreen {
+  box-sizing: border-box;
+  min-height: calc(100vh - 66px);
+  min-height: calc(100svh - 66px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(34px, 5vh, 64px) 0;
+  scroll-margin-top: 66px;
+}
+.aboutScreen--cover { position: relative; }
+.aboutScreen--cover .chapterHeading { margin: 0; }
+.aboutScreen--cover .chapterHeading h2 { margin-top: clamp(30px, 5vh, 64px); }
+.aboutScrollCue {
+  position: absolute;
+  left: 0;
+  bottom: clamp(24px, 4vh, 46px);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #7b6b5f;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+.aboutScrollCue i { display: block; width: 74px; height: 1px; background: var(--line); overflow: hidden; }
+.aboutScrollCue i::after {
+  content: "";
+  display: block;
+  width: 34%;
+  height: 100%;
+  background: var(--warm);
+  animation: aboutScrollCue 1.9s ease-in-out infinite;
+}
+@keyframes aboutScrollCue {
+  0% { transform: translateX(-110%); }
+  55%, 100% { transform: translateX(300%); }
+}
+
+.aboutScreen--profile .aboutGrid { width: 100%; }
+.aboutScreen--profile .aboutPortrait { max-width: 560px; justify-self: center; }
+.aboutScreen--profile .aboutStory h3 { font-size: clamp(38px, 4.35vw, 68px); }
+.aboutScreen--profile .aboutLead { font-size: clamp(14px, 1.05vw, 17px); }
+.aboutScreen--profile .aboutTraits { margin: clamp(22px, 3vh, 34px) 0; }
+
+.aboutScreen--transcreation .aboutDetail,
+.aboutScreen--background .aboutDetail { width: 100%; margin: 0; }
+.aboutScreen--transcreation .transcreationTitle {
+  padding: clamp(28px, 4vh, 52px) 0 20px;
+  font-size: clamp(48px, 6.95vw, 106px);
+}
+.aboutScreen--transcreation .transcreationResult {
+  padding: clamp(20px, 3vh, 34px) 0 clamp(26px, 4vh, 46px);
+}
+.aboutScreen--transcreation .transcreationResult strong { font-size: clamp(52px, 7.8vw, 118px); }
+.aboutScreen--transcreation .transcreationNotes article { min-height: clamp(160px, 20vh, 205px); }
+.aboutScreen--transcreation .transcreationNotes h4 { margin-top: clamp(30px, 4vh, 52px); }
+
+.aboutScreen--background .backgroundIntro {
+  padding: clamp(24px, 3.5vh, 42px) 0 clamp(20px, 3vh, 34px);
+}
+.aboutScreen--background .backgroundIntro p { font-size: clamp(34px, 4.1vw, 62px); }
+.aboutScreen--background .backgroundGrid {
+  flex: 1;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+.aboutScreen--background .backgroundCard {
+  min-height: 0;
+  padding: clamp(22px, 2.5vw, 38px);
+}
+.aboutScreen--background .backgroundCard h4 {
+  margin: auto 0 clamp(18px, 2.2vh, 28px);
+  font-size: clamp(38px, 4.3vw, 66px);
+}
+.aboutScreen--background .backgroundCard p { font-size: clamp(12px, 1vw, 15px); }
+
+/* ABOUT step pager — 사용자 스케치의 1·2·3·4 + dot 내비게이션 */
+.aboutPager {
+  position: fixed;
+  z-index: 24;
+  left: clamp(18px, 2.1vw, 42px);
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  transform: translate3d(-12px, -50%, 0);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .28s ease, transform .42s cubic-bezier(.16,1,.3,1), visibility .28s;
+}
+.aboutPager.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, -50%, 0);
+}
+.aboutPager button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 32px 14px;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.aboutPagerNumber {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .24;
+  transform: scale(.9);
+  transition: opacity .25s ease, transform .36s cubic-bezier(.16,1,.3,1), background .25s ease;
+}
+.aboutPagerDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--warm);
+  opacity: .26;
+  transform: scale(.72);
+  box-shadow: 0 0 0 0 rgba(148, 89, 59, 0);
+  transition: opacity .25s ease, transform .36s cubic-bezier(.16,1,.3,1), box-shadow .36s ease;
+}
+.aboutPager button:hover .aboutPagerNumber,
+.aboutPager button:focus-visible .aboutPagerNumber { opacity: .68; transform: scale(.96); }
+.aboutPager button:hover .aboutPagerDot,
+.aboutPager button:focus-visible .aboutPagerDot { opacity: .7; transform: scale(.92); }
+.aboutPager button.is-active .aboutPagerNumber {
+  opacity: 1;
+  transform: scale(1);
+}
+.aboutPager button.is-active .aboutPagerDot {
+  opacity: 1;
+  transform: scale(1.16);
+  box-shadow: 0 0 0 5px rgba(148, 89, 59, .08);
+}
+.aboutPager button:focus-visible { outline: none; }
+.aboutPager button:focus-visible .aboutPagerNumber { outline: 2px solid var(--warm); outline-offset: 3px; }
+
+/* ABOUT GSAP motion
+   기본 상태는 항상 보이게 두고, 장면이 viewport에 들어온 순간에만 GSAP가 from 상태를 주입한다.
+   JS/Observer가 실패해도 콘텐츠가 사라지지 않는다. */
+.aboutScreen { overflow: visible; }
+.aboutStory h3 { overflow: visible; }
+.aboutHeadlineLine { transform-origin: left bottom; }
+.aboutScreen--profile.about-motion-played .aboutHeadlineAccent::after {
+  animation: aboutHeadlineRule .72s .72s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes aboutHeadlineRule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ABOUT은 JS가 한 번의 wheel gesture를 한 viewport 전환으로 제어한다.
+   CSS scroll-snap은 트랙패드에서 이중 보정이 생기므로 사용하지 않는다. */
+
+@media (max-width: 1180px) {
+  .aboutPager { display: none; }
+}
+
+@media (max-width: 1050px) and (min-width: 761px) {
+  .aboutScreen--profile .aboutGrid { gap: 44px; }
+  .aboutScreen--profile .aboutPortrait { max-width: 460px; }
+  .aboutScreen--profile .aboutStory h3 { font-size: clamp(32px, 4.1vw, 46px); }
+  .aboutScreen--transcreation .transcreationNotes article { padding: 24px; }
+  .aboutScreen--background .backgroundCard h4 { font-size: clamp(34px, 4.8vw, 52px); }
+}
+
+@media (max-width: 760px) {
+  .chapterAbout { padding: 0; }
+  .chapterShell--about { width: calc(100% - 38px); }
+  .aboutScreen {
+    min-height: auto;
+    display: block;
+    padding: 86px 0;
+    scroll-margin-top: 58px;
+  }
+  .aboutScreen--cover { min-height: calc(100svh - 58px); display: flex; justify-content: center; }
+  .aboutScrollCue { bottom: 30px; }
+  .aboutScreen--profile .aboutPortrait { max-width: 500px; }
+  .aboutHeadlineLine { white-space: normal; }
+  .aboutScreen--transcreation .aboutDetail,
+  .aboutScreen--background .aboutDetail { margin: 0; }
+  .aboutScreen--transcreation .transcreationNotes article { min-height: 180px; }
+  .aboutScreen--background .backgroundGrid { grid-template-rows: none; }
+  .aboutScreen--background .backgroundCard { min-height: 280px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aboutScrollCue i::after { animation: none; }
+}
+
+/* =========================================================
+   GLOBAL TOP BUTTON
+   HERO를 벗어난 뒤에만 노출. 왼쪽 ABOUT pager와 같은 사각형 문법을 사용한다.
+========================================================= */
+.topButton {
+  position: fixed;
+  z-index: 40;
+  right: clamp(22px, 2.35vw, 46px);
+  bottom: clamp(22px, 2.6vw, 42px);
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  padding: 0;
+  border: 1px solid rgba(25, 23, 21, .92);
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 10px 30px rgba(25, 23, 21, .14);
+  font: inherit;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, 16px, 0) scale(.94);
+  transition:
+    opacity .25s ease,
+    visibility .25s ease,
+    transform .42s cubic-bezier(.16,1,.3,1),
+    background .22s ease,
+    color .22s ease,
+    border-color .22s ease;
+}
+.topButton.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+.topButton > span {
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1;
+  transform: translateY(1px);
+}
+.topButton small {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  line-height: 1;
+}
+.topButton:hover,
+.topButton:focus-visible {
+  background: var(--warm);
+  color: var(--paper);
+  border-color: var(--warm);
+  transform: translate3d(0, -5px, 0) scale(1.03);
+}
+.topButton:focus-visible {
+  outline: 2px solid var(--warm);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .topButton {
+    width: 50px;
+    height: 50px;
+    right: 14px;
+    bottom: 14px;
+  }
+}
+
+/* 어두운 챕터(WORK / PLAY / HELLO) 위에서는 밝은 버튼으로 반전 */
+.topButton[data-tone="dark"] {
+  border-color: rgba(243, 238, 227, .9);
+  background: #f3eee3;
+  color: #191715;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .34);
+}
+.topButton[data-tone="dark"]:hover,
+.topButton[data-tone="dark"]:focus-visible {
+  border-color: #d7a77f;
+  background: #d7a77f;
+  color: #191715;
+}
+.topButton[data-tone="dark"]:focus-visible { outline-color: #f3eee3; }

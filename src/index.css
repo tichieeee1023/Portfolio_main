@@ -4,8 +4,11 @@
 }
 
 html {
-  scroll-behavior:
-    smooth;
+  /*
+    smooth를 쓰면 GSAP ScrollTrigger의 스냅/scrollTo와 브라우저의 자체 스무딩이
+    동시에 돌면서 장면 스크롤이 끈적하게 느껴진다. 이동 애니메이션은 GSAP가 담당한다.
+  */
+  scroll-behavior: auto;
 }
 
 html,

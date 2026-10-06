@@ -1,0 +1,218 @@
+/* Hero information and actions have distinct silhouettes. */
+.heroStage .growthIdentity {
+  bottom: 32px;
+  width: auto;
+  max-width: min(470px, calc(100% - 2 * var(--gutter)));
+  min-height: 98px;
+  gap: 16px;
+  padding: 12px 20px 12px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(105deg, #fff9edf5, #fff9ede6 72%, #fff9edb8);
+  box-shadow: 0 8px 28px #30201614;
+}
+.heroStage .growthIdentity::before { display: none; }
+.heroStage .growthIdentity > div { padding: 0; }
+.heroStage .growthIdentity .growthRank {
+  flex: 0 0 76px;
+  width: 76px;
+  min-height: 74px;
+  padding: 12px 5px;
+  gap: 10px;
+  border: 1px solid #b88a4f;
+  border-radius: 50% 50% 8px 8px;
+  background: #27221c;
+  box-shadow: inset 0 0 0 4px #ffffff0b;
+}
+.heroStage .growthIdentity .growthRank > b { color: #f4deb2; font-size: 22px; }
+.heroStage.scene-0 .growthIdentity .growthRank > b { color: #f4deb2; font-size: 12px; }
+.heroStage.scene-4 .growthIdentity .growthRank {
+  background: linear-gradient(135deg, #302319, #67461f);
+  border-color: #d7ad64;
+}
+.heroStage.scene-4 .growthIdentity .growthRank > b { color: #ffdfa0; font-size: 27px; }
+.heroStage .growthIdentity .growthPips { margin: 0; }
+.heroStage .growthIdentity .growthPips i { border-color: #ad895b; }
+.heroStage .growthIdentity .growthPips i.isOn { background: #e8bd74; border-color: #e8bd74; }
+.heroStage .growthIdentity strong { font-size: clamp(20px, 1.6vw, 27px); }
+.heroStage .growthIdentity small { font-size: 10px; margin-bottom: 6px; }
+.heroStage .growthIdentity p { margin-top: 7px; font-size: 12px; }
+
+/* A rising arrow is the primary action; the text names the next step. */
+.heroStage .navigationControl { top: 42%; gap: 8px; }
+.heroStage.scene-4 .navigationControl { top: 39%; }
+.heroStage .prevControl {
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 6px 0;
+  color: #32251c;
+  text-shadow: 0 1px 5px #fff7e9;
+}
+.heroStage .nextControl,
+.heroStage.isAcquired .nextControl {
+  min-width: 274px;
+  min-height: 104px;
+  gap: 20px;
+  padding: 4px 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: none;
+}
+.heroStage .nextControl:hover { transform: none; }
+.heroStage .nextControl .nextCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  text-align: left;
+  color: #241c16;
+  text-shadow: 0 1px 5px #fff8ec, 0 0 16px #fff8ec, 0 0 28px #fff8ec;
+}
+.heroStage .nextControl small,
+.heroStage.isAcquired .nextControl small {
+  color: #634522;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.heroStage .nextControl strong,
+.heroStage.isAcquired .nextControl strong {
+  color: #241c16;
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: -.04em;
+  line-height: 1.1;
+}
+.heroStage .nextDestination {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #a77b43;
+  font-size: 13px;
+  font-weight: 650;
+}
+.heroStage .nextControl .nextArrow,
+.heroStage.isAcquired .nextControl .nextArrow {
+  position: relative;
+  flex: 0 0 84px;
+  width: 84px;
+  height: 84px;
+  border: 1px solid #d1aa70;
+  border-radius: 50%;
+  background: #211d18;
+  color: #fff0d1;
+  box-shadow: 0 0 0 5px #fff8e8aa, 0 8px 24px #30201633;
+  transition: transform .25s ease, background .25s ease;
+}
+.heroStage .nextArrow svg { width: 56px; height: 56px; overflow: visible; }
+.heroStage .nextArrow .risePath { stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.heroStage .nextArrow .stepPath { stroke: #c79b61; stroke-width: 1.5; opacity: .65; }
+.heroStage .nextControl:not([aria-disabled="true"]):hover .nextArrow {
+  transform: translate(4px, -5px);
+  background: #574020;
+  color: #fff5dd;
+}
+.heroStage .nextControl[aria-disabled="true"] { opacity: .55; }
+.heroStage .nextControl[aria-disabled="true"] .nextArrow { transform: none; }
+.heroStage.isAcquired .nextControl .nextArrow { background: #a57532; color: #fff9ea; }
+
+.heroStage .skipCta,
+.heroStage .skipCta:hover {
+  background: #171717;
+  border: 1px solid #171717;
+  color: #fff;
+  box-shadow: 0 5px 16px #0002;
+}
+.heroStage .skipCta small,
+.heroStage .skipCta:hover small { color: #fff; opacity: .72; }
+.heroStage .skipCta strong { color: #fff; }
+
+
+/* SSR final: 프로젝트로 건너뛰는 CTA와 별개로 다음 서사인 ABOUT을 명확히 보여준다. */
+.heroStage .aboutChapterControl {
+  appearance: none;
+  align-self: flex-end;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas: "small arrow" "strong arrow";
+  column-gap: 14px;
+  align-items: center;
+  min-width: 188px;
+  padding: 7px 0 10px;
+  border: 0;
+  border-bottom: 1px solid rgba(36, 28, 22, .42);
+  background: transparent;
+  color: #241c16;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  text-shadow: 0 1px 5px #fff8ec, 0 0 16px #fff8ec;
+  transition: color .22s ease, border-color .22s ease, transform .28s cubic-bezier(.16,1,.3,1);
+}
+.heroStage .aboutChapterControl small { grid-area: small; font-size: 9px; font-weight: 800; letter-spacing: .15em; color: #735338; }
+.heroStage .aboutChapterControl strong { grid-area: strong; font-size: 14px; font-weight: 850; letter-spacing: -.02em; }
+.heroStage .aboutChapterControl > span { grid-area: arrow; font-size: 25px; line-height: 1; color: #a57532; transition: transform .28s cubic-bezier(.16,1,.3,1); }
+.heroStage .aboutChapterControl:hover { color: #8e5f2c; border-color: #8e5f2c; transform: translateY(2px); }
+.heroStage .aboutChapterControl:hover > span { transform: translateY(4px); }
+
+/* The reward floats above the action, away from the laptop silhouette. */
+.heroStage.isAcquired .ssrReward {
+  top: 100px;
+  right: var(--gutter);
+  width: 250px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  text-shadow: 0 0 18px #fff8e9, 0 1px 4px #fff8e9;
+}
+.heroStage .ssrReward > strong { margin-top: 13px; font-size: 76px; }
+.heroStage .ssrRewardStars { margin-top: 11px; }
+.heroStage .ssrReward .ssrName { margin-top: 10px; padding-top: 9px; font-size: 10px; }
+
+@media (max-width: 1100px) and (min-width: 769px) {
+  .heroStage .nextControl, .heroStage.isAcquired .nextControl { min-width: 228px; gap: 14px; }
+  .heroStage .nextControl strong, .heroStage.isAcquired .nextControl strong { font-size: 25px; }
+  .heroStage .nextControl .nextArrow { flex-basis: 70px; width: 70px; height: 70px; }
+  .heroStage.isAcquired .ssrReward { width: 228px; }
+}
+@media (max-width: 768px) {
+  .heroStage .growthIdentity { bottom: 126px; min-height: 86px; padding: 10px 14px 10px 10px; gap: 13px; }
+  .heroStage .growthIdentity .growthRank { flex-basis: 60px; width: 60px; min-height: 64px; padding: 10px 3px; }
+  .heroStage .growthIdentity > div { padding: 0; }
+  .heroStage .growthIdentity strong { font-size: 19px; }
+  .heroStage .growthIdentity small { font-size: 9px; }
+  .heroStage .growthIdentity p { font-size: 11px; max-width: 220px; }
+  .heroStage .navigationControl, .heroStage.scene-4 .navigationControl {
+    top: auto; bottom: 24px; left: 18px; right: 18px;
+    flex-direction: row; align-items: center; gap: 18px;
+  }
+  .heroStage .prevControl { position: static; align-self: center; flex: 0 0 32px; min-height: 44px; }
+  .heroStage .prevControl span { display: none; }
+  .heroStage .nextControl, .heroStage.isAcquired .nextControl { min-width: 0; min-height: 78px; flex: 1; gap: 12px; }
+  .heroStage .nextControl strong, .heroStage.isAcquired .nextControl strong { font-size: 25px; }
+  .heroStage .nextControl small { font-size: 9px; }
+  .heroStage .nextDestination { font-size: 12px; }
+  .heroStage .nextControl .nextArrow, .heroStage.isAcquired .nextControl .nextArrow { flex-basis: 64px; width: 64px; height: 64px; }
+  .heroStage .nextArrow svg { width: 44px; height: 44px; }
+  .heroStage .aboutChapterControl { display: none; }
+  .heroStage.isAcquired .ssrReward { top: 124px; right: 22px; width: 178px; }
+  .heroStage .ssrReward > strong { font-size: 54px; margin-top: 9px; }
+  .heroStage .ssrReward .ssrName { font-size: 8px; padding-top: 7px; }
+  .heroStage .ssrReward .ssrEyebrow { font-size: 8px; }
+  .heroStage .dialogueBox { bottom: 243px; }
+}
+@media (max-height: 740px) and (min-width: 769px) {
+  .heroStage.isAcquired .ssrReward { top: 80px; }
+  .heroStage .ssrReward > strong { font-size: 56px; }
+  .heroStage.scene-4 .navigationControl { top: 42%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroStage .nextControl .nextArrow { transition: none; }
+  .heroStage .nextControl:not([aria-disabled="true"]):hover .nextArrow { transform: none; }
+}

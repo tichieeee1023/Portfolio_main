@@ -3,117 +3,55 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import "./YoojinHero.css";
+import "./heroControls.css";
+import { GrowthJourney, AcquisitionFireworks } from "./GrowthJourney";
+import { GROWTH } from "./growthData";
+import { createHeroMotion } from "./heroMotion";
+import { LAST_SCENE, SCENES, SCENE_POINTS, SCROLL_END } from "./heroScenes";
+import { pad2, prefersReducedMotion } from "./heroUtils";
+import { useAmbientMotion, useDialogueMotion, useKineticTypography } from "./useHeroAnimations";
+import { navigateToChapter } from "../PortfolioChapters/chapterNavigation";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-type Scene = {
-  image: string;
-  keyword: string;
-  outline: string;
-  phrase: string;
-  marquee: string;
-  level: string;
-  job: string;
-  title: string;
-  dialogue: string[];
+/*
+  스크롤 → 장면 결정.
+  - INTENT(약 40px) 이상 움직여야 "장면을 넘기려는 의도"로 본다. 미세한 흔들림은 무시.
+  - 의도가 확인되면 진행 방향의 다음 장면으로 간다(휠 한 칸 = 한 장면).
+  - SNAP_EPS는 장면 지점에 도착한 뒤 남는 몇 px 오차를 흡수한다.
+*/
+const INTENT = 0.01;
+const SNAP_EPS = 0.004;
+const pickSceneIndex = (progress: number, direction: number, current: number) => {
+  const delta = progress - SCENE_POINTS[current];
+  if (Math.abs(delta) < INTENT) return current;
+  const dir = direction !== 0 ? direction : delta > 0 ? 1 : -1;
+  if (dir > 0) {
+    const i = SCENE_POINTS.findIndex((p) => p >= progress - SNAP_EPS);
+    return i === -1 ? LAST_SCENE : i;
+  }
+  let i = 0;
+  SCENE_POINTS.forEach((p, k) => {
+    if (p <= progress + SNAP_EPS) i = k;
+  });
+  return i;
 };
-
-const SCENES: Scene[] = [
-  {
-    image: "/assets/profile/yoojin-00.webp",
-    keyword: "GROW",
-    outline: "YOOJIN",
-    phrase: "START SMALL. KEEP GOING.",
-    marquee:
-      "GROW • LEARN • TRY • MAKE • GROW • LEARN • TRY • MAKE • ",
-    level: "01",
-    job: "LEARNER",
-    title: "FIRST STEP",
-    dialogue: [
-      "아직은 배우는 중이에요.",
-      "일단 만들어보는 편입니다.",
-      "뭘 만들지 고민하는 시간이 제일 길어요.",
-    ],
-  },
-
-  {
-    image: "/assets/profile/yoojin-01.webp",
-    keyword: "CODE",
-    outline: "FIRST COMMIT",
-    phrase: "HTML / CSS / JAVASCRIPT",
-    marquee:
-      "HTML • CSS • JAVASCRIPT • CODE • HTML • CSS • JAVASCRIPT • CODE • ",
-    level: "02",
-    job: "WEB LEARNER",
-    title: "FIRST COMMIT",
-    dialogue: [
-      "일단 코드를 쳐봅니다.",
-      "안 되면 다시 해보면 되죠.",
-      "처음엔 HTML이 제일 쉬운 줄 알았어요.",
-    ],
-  },
-
-  {
-    image: "/assets/profile/yoojin-02.webp",
-    keyword: "LEARN",
-    outline: "BUILD",
-    phrase: "BUILD. BREAK. REPEAT.",
-    marquee:
-      "COMPONENT • STATE • REACT • BUILD • BREAK • REPEAT • COMPONENT • ",
-    level: "03",
-    job: "FRONTEND TRAINEE",
-    title: "COMPONENT BUILDER",
-    dialogue: [
-      "컴포넌트를 나누는 재미를 알아버렸어요.",
-      "상태가 바뀌면 화면도 바뀌는 게 재밌어요.",
-      "이제 그냥 예쁜 화면만 만들고 싶진 않아요.",
-    ],
-  },
-
-  {
-    image: "/assets/profile/yoojin-03.webp",
-    keyword: "KEEP",
-    outline: "GOING",
-    phrase: "ONE MORE TRY.",
-    marquee:
-      "INTERACTION • DEBUG • COFFEE • AGAIN • INTERACTION • DEBUG • ",
-    level: "04",
-    job: "FRONTEND TRAINEE",
-    title: "UI TINKERER",
-    dialogue: [
-      "커피는 기능 구현에 포함됩니다.",
-      "조금만 더 하면 될 것 같아요.",
-      "인터랙션 넣다가 시간이 사라졌어요.",
-    ],
-  },
-
-  {
-    image: "/assets/profile/yoojin-04.webp",
-    keyword: "FRONTEND",
-    outline: "DEVELOPER",
-    phrase: "INTERACTION MAKER",
-    marquee:
-      "FRONTEND • REACT • TYPESCRIPT • INTERACTION • FRONTEND • REACT • ",
-    level: "05",
-    job: "FRONTEND DEVELOPER",
-    title: "INTERACTION MAKER",
-    dialogue: [
-      "화면이 반응하는 순간을 좋아합니다.",
-      "이제 제가 만든 프로젝트도 보여드릴게요.",
-      "안녕하세요. 프론트엔드 개발자 이유진입니다.",
-    ],
-  },
-];
 
 export default function YoojinHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const motionRef = useRef<HTMLDivElement>(null);
 
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const keywordRef = useRef<HTMLHeadingElement>(null);
+  const keywordRef = useRef<HTMLDivElement>(null);
+  const keywordEchoRef = useRef<HTMLSpanElement>(null);
+  const ambientRef = useRef<HTMLDivElement>(null);
+  const dialogueRef = useRef<HTMLButtonElement>(null);
+  const dialogueTextRef = useRef<HTMLSpanElement>(null);
   const outlineRef = useRef<HTMLDivElement>(null);
   const phraseRef = useRef<HTMLParagraphElement>(null);
+  const accentRef = useRef<HTMLSpanElement>(null);
   const numberRef = useRef<HTMLSpanElement>(null);
 
   const marqueeTopRef = useRef<HTMLDivElement>(null);
@@ -121,25 +59,71 @@ export default function YoojinHero() {
 
   const triggerRef = useRef<ScrollTrigger | null>(null);
 
+  // 이미지 디코딩이 끝나기 전에는 장면 전환을 시작하지 않는다(첫 전환 깜빡임 방지).
+  const motionApiRef = useRef<ReturnType<typeof createHeroMotion> | null>(null);
+  const assetsReadyRef = useRef(false);
+  const desiredSceneRef = useRef(0);
+  // 전환이 이미 시작된 제스처(또는 버튼 이동)가 장면 지점에 안착할 때까지 새 의도 판정을 잠근다.
+  const gestureLockRef = useRef(false);
+  // 마지막 장면의 각성 연출이 끝나기 전에는 핀 구간 밖으로 스크롤되지 않게 막는다.
+  const lockExitRef = useRef(false);
+  // SSR 완료 후 ABOUT으로 넘어갈 때 연속 휠 입력이 겹치지 않게 잠근다.
+  const chapterPagingRef = useRef(false);
+
   const [sceneIndex, setSceneIndex] = useState(0);
 
   const [dialogueOpen, setDialogueOpen] = useState(false);
   const [dialogueIndex, setDialogueIndex] = useState(0);
 
-  const [revolutionActive, setRevolutionActive] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [revolutionDone, setRevolutionDone] = useState(false);
+  const [acquisitionVisible, setAcquisitionVisible] = useState(false);
 
   const currentScene = SCENES[sceneIndex];
+
+  useKineticTypography(sceneIndex, {
+    sectionRef,
+    keywordRef,
+    keywordEchoRef,
+    outlineRef,
+    phraseRef,
+    accentRef,
+    numberRef,
+  });
+  useAmbientMotion(stageRef, ambientRef);
+  useDialogueMotion(dialogueOpen, dialogueIndex, dialogueRef, dialogueTextRef);
 
   /* ========================================
      PRELOAD
   ======================================== */
 
   useEffect(() => {
-    SCENES.forEach((scene) => {
-      const image = new Image();
-      image.src = scene.image;
+    let cancelled = false;
+
+    const decodeAll = Promise.all(
+      SCENES.map(async (scene) => {
+        const image = new Image();
+        image.src = scene.image;
+        try {
+          await image.decode();
+        } catch {
+          /* 디코딩 실패해도 전환 자체는 막지 않는다 */
+        }
+      })
+    );
+    // 네트워크가 느려도 3초 뒤에는 어떤 경우든 열어준다.
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 3000));
+
+    Promise.race([decodeAll, timeout]).then(() => {
+      if (cancelled) return;
+      assetsReadyRef.current = true;
+      // 준비 전에 스크롤된 위치가 있다면 지금 반영
+      motionApiRef.current?.request(desiredSceneRef.current);
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   /* ========================================
@@ -149,332 +133,196 @@ export default function YoojinHero() {
   useEffect(() => {
     const section = sectionRef.current;
     const stage = stageRef.current;
+    const host = motionRef.current;
+    if (!section || !stage || !host) return;
 
-    if (!section || !stage) return;
-
+    let motion: ReturnType<typeof createHeroMotion> | undefined;
     const ctx = gsap.context(() => {
-      imageRefs.current.forEach((image, index) => {
-        if (!image) return;
-
-        gsap.set(image, {
-          opacity: index === 0 ? 1 : 0,
-
-          clipPath:
-            index === 0
-              ? "inset(0% 0% 0% 0%)"
-              : "inset(0% 100% 0% 0%)",
-
-          zIndex: index === 0 ? 2 : 1,
-        });
+      motion = createHeroMotion({
+        stage,
+        host,
+        layers: imageRefs.current.filter((layer): layer is HTMLDivElement => layer !== null),
+        images: SCENES.map((scene) => scene.image),
+        transitions: SCENES.map((scene) => scene.transition),
+        onStart: () => {
+          lockExitRef.current = desiredSceneRef.current === LAST_SCENE;
+          setIsTransitioning(true);
+          setRevolutionDone(false);
+          setAcquisitionVisible(false);
+          setDialogueOpen(false);
+        },
+        onReveal: (index) => {
+          setSceneIndex(index);
+          setAcquisitionVisible(index === LAST_SCENE);
+          setDialogueIndex(0);
+        },
+        onFinish: (index) => {
+          lockExitRef.current = false;
+          setIsTransitioning(false);
+          setRevolutionDone(index === LAST_SCENE);
+        },
       });
 
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
+      motionApiRef.current = motion;
 
-          start: "top top",
+      let snapIndex = 0;
 
-          /*
-            마지막 장면 체류 시간을 길게 확보
-          */
-          end: "+=760%",
+      triggerRef.current = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: SCROLL_END,
+        pin: stage,
+        anticipatePin: 1,
+        /*
+          1) 의도 판정(onUpdate): 스크롤이 INTENT를 넘는 순간 바로 전환을 시작한다.
+             트랙패드 관성이 끝나길 기다리지 않는다.
+          2) 스냅(snapTo): 스크롤 위치를 장면 지점에 맞춰 안착시킨다.
+          두 단계가 같은 pickSceneIndex를 쓰므로 서로 다른 장면을 가리키지 않는다.
+        */
+        onUpdate: (self) => {
+          // 각성 연출 중에는 핀 구간 밖으로 나가지 못하게 끝 지점에 붙잡아 둔다.
+          // 핀이 걸려 있는 구간 안에서의 보정이라 화면상 움직임은 보이지 않는다.
+          if (lockExitRef.current && self.progress >= 1) {
+            gsap.set(window, { scrollTo: self.end - 1 });
+            return;
+          }
 
-          pin: stage,
+          const current = desiredSceneRef.current;
 
-          scrub: 0.65,
+          if (gestureLockRef.current) {
+            if (Math.abs(self.progress - SCENE_POINTS[current]) < SNAP_EPS) {
+              gestureLockRef.current = false;
+            }
+            return;
+          }
 
-          anticipatePin: 1,
+          const index = pickSceneIndex(self.progress, self.direction, current);
+          if (index === current) return;
 
-          /*
-            마지막을 바로 100%로 snap 하지 않음.
-            72%부터 끝까지 최종 화면 체류.
-          */
-          snap: {
-            snapTo: [0, 0.18, 0.36, 0.54, 0.72],
-
-            duration: {
-              min: 0.2,
-              max: 0.5,
-            },
-
-            delay: 0.06,
-
-            ease: "power2.inOut",
+          gestureLockRef.current = true;
+          desiredSceneRef.current = index;
+          if (assetsReadyRef.current) motion?.request(index);
+        },
+        snap: {
+          snapTo: (value: number, self?: ScrollTrigger) => {
+            const direction = self?.direction ?? 0;
+            // 마지막 장면 뒤 정지 구간에서 아래로 스크롤하면 자유롭게 빠져나간다.
+            if (direction > 0 && value > SCENE_POINTS[LAST_SCENE] + SNAP_EPS) {
+              snapIndex = LAST_SCENE;
+              return value;
+            }
+            snapIndex = pickSceneIndex(value, direction, desiredSceneRef.current);
+            desiredSceneRef.current = snapIndex;
+            return SCENE_POINTS[snapIndex];
           },
-
-          onUpdate: (self) => {
-            const p = self.progress;
-
-            let nextIndex = 0;
-
-            if (p >= 0.18) nextIndex = 1;
-            if (p >= 0.36) nextIndex = 2;
-            if (p >= 0.54) nextIndex = 3;
-            if (p >= 0.72) nextIndex = 4;
-
-            setSceneIndex(nextIndex);
+          duration: { min: 0.2, max: 0.4 },
+          delay: 0.04,
+          ease: "power2.out",
+          // onUpdate에서 이미 시작했더라도 request는 같은 장면이면 아무 일도 하지 않는다.
+          onStart: () => {
+            if (assetsReadyRef.current) motion?.request(snapIndex);
+          },
+          onComplete: () => {
+            gestureLockRef.current = false;
           },
         },
       });
 
-      /*
-        전환은 이미지 흔들지 않고
-        좌우 마스크로만.
-      */
-
-      const starts = [0, 0.18, 0.36, 0.54, 0.72];
-
-      for (let index = 1; index < SCENES.length; index++) {
-        const previous = imageRefs.current[index - 1];
-        const next = imageRefs.current[index];
-
-        if (!previous || !next) continue;
-
-        /*
-          GSAP timeline 자체는 0~4 길이를 사용하고
-          ScrollTrigger progress와는 별개.
-        */
-        const start = index;
-
-        const fromRight = index % 2 !== 0;
-
-        timeline.set(
-          next,
-          {
-            zIndex: 3,
-          },
-          start - 0.05
-        );
-
-        timeline.fromTo(
-          next,
-          {
-            opacity: 1,
-
-            clipPath: fromRight
-              ? "inset(0% 0% 0% 100%)"
-              : "inset(0% 100% 0% 0%)",
-          },
-          {
-            opacity: 1,
-
-            clipPath: "inset(0% 0% 0% 0%)",
-
-            duration: 0.72,
-
-            ease: "power4.out",
-          },
-          start
-        );
-
-        timeline.to(
-          previous,
-          {
-            opacity: 0,
-
-            duration: 0.4,
-
-            ease: "power2.out",
-          },
-          start + 0.22
-        );
-      }
-
-      triggerRef.current = timeline.scrollTrigger ?? null;
-
-      if (marqueeTopRef.current) {
-        gsap.to(marqueeTopRef.current, {
-          xPercent: -30,
-
-          ease: "none",
-
-          scrollTrigger: {
-            trigger: section,
-
-            start: "top top",
-            end: "bottom bottom",
-
-            scrub: 1.1,
-          },
+      if (!prefersReducedMotion()) {
+        [marqueeTopRef.current, marqueeBottomRef.current].forEach((track, index) => {
+          if (!track) return;
+          gsap.to(track, {
+            xPercent: index === 0 ? -30 : 26,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 1.1,
+            },
+          });
         });
       }
-
-      if (marqueeBottomRef.current) {
-        gsap.to(marqueeBottomRef.current, {
-          xPercent: 26,
-
-          ease: "none",
-
-          scrollTrigger: {
-            trigger: section,
-
-            start: "top top",
-            end: "bottom bottom",
-
-            scrub: 1.1,
-          },
-        });
-      }
-
-      void starts;
     }, section);
 
     return () => {
+      motion?.destroy();
       ctx.revert();
+      triggerRef.current = null;
+      motionApiRef.current = null;
     };
   }, []);
 
-  /* ========================================
-     TYPO / HUD
-  ======================================== */
 
-  useEffect(() => {
-    setDialogueOpen(false);
-    setDialogueIndex(0);
 
-    if (
-      !keywordRef.current ||
-      !outlineRef.current ||
-      !phraseRef.current ||
-      !numberRef.current
-    ) {
+  const glideToChapter = (id: string) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    if (prefersReducedMotion()) {
+      navigateToChapter(id, false);
       return;
     }
 
-    const tl = gsap.timeline();
-
-    tl.fromTo(
-      keywordRef.current,
-      {
-        yPercent: 110,
-        opacity: 0,
+    const navOffset = id === "about" ? 66 : 0;
+    const y = window.scrollY + target.getBoundingClientRect().top - navOffset;
+    chapterPagingRef.current = true;
+    gsap.killTweensOf(window);
+    gsap.to(window, {
+      scrollTo: { y, autoKill: false },
+      duration: 0.82,
+      ease: "power3.inOut",
+      overwrite: true,
+      onComplete: () => {
+        chapterPagingRef.current = false;
+        history.replaceState(null, "", `#${id}`);
+        ScrollTrigger.update();
       },
-      {
-        yPercent: 0,
-        opacity: 1,
-
-        duration: 0.68,
-
-        ease: "power4.out",
-      }
-    );
-
-    tl.fromTo(
-      outlineRef.current,
-      {
-        xPercent: sceneIndex % 2 === 0 ? 15 : -15,
-        opacity: 0,
-      },
-      {
-        xPercent: 0,
-        opacity: 1,
-
-        duration: 0.7,
-
-        ease: "power4.out",
-      },
-      "<0.04"
-    );
-
-    tl.fromTo(
-      numberRef.current,
-      {
-        y: 70,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: sceneIndex === 4 ? 0 : 0.12,
-
-        duration: 0.5,
-
-        ease: "power3.out",
-      },
-      "<"
-    );
-
-    tl.fromTo(
-      phraseRef.current,
-      {
-        y: 18,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-
-        duration: 0.4,
-
-        ease: "power2.out",
-      },
-      "-=0.3"
-    );
-
-    gsap.fromTo(
-      ".footerInfoItem strong, .levelNumber strong",
-      {
-        y: 10,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-
-        stagger: 0.04,
-
-        duration: 0.42,
-
-        ease: "power3.out",
-      }
-    );
-
-    /*
-      마지막 진입.
-      기존 1.5초 → 2.8초.
-    */
-
-    if (sceneIndex === 4 && !revolutionDone) {
-      setRevolutionActive(true);
-
-      const timer = window.setTimeout(() => {
-        setRevolutionActive(false);
-        setRevolutionDone(true);
-      }, 2800);
-
-      return () => {
-        window.clearTimeout(timer);
-      };
-    }
-  }, [sceneIndex, revolutionDone]);
-
-  /* ========================================
-     FINAL SCROLL LOCK
-
-     SSR 획득 후 아래 방향 휠만 막음.
-     위로 스크롤은 허용.
-  ======================================== */
-
-  useEffect(() => {
-    if (sceneIndex !== 4 || !revolutionDone) return;
-
-    const blockDownScroll = (event: WheelEvent) => {
-      /*
-        아래로 스크롤만 차단.
-        위로 돌리면 이전 카드로 복귀 가능.
-      */
-      if (event.deltaY > 0) {
-        event.preventDefault();
-      }
-    };
-
-    window.addEventListener("wheel", blockDownScroll, {
-      passive: false,
     });
+  };
 
-    return () => {
-      window.removeEventListener("wheel", blockDownScroll);
+  // 최종 SSR 화면에서 아래로 한 번 굴리면 ABOUT 첫 장면으로 한 화면씩 넘어간다.
+  // HERO 내부의 긴 pin 구간을 자연 스크롤로 빠져나가게 두면 다시 '드륵드륵'한 감각이 생기므로
+  // 마지막 장면이 완전히 끝난 순간에만 wheel gesture를 챕터 전환으로 바꾼다.
+  useEffect(() => {
+    if (sceneIndex !== LAST_SCENE || !acquisitionVisible || !revolutionDone || isTransitioning) return;
+
+    let wheelSum = 0;
+    let resetTimer = 0;
+    const desktop = window.matchMedia("(min-width: 761px)");
+
+    const onWheel = (event: WheelEvent) => {
+      if (!desktop.matches || event.deltaY <= 0) return;
+
+      // 이 리스너는 컴포넌트가 살아 있는 동안 계속 window에 붙어 있으므로,
+      // SSR 화면이 실제 viewport에 보일 때만 입력을 가로챈다.
+      // ABOUT으로 넘어간 뒤까지 preventDefault가 남으면 ABOUT 첫 장면이 잠기는 문제가 생긴다.
+      const stage = stageRef.current;
+      if (!stage) return;
+      const stageRect = stage.getBoundingClientRect();
+      const ssrIsVisible = stageRect.bottom > 1 && stageRect.top < window.innerHeight - 1;
+      if (!ssrIsVisible) return;
+
+      // 마지막 SSR이 완성된 뒤의 아래 방향 입력은 이 화면에 잠시 붙잡아 두고
+      // 임계값을 넘는 순간 ABOUT으로 한 번에 보낸다. tween 중의 관성 입력도 막는다.
+      event.preventDefault();
+      if (chapterPagingRef.current) return;
+
+      wheelSum += event.deltaY;
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(() => { wheelSum = 0; }, 140);
+      if (Math.abs(wheelSum) < 28) return;
+
+      wheelSum = 0;
+      glideToChapter("about");
     };
-  }, [sceneIndex, revolutionDone]);
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.clearTimeout(resetTimer);
+      window.removeEventListener("wheel", onWheel);
+    };
+  }, [sceneIndex, acquisitionVisible, revolutionDone, isTransitioning]);
 
   /* ========================================
      NEXT / PREV
@@ -490,55 +338,50 @@ export default function YoojinHero() {
       Math.min(SCENES.length - 1, targetIndex)
     );
 
-    /*
-      마지막 위치를 72%에 배치.
-      100%로 보내지 않음.
-    */
+    const progress = SCENE_POINTS[index];
 
-    const points = [0, 0.18, 0.36, 0.54, 0.72];
+    const target = trigger.start + (trigger.end - trigger.start) * progress;
 
-    const progress = points[index];
-
-    const target =
-      trigger.start +
-      (trigger.end - trigger.start) * progress;
+    // 버튼은 스크롤 이동을 기다리지 않고 즉시 전환을 시작한다.
+    desiredSceneRef.current = index;
+    gestureLockRef.current = true; // 스크롤이 도착하는 동안 의도 판정이 끼어들지 않게
+    if (assetsReadyRef.current) motionApiRef.current?.request(index);
 
     gsap.to(window, {
       scrollTo: target,
 
-      duration: 0.8,
+      duration: prefersReducedMotion() ? 0 : 0.55,
 
       ease: "power3.inOut",
     });
   };
 
   const handlePrev = () => {
+    if (sceneIndex === 0 || isTransitioning) return;
+
     /*
       최종에서 뒤로 가면 다음에 다시
       Revolution을 볼 수 있게 초기화.
     */
 
-    if (sceneIndex === 4) {
+    if (sceneIndex === LAST_SCENE) {
       setRevolutionDone(false);
-      setRevolutionActive(false);
     }
 
     moveToScene(sceneIndex - 1);
   };
 
   const handleNext = () => {
-    if (sceneIndex === 4) {
+    if (isTransitioning) return;
+
+    if (sceneIndex === LAST_SCENE) {
       /*
         Revolution 중에는 프로젝트 이동 금지.
       */
 
-      if (!revolutionDone) return;
+      if (!revolutionDone || isTransitioning) return;
 
-      document
-        .querySelector("#projects")
-        ?.scrollIntoView({
-          behavior: "smooth",
-        });
+      navigateToChapter("projects");
 
       return;
     }
@@ -550,7 +393,17 @@ export default function YoojinHero() {
      DIALOGUE
   ======================================== */
 
+  const handleSkip = () => {
+    navigateToChapter("projects");
+  };
+
+  const handleAbout = () => {
+    glideToChapter("about");
+  };
+
   const handleCharacter = () => {
+    if (isTransitioning) return;
+
     if (!dialogueOpen) {
       setDialogueOpen(true);
       return;
@@ -569,8 +422,31 @@ export default function YoojinHero() {
     >
       <div
         ref={stageRef}
-        className={`heroStage scene-${sceneIndex}`}
+        className={`heroStage scene-${sceneIndex} ${acquisitionVisible ? "isAcquired" : ""}`}
       >
+        {/* A11Y: 문서의 유일한 h1 + 화면 변화 안내 */}
+
+        <h1 className="srOnly">이유진 — 프론트엔드 개발자 포트폴리오</h1>
+        <div className="srOnly" role="status" aria-live="polite" aria-atomic="true">
+          {dialogueOpen
+            ? `이유진: ${currentScene.dialogue[dialogueIndex]}`
+            : `${currentScene.level} / ${pad2(SCENES.length)}. ${currentScene.job}. ${currentScene.title}. ${currentScene.phrase}`}
+        </div>
+
+        {/* SKIP: 첫 포커스 요소이자, 연출 중에도 항상 보이는 프로젝트 바로가기 */}
+
+        <button
+          type="button"
+          className="skipCta"
+          onClick={handleSkip}
+          aria-label="인트로 건너뛰고 프로젝트 보기"
+        >
+          <small>SKIP INTRO</small>
+          <strong>PROJECTS ↗</strong>
+        </button>
+
+        <GrowthJourney index={sceneIndex} transitioning={isTransitioning} complete={acquisitionVisible} />
+
         {/* IMAGE */}
 
         <div className="imageStack">
@@ -584,7 +460,7 @@ export default function YoojinHero() {
             >
               <img
                 src={scene.image}
-                alt=""
+                alt={`이유진 캐릭터 이미지 (${scene.level} / ${pad2(SCENES.length)})`}
                 className="heroImage"
                 draggable={false}
               />
@@ -593,6 +469,14 @@ export default function YoojinHero() {
         </div>
 
         <div className="imageWash" />
+        <div ref={ambientRef} className="heroAmbient" aria-hidden="true">
+          <span className="ambientItem ambientOrbit"><i /></span>
+          <span className="ambientItem ambientStar">{"\u2733"}</span>
+          <span className="ambientItem ambientTag">MOTION / {pad2(sceneIndex + 1)}</span>
+          <span className="ambientItem ambientCross">{"\uFF0B"}</span>
+          <span className="ambientItem ambientDash" />
+        </div>
+        <div ref={motionRef} className="heroMotion" aria-hidden="true" />
 
         {/* HEADER */}
 
@@ -603,17 +487,13 @@ export default function YoojinHero() {
             </a>
 
             <span>
-              FRONTEND DEVELOPER
+              FRONTEND DEVELOPER · REACT / TYPESCRIPT
             </span>
           </div>
 
-          <nav>
+          <nav aria-label="주요 메뉴">
             <a href="#about">
               ABOUT
-            </a>
-
-            <a href="#projects">
-              PROJECTS
             </a>
 
             <a href="#contact">
@@ -627,25 +507,34 @@ export default function YoojinHero() {
         <span
           ref={numberRef}
           className="giantNumber"
+          aria-hidden="true"
         >
-          0{sceneIndex + 1}
+          {pad2(sceneIndex + 1)}
         </span>
 
         {/* TYPO */}
 
         <div className="kineticTypography">
           <div className="keywordMask">
-            <h1
+            <div
               ref={keywordRef}
               className="keywordFilled"
+              aria-hidden="true"
             >
-              {currentScene.keyword}
-            </h1>
+              {Array.from(currentScene.keyword).map((letter, index) => (
+                <span className="keywordLetter" key={index}>
+                  {letter}
+                </span>
+              ))}
+            </div>
           </div>
-
+          <span ref={keywordEchoRef} className="keywordEcho" aria-hidden="true">
+            {currentScene.keyword}
+          </span>
           <div
             ref={outlineRef}
             className="keywordOutline"
+            aria-hidden="true"
           >
             {currentScene.outline}
           </div>
@@ -656,11 +545,12 @@ export default function YoojinHero() {
           >
             {currentScene.phrase}
           </p>
+          <span ref={accentRef} className="typeAccent" aria-hidden="true" />
         </div>
 
         {/* MARQUEE */}
 
-        <div className="marquee marqueeTop">
+        <div className="marquee marqueeTop" aria-hidden="true">
           <div
             ref={marqueeTopRef}
             className="marqueeTrack"
@@ -670,7 +560,7 @@ export default function YoojinHero() {
           </div>
         </div>
 
-        <div className="marquee marqueeBottom">
+        <div className="marquee marqueeBottom" aria-hidden="true">
           <div
             ref={marqueeBottomRef}
             className="marqueeTrack outlineMarquee"
@@ -685,6 +575,8 @@ export default function YoojinHero() {
         <button
           type="button"
           className="characterHitbox"
+          aria-disabled={isTransitioning}
+          aria-expanded={dialogueOpen}
           onClick={handleCharacter}
           aria-label="이유진 대사 보기"
         >
@@ -695,20 +587,27 @@ export default function YoojinHero() {
 
         {dialogueOpen && (
           <button
+            ref={dialogueRef}
             type="button"
             className="dialogueBox"
             onClick={handleCharacter}
+            aria-label={`Yoojin: ${currentScene.dialogue[dialogueIndex]}. Tap for the next line.`}
           >
-            <strong>
-              YOOJIN
-            </strong>
-
-            <p>
+            <span className="dialogueSpark dialogueSparkOne" aria-hidden="true">{"\u2733"}</span>
+            <span className="dialogueSpark dialogueSparkTwo" aria-hidden="true">{"\u2726"}</span>
+            <span className="dialogueSpeaker">
+              <span className="dialogueAvatar" aria-hidden="true">Y</span>
+              <span className="dialogueMeta">
+                <small>CHARACTER LOG / {pad2(sceneIndex + 1)}</small>
+                <strong>YOOJIN</strong>
+              </span>
+            </span>
+            <span ref={dialogueTextRef} className="dialogueCopy">
               {currentScene.dialogue[dialogueIndex]}
-            </p>
-
-            <span>
-              TAP ↘
+            </span>
+            <span className="dialogueAdvance">
+              <small>{pad2(dialogueIndex + 1)} / {pad2(currentScene.dialogue.length)}</small>
+              <span aria-hidden="true">{"\u2197"}</span>
             </span>
           </button>
         )}
@@ -719,7 +618,7 @@ export default function YoojinHero() {
           <button
             type="button"
             className="prevControl"
-            disabled={sceneIndex === 0}
+            aria-disabled={sceneIndex === 0 || isTransitioning}
             onClick={handlePrev}
           >
             ←
@@ -728,124 +627,71 @@ export default function YoojinHero() {
             </span>
           </button>
 
+          {sceneIndex === LAST_SCENE && revolutionDone && (
+            <button
+              type="button"
+              className="aboutChapterControl"
+              onClick={handleAbout}
+              aria-label="이유진 소개 보기"
+            >
+              <small>NEXT / ABOUT</small>
+              <strong>카드 밖의 이야기</strong>
+              <span aria-hidden="true">↓</span>
+            </button>
+          )}
+
           <button
             type="button"
             className={`nextControl ${
-              sceneIndex === 4 && !revolutionDone
+              sceneIndex === LAST_SCENE && !revolutionDone
                 ? "isWaiting"
                 : ""
             }`}
+            aria-disabled={isTransitioning || (sceneIndex === LAST_SCENE && !revolutionDone)}
             onClick={handleNext}
           >
-            <div>
+            <span className="nextCopy">
               <small>
-                {sceneIndex === 4
-                  ? revolutionDone
-                    ? "PORTFOLIO"
-                    : "FINAL EVOLUTION"
-                  : `0${sceneIndex + 2} / 05`}
+                {sceneIndex === LAST_SCENE
+                  ? revolutionDone ? "NEXT CHAPTER" : "FINAL EVOLUTION"
+                  : `NEXT / LV.${pad2(sceneIndex + 1)} → ${pad2(sceneIndex + 2)}`}
               </small>
-
               <strong>
-                {sceneIndex === 4
-                  ? revolutionDone
-                    ? "VIEW PROJECTS"
-                    : "EVOLVING..."
-                  : "NEXT"}
+                {sceneIndex === LAST_SCENE
+                  ? revolutionDone ? "VIEW WORK" : "AWAKENING"
+                  : "LEVEL UP"}
               </strong>
-            </div>
-
-            <span className="nextArrow">
-              →
+              <span className="nextDestination">
+                {sceneIndex === LAST_SCENE
+                  ? revolutionDone ? "프로젝트 보러 가기" : "프론트엔드 개발자로 각성 중"
+                  : `${GROWTH[sceneIndex + 1].name} 단계로`}
+              </span>
+            </span>
+            <span className="nextArrow" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none">
+                <path className="stepPath" d="M11 49h13V36h13V23h13" />
+                <path className="risePath" d="M21 43 48 16M29 16h19v19" />
+              </svg>
             </span>
           </button>
         </div>
 
-        {/* SLIM STATUS BAR */}
-
-        <footer className="gameFooter">
-          <div className="footerLevel">
-            <span className="footerMiniLabel">
-              LEVEL
-            </span>
-
-            <div className="levelNumber">
-              <span>
-                LV.
-              </span>
-
-              <strong>
-                {currentScene.level}
-              </strong>
-            </div>
-          </div>
-
-          <div className="footerInfo">
-            <div className="footerInfoItem">
-              <span className="footerMiniLabel">
-                JOB
-              </span>
-
-              <strong>
-                {currentScene.job}
-              </strong>
-            </div>
-
-            <div className="footerDivider" />
-
-            <div className="footerInfoItem">
-              <span className="footerMiniLabel">
-                TITLE
-              </span>
-
-              <strong>
-                {currentScene.title}
-              </strong>
-            </div>
-          </div>
-        </footer>
-
-        {/* REVOLUTION */}
-
-        {revolutionActive && (
-          <div className="revolutionScreen">
-            <span className="revolutionSmall">
-              FINAL AWAKENING
-            </span>
-
-            <strong className="revolutionTitle">
-              REVOLUTION!
-            </strong>
-
-            <div className="revolutionRings">
-              <i />
-              <i />
-              <i />
-            </div>
-          </div>
-        )}
-
         {/* SSR */}
 
-        {sceneIndex === 4 &&
-          revolutionDone && (
-            <div className="ssrReward">
-              <div className="ssrRewardStars">
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
+        {sceneIndex === LAST_SCENE &&
+          acquisitionVisible && (
+            <>
+            <AcquisitionFireworks />
+            <div className="acquisitionFrame" aria-hidden="true" />
+            <div className="ssrReward" role="status">
+              <small className="ssrEyebrow">RARITY ACQUIRED</small>
+              <strong>SSR</strong>
+              <div className="ssrRewardStars" aria-hidden="true">
+                <span /><span /><span /><span /><span />
               </div>
-
-              <strong>
-                SSR
-              </strong>
-
-              <small>
-                NEW CARD ACQUIRED
-              </small>
+              <small className="ssrName">이유진 · FRONTEND DEVELOPER</small>
             </div>
+            </>
           )}
       </div>
     </section>
