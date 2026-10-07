@@ -4,15 +4,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { navigateToChapter } from './chapterNavigation';
 import { buildAboutTimeline } from './aboutMotion';
-import { aboutPagerLabels, chapters, pad, skillGroups, SKILL_TOTAL, TOTAL, WORK_TOTAL, works } from './chapterData';
+import { aboutPagerLabels, chapters, pad, skillGroups, SKILL_TOTAL, TOTAL } from './chapterData';
 import './PortfolioChapters.css';
+import SelectedWorkMagazine from '../SelectedWorkMagazine/SelectedWorkMagazine';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 /** sticky 내비 높이(데스크톱). CSS의 .chapterNav height, scroll-margin-top과 맞춰야 한다. */
 const NAV_HEIGHT = 66;
 /** 배경이 어두운 챕터. TOP 버튼 색을 반전시키는 데 쓴다. */
-const DARK_CHAPTERS = new Set(['projects', 'experiments', 'contact']);
+const DARK_CHAPTERS = new Set(['experiments', 'contact']);
 
 function SectionHeading({ id, number, eyebrow, title, description }: { id: string; number: string; eyebrow: string; title: string; description: string }) {
   // 글자 단위로 쪼개면 한글 단어 중간에서 줄이 바뀌므로 "단어 단위"로 마스크 처리한다.
@@ -331,7 +332,8 @@ export default function PortfolioChapters() {
     ------------------------------------------------------------------ */
     // 이 컴포넌트 안에 있는 요소만 대상으로 한다 (#top은 히어로라 따로 처리)
     const resolveTarget = (id: string) => {
-      const element = id ? document.getElementById(id) : null;
+      const targetId = ['work-moonlight', 'work-harvest', 'work-b612'].includes(id) ? 'projects' : id;
+      const element = targetId ? document.getElementById(targetId) : null;
       return element && host.contains(element) ? element : null;
     };
 
@@ -561,30 +563,8 @@ export default function PortfolioChapters() {
       </div>
     </section>
 
-    <section id="projects" className="chapter chapterProjects" aria-labelledby="projects-title">
-      <div className="chapterShell">
-        <SectionHeading id="projects-title" number="02" eyebrow={'SELECTED WORK / 01—' + WORK_TOTAL} title="만든 것들" description="서로 다른 요구와 화면을, 실제로 작동하는 경험으로 연결했습니다." />
-        <div className="workGrid">
-          {works.map((work, index) => <article id={'work-' + work.id} className={'workCard workCard--' + work.id} key={work.id} data-reveal>
-            <div className="workCardImage">
-              <img src={work.image} alt={work.alt} loading="lazy" decoding="async" />
-              <span className="workCardImageIndex">{pad(index + 1)} / {WORK_TOTAL}</span>
-            </div>
-            <div className="workCardBody">
-              <div className="workCardMeta"><span>{work.category}</span><span>{pad(index + 1)}</span></div>
-              <h3>{work.title}</h3>
-              <p className="workCardKo">{work.ko}</p>
-              <p className="workCardSummary">{work.summary}</p>
-              <p className="workCardPoint"><span>MY FOCUS</span>{work.point}</p>
-              <div className="workCardTags">{work.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-              <div className="workCardLinks">
-                {work.live && <a href={work.live} target="_blank" rel="noopener noreferrer" aria-label={work.title + ' 실행 화면 열기'}>LIVE SITE <span aria-hidden="true">↗</span></a>}
-                <a href={work.github} target="_blank" rel="noopener noreferrer" aria-label={work.title + ' GitHub 저장소 열기'}>GITHUB <span aria-hidden="true">↗</span></a>
-              </div>
-            </div>
-          </article>)}
-        </div>
-      </div>
+    <section id="projects" className="chapter chapterProjects" aria-label="만든 것들 · Selected Work">
+      <SelectedWorkMagazine />
     </section>
 
     <section id="skills" className="chapter chapterSkills" aria-labelledby="skills-title">

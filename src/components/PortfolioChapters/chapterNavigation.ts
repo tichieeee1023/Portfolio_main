@@ -1,6 +1,8 @@
 export function navigateToChapter(id: string, animate = true) {
-  const target = document.getElementById(id);
+  const workIndex = ({ 'work-moonlight': 0, 'work-harvest': 1, 'work-b612': 2 } as Record<string, number>)[id];
+  const target = document.getElementById(workIndex === undefined ? id : 'projects');
   if (!target) return;
+  if (workIndex !== undefined) window.dispatchEvent(new CustomEvent('selected-work:navigate', { detail: workIndex }));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   target.scrollIntoView({ behavior: animate && !reduced ? 'smooth' : 'instant', block: 'start' });
   history.replaceState(null, '', '#' + id);
