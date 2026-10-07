@@ -18,9 +18,10 @@ export default function WorkIndex({ projects, activeIndex, onSelect }) {
       <div className="work-index-items" ref={itemsRef}>
         {projects.map((project, index) => (
           <button key={project.id} type="button" aria-controls={`project-${project.slug}`}
+            aria-label={`${project.id} ${project.indexLabel}: ${project.title.join(' ')}`}
             aria-current={activeIndex === index ? 'true' : undefined}
             onClick={() => onSelect(index)}>
-            <span>{project.id}</span> {project.indexLabel}
+            <span>{project.id}</span> <span className="work-index-title">{project.indexLabel}</span>
           </button>
         ))}
       </div>

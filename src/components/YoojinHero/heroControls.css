@@ -1,4 +1,6 @@
 /* Hero information and actions have distinct silhouettes. */
+.heroStage .mobileNextCopy { display: none; }
+.heroFooter { display: contents; }
 .heroStage .growthIdentity {
   bottom: 32px;
   width: auto;
@@ -180,32 +182,6 @@
   .heroStage .nextControl strong, .heroStage.isAcquired .nextControl strong { font-size: 25px; }
   .heroStage .nextControl .nextArrow { flex-basis: 70px; width: 70px; height: 70px; }
   .heroStage.isAcquired .ssrReward { width: 228px; }
-}
-@media (max-width: 768px) {
-  .heroStage .growthIdentity { bottom: 126px; min-height: 86px; padding: 10px 14px 10px 10px; gap: 13px; }
-  .heroStage .growthIdentity .growthRank { flex-basis: 60px; width: 60px; min-height: 64px; padding: 10px 3px; }
-  .heroStage .growthIdentity > div { padding: 0; }
-  .heroStage .growthIdentity strong { font-size: 19px; }
-  .heroStage .growthIdentity small { font-size: 9px; }
-  .heroStage .growthIdentity p { font-size: 11px; max-width: 220px; }
-  .heroStage .navigationControl, .heroStage.scene-4 .navigationControl {
-    top: auto; bottom: 24px; left: 18px; right: 18px;
-    flex-direction: row; align-items: center; gap: 18px;
-  }
-  .heroStage .prevControl { position: static; align-self: center; flex: 0 0 32px; min-height: 44px; }
-  .heroStage .prevControl span { display: none; }
-  .heroStage .nextControl, .heroStage.isAcquired .nextControl { min-width: 0; min-height: 78px; flex: 1; gap: 12px; }
-  .heroStage .nextControl strong, .heroStage.isAcquired .nextControl strong { font-size: 25px; }
-  .heroStage .nextControl small { font-size: 9px; }
-  .heroStage .nextDestination { font-size: 12px; }
-  .heroStage .nextControl .nextArrow, .heroStage.isAcquired .nextControl .nextArrow { flex-basis: 64px; width: 64px; height: 64px; }
-  .heroStage .nextArrow svg { width: 44px; height: 44px; }
-  .heroStage .aboutChapterControl { display: none; }
-  .heroStage.isAcquired .ssrReward { top: 124px; right: 22px; width: 178px; }
-  .heroStage .ssrReward > strong { font-size: 54px; margin-top: 9px; }
-  .heroStage .ssrReward .ssrName { font-size: 8px; padding-top: 7px; }
-  .heroStage .ssrReward .ssrEyebrow { font-size: 8px; }
-  .heroStage .dialogueBox { bottom: 243px; }
 }
 @media (max-height: 740px) and (min-width: 769px) {
   .heroStage.isAcquired .ssrReward { top: 80px; }

@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import "./YoojinHero.css";
 import "./heroControls.css";
-import { GrowthJourney, AcquisitionFireworks } from "./GrowthJourney";
+import { GrowthJourney, GrowthIdentity, AcquisitionFireworks } from "./GrowthJourney";
 import { GROWTH } from "./growthData";
 import { createHeroMotion } from "./heroMotion";
 import { LAST_SCENE, SCENES, SCENE_POINTS, SCROLL_END } from "./heroScenes";
@@ -435,17 +435,7 @@ export default function YoojinHero() {
 
         {/* SKIP: 첫 포커스 요소이자, 연출 중에도 항상 보이는 프로젝트 바로가기 */}
 
-        <button
-          type="button"
-          className="skipCta"
-          onClick={handleSkip}
-          aria-label="인트로 건너뛰고 프로젝트 보기"
-        >
-          <small>SKIP INTRO</small>
-          <strong>PROJECTS ↗</strong>
-        </button>
-
-        <GrowthJourney index={sceneIndex} transitioning={isTransitioning} complete={acquisitionVisible} />
+        <GrowthJourney index={sceneIndex} complete={acquisitionVisible} />
 
         {/* IMAGE */}
 
@@ -614,6 +604,17 @@ export default function YoojinHero() {
 
         {/* NAVIGATION */}
 
+        <footer className="heroFooter" aria-label="성장 단계와 프로젝트 이동">
+          <GrowthIdentity index={sceneIndex} transitioning={isTransitioning} />
+          <button
+            type="button"
+            className="skipCta"
+            onClick={handleSkip}
+            aria-label="인트로 건너뛰고 프로젝트 보기"
+          >
+            <small>SKIP INTRO</small>
+            <strong>PROJECTS ↗</strong>
+          </button>
         <div className="navigationControl">
           <button
             type="button"
@@ -673,8 +674,14 @@ export default function YoojinHero() {
                 <path className="risePath" d="M21 43 48 16M29 16h19v19" />
               </svg>
             </span>
+            <span className="mobileNextCopy">
+              {isTransitioning ? "전환 중…" : sceneIndex === LAST_SCENE
+                ? revolutionDone ? "작업 보기" : "전환 중…"
+                : "LEVEL UP ↑"}
+            </span>
           </button>
         </div>
+        </footer>
 
         {/* SSR */}
 

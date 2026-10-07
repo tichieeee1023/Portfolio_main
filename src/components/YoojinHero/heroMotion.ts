@@ -209,4 +209,3 @@ export function createHeroMotion(options: Options) {
     },
   };
 }
-

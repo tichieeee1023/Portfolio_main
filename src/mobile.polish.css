@@ -1,0 +1,201 @@
+/* ==========================================================================
+   mobile.polish.css  —  App.tsx 의 맨 마지막에 import
+   원칙: 큰 타이포(연출)는 유지 / 줄 수·보조 문구는 줄이기 / 위계(1순위 1개)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .heroStage {
+    --ink: #191715;
+    --cream: #fff9ed;
+    --mobile-footer-height: calc(176px + env(safe-area-inset-bottom));
+  }
+
+  /* ── 0. 버그 수정 ──────────────────────────────────────────────
+     데스크톱 규칙(.heroStage .nextControl .nextCopy = 0-3-0)이
+     모바일 숨김 규칙(0-2-0)을 이겨서 'NEXT / LV.01 → 02' 와 'LEVEL UP' 이
+     같이 노출되던 문제. 같은 특이도로 다시 숨김. */
+  .heroStage .nextControl .nextCopy,
+  .heroStage .nextControl .nextArrow,
+  .heroStage.isAcquired .nextControl .nextArrow { display: none; }
+  .heroStage .nextControl .mobileNextCopy { display: block; }
+
+  /* ── 1. 히어로 하단: 버튼 위계 정리 ─────────────────────────────
+     LEVEL UP(진행) = 1순위 채움 / PROJECTS(건너뛰기) = 2순위 고스트 */
+  .heroStage .heroFooter {
+    background: linear-gradient(135deg, #343230, #252422 58%, #191817);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255,249,237,.12);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr) 48px;
+  }
+  .heroStage .navigationControl { gap: 6px; }
+  .heroStage .prevControl {
+    flex: 0 0 44px; min-height: 48px; border-radius: 4px;
+    border: 1px solid rgba(255,249,237,.25); color: var(--cream); font-size: 16px;
+  }
+  .heroStage .prevControl[aria-disabled="true"] { opacity: .3; }
+  .heroStage .nextControl,
+  .heroStage.isAcquired .nextControl {
+    min-height: 48px; background: var(--cream); border-color: var(--cream);
+    color: var(--ink); border-radius: 4px;
+  }
+  .heroStage .nextControl .mobileNextCopy {
+    font: 800 14px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .08em;
+  }
+  .heroStage .nextControl[aria-disabled="true"] { opacity: .5; }
+  .heroStage .skipCta,
+  .heroStage .skipCta:hover,
+  .heroStage .skipCta:focus-visible {
+    min-height: 48px; padding: 0 4px; background: transparent; color: var(--cream);
+    border: 0; border-bottom: 1px solid rgba(255,249,237,.55); border-radius: 0;
+  }
+  .heroStage .skipCta strong {
+    color: var(--cream);
+    font: 700 14px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .08em;
+  }
+
+  /* 정체성 카드: 라벨/제목/설명 위계를 또렷하게 */
+  .heroStage .heroFooter .growthIdentity,
+  .heroStage .heroFooter .growthIdentity > div {
+    background: transparent; border: 0; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .heroStage .growthIdentity small { color: #d9b57e; font-size: 10px; letter-spacing: .14em; margin-bottom: 6px; }
+  .heroStage .growthIdentity strong { color: var(--cream); font-size: 22px; letter-spacing: -.03em; line-height: 1.15; }
+  .heroStage .growthIdentity p { color: #d3cdc4; font-size: 13px; line-height: 1.5; margin-top: 6px; opacity: 1; }
+
+  /* ── 2. 히어로 큰 글씨: 유지(+살짝 키움) ──────────────────────── */
+  .heroStage .keywordFilled,
+  .heroStage.scene-4 .keywordFilled,
+  .heroStage .keywordEcho,
+  .heroStage.scene-4 .keywordEcho { font-size: clamp(46px, 16.5vw, 96px); }
+  .heroStage .keywordOutline,
+  .heroStage.scene-4 .keywordOutline { font-size: clamp(26px, 9.2vw, 56px); }
+  .heroStage .kineticTypography,
+  .heroStage.scene-4 .kineticTypography {
+    bottom: calc(var(--mobile-footer-height) + 14px);
+  }
+}
+
+/* ==========================================================================
+   챕터 (About ~ Contact)
+   ========================================================================== */
+@media (max-width: 760px) {
+  .portfolioChapters {
+    --gutter: 20px;
+  }
+  .chapterShell,
+  .chapterShell--about { width: calc(100% - 40px); }
+  .chapter { padding: 64px 0; }
+  .chapter.chapterAbout, .chapter.chapterProjects { padding: 0; }
+
+  /* 한글: 단어 단위로 줄바꿈 → '속에/서', 'TRANSCREATIO/N' 같은 깨짐 제거 */
+  .portfolioChapters h2,
+  .portfolioChapters h3,
+  .portfolioChapters h4,
+  .portfolioChapters p,
+  .portfolioChapters .aboutHeadlineLine,
+  .portfolioChapters .transcreationResult strong {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  .portfolioChapters h2,
+  .portfolioChapters h3 { text-wrap: balance; }
+
+  /* 8~9px 라벨은 모바일에서 읽히지 않음 → 최소 10px + 자간 정리 */
+  .chapterHeadingTop,
+  .aboutDetailHead,
+  .contactOverline,
+  .aboutPortraitMeta,
+  .chapterEnd {
+    font-size: 10px; letter-spacing: .1em;
+  }
+
+  /* 네비: 한 줄 고정, 우측 페이드로 '더 있음' 암시 */
+  .chapterNavLinks {
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+  .chapterNavLinks a { font-size: 10px; letter-spacing: .1em; padding: 8px 0; }
+
+  /* About 커버: 가운데 떠 있던 제목을 하단에 앵커 + 키우기 */
+  .aboutScreen--cover {
+    justify-content: flex-end; padding: 0 0 112px;
+  }
+  .aboutScreen--cover .chapterHeading h2 {
+    font-size: clamp(64px, 23vw, 118px); line-height: .88; letter-spacing: -.09em;
+  }
+  .aboutScreen--cover .chapterHeading p { font-size: 15px; max-width: 18em; }
+
+  /* About 헤드라인: 의도한 5줄 유지 + 화면 폭에 맞춰 스케일 */
+  .aboutGrid { grid-template-columns: minmax(0, 1fr); }
+  .aboutScreen--profile .aboutStory h3.aboutHeadline { font-size: clamp(28px, 8.4vw, 52px); line-height: 1.12; letter-spacing: -.06em; }
+  .aboutHeadlineLine { white-space: nowrap; }
+
+  /* Transcreation 큰 글씨: 잘리지 않게 vw 기준으로 */
+  .transcreationTitle { font-size: clamp(44px, 14vw, 92px); gap: 4px; }
+  /* TRANS / CREATION 두 줄로 쌓아서 한 줄 때보다 오히려 크게 */
+  .transcreationResult strong {
+    font-size: clamp(40px, 14.2vw, 92px); white-space: normal; line-height: .86;
+    letter-spacing: -.085em; text-align: left;
+  }
+  .transcreationResult strong em { display: block; }
+
+  /* Keep the requested 2×2 experience grid and its complete compact copy. */
+  .aboutScreen--background .backgroundGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aboutScreen--background .backgroundCard { padding: 16px 12px; }
+  .aboutScreen--background .backgroundIndex { font-size: 10px; letter-spacing: .03em; }
+  .aboutScreen--background .backgroundCard p { font-size: 12px; line-height: 1.6; }
+  .aboutScreen--background .backgroundCard small { font-size: 10px; }
+
+  /* 스킬 / 플레이 카드: 간격은 줄이고 설명은 읽을 수 있게 유지 */
+  .skillCard { padding: 22px 20px; }
+  .skillCardEnglish { margin: 22px 0 6px; }
+  .skillCardDescription, .playCardBody p { font-size: 16px; line-height: 1.65; margin-bottom: 18px; }
+  .skillEvidence { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .playCardVisual { height: 220px; }
+
+  /* Contact: 큰 제목 키우고 CTA를 확실한 1순위로 */
+  .chapterContact h2 { font-size: clamp(50px, 14vw, 90px); line-height: .95; }
+  .chapterContact h2 em { white-space: normal; }
+  .contactBottom { gap: 22px; }
+  .contactMail { padding: 20px 22px; font-size: 15px; }
+  .contactDetails { flex-direction: column; gap: 10px; font-size: 13px; }
+
+  /* TOP 버튼: 콘텐츠를 덜 가리게 */
+  .topButton { width: 44px; height: 44px; right: 12px; bottom: 12px; }
+}
+
+/* ==========================================================================
+   Selected Work (≤900px)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .selectedWorkMagazine .mobile-swipe-hint { font-size: 14px; }
+  .selectedWorkMagazine .magazine-head { min-height: 60px; }
+
+  /* 영상 위를 크게 덮던 '다음 프로젝트' 카드 → 작은 알약 */
+  .selectedWorkMagazine .mobile-preview-next {
+    min-height: 48px; padding: 8px 12px; gap: 10px; right: 10px; bottom: 10px;
+  }
+  .selectedWorkMagazine .mobile-preview-next small { display: none; }
+  .selectedWorkMagazine .mobile-preview-next strong { font-size: 16px; line-height: 1.2; }
+  .selectedWorkMagazine .mobile-preview-next > span:last-child { font-size: 20px; }
+
+  .selectedWorkMagazine .ed-lede { font-size: 18px; }
+  .selectedWorkMagazine .ed-focus p { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroStage .heroFooter { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* Preserve space for the portrait in short landscape viewports. */
+@media (max-width: 768px) and (max-height: 500px) {
+  .heroStage .keywordFilled,
+  .heroStage.scene-4 .keywordFilled,
+  .heroStage .keywordEcho,
+  .heroStage.scene-4 .keywordEcho { font-size: clamp(32px, 9vw, 64px); }
+  .heroStage .keywordOutline,
+  .heroStage.scene-4 .keywordOutline { font-size: clamp(20px, 6vw, 36px); }
+}

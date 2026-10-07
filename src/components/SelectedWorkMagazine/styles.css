@@ -14,6 +14,12 @@
 }
 
 .selectedWorkMagazine * { box-sizing: border-box; }
+.selectedWorkMagazine .mobile-copy,
+.selectedWorkMagazine .mobile-work-intro,
+.selectedWorkMagazine .mobile-project-step,
+.selectedWorkMagazine .mobile-swipe-hint,
+.selectedWorkMagazine .mobile-project-nav,
+.selectedWorkMagazine .mobile-project-status { display: none; }
 
 
 
@@ -247,34 +253,6 @@
 }
 
 /* 좁은 화면(≤ 900px): 전환 없이 세 프로젝트가 세로로 쌓이는 일반 스크롤 매거진 */
-@media (max-width: 900px) {
-  /* 문서 자체가 스크롤되게: html/body/#root의 100% 높이와 overflow:hidden을 풀어준다 */
-
-
-
-  .selectedWorkMagazine .prototype-shell { height: auto; min-height: 100svh; }
-  .selectedWorkMagazine .portfolio-book { height: auto; min-height: 0; overflow: visible; }
-  .selectedWorkMagazine .intro-sheet { display: none; }
-  .selectedWorkMagazine .magazine-shell { position: relative; inset: auto; display: block; }
-  .selectedWorkMagazine .running-head { grid-template-columns: 1fr auto; padding: 0 16px; height: var(--head-h); }
-  .selectedWorkMagazine .head-tabs { display: none; }
-  .selectedWorkMagazine .running-foot { height: var(--foot-h); padding: 0 16px; }
-  .selectedWorkMagazine .running-foot span:last-child { display: none; }
-  .selectedWorkMagazine .stage { overflow: visible; }
-
-  .selectedWorkMagazine .project-layer { position: relative; inset: auto; visibility: visible; display: flex; flex-direction: column; border-bottom: 1px solid var(--line); }
-  .selectedWorkMagazine .visual { position: relative; top: auto; bottom: auto; left: auto; right: auto; width: 100%; aspect-ratio: 16 / 11; will-change: auto; }
-  .selectedWorkMagazine .phone { height: 44%; bottom: 16px; }
-  .selectedWorkMagazine .layout-visual-left .phone, .selectedWorkMagazine .layout-visual-right .phone { left: auto; right: 10px; }
-  .selectedWorkMagazine .editorial { position: relative; top: auto; bottom: auto; left: auto; right: auto; width: 100%; padding: 28px 20px 30px; border: 0 !important; will-change: auto; }
-  .selectedWorkMagazine .folio { font-size: 130px; top: 22px; right: 12px; }
-  .selectedWorkMagazine .ed-title { font-size: clamp(46px, 14vw, 78px); margin-top: 22px; }
-  .selectedWorkMagazine .ed-links { margin-top: 26px; }
-}
-@media (max-width: 560px) {
-  .selectedWorkMagazine .visual { aspect-ratio: 4 / 3.3; }
-  .selectedWorkMagazine .phone { height: 50%; }
-}
 
 /* Content edition: keep the v8 stage geometry and transition values intact. */
 .selectedWorkMagazine .magazine-head { grid-template-columns: minmax(0, 1fr) auto; gap: 16px; }
@@ -334,25 +312,6 @@
   .selectedWorkMagazine .work-index-items { column-gap: 12px; }
   .selectedWorkMagazine .work-index button { font-size: 7px; }
 }
-@media (max-width: 900px) {
-  .selectedWorkMagazine .magazine-head { position: sticky; top: 0; height: auto; min-height: 64px; padding: 10px 16px; }
-  .selectedWorkMagazine .work-index { align-items: flex-start; gap: 8px; flex-direction: column; }
-  .selectedWorkMagazine .work-index-items { gap: 0 14px; }
-  .selectedWorkMagazine .work-index button { min-height: 32px; text-align: left; }
-  .selectedWorkMagazine .project-layer { scroll-margin-top: 130px; }
-  .selectedWorkMagazine .editorial { overflow: visible; }
-  .selectedWorkMagazine .ed-title { font-size: clamp(40px, 11vw, 78px); }
-  .selectedWorkMagazine .turntable { bottom: 16px; left: 14px; width: min(290px, 58%); }
-  .selectedWorkMagazine .turntable button { gap: 8px; padding: 9px; min-height: 76px; }
-  .selectedWorkMagazine .record { width: 48px; height: 48px; }
-  .selectedWorkMagazine .tone-arm { left: 54px; height: 32px; }
-  .selectedWorkMagazine .equalizer { display: none; }
-  .selectedWorkMagazine .placeholder--pc { place-content: start center; padding-top: 36px; }
-  .selectedWorkMagazine .placeholder--pc strong { font-size: clamp(26px, 6vw, 42px); margin: 10px auto; }
-  .selectedWorkMagazine .placeholder--phone { padding: 5px; }
-  .selectedWorkMagazine .placeholder--phone strong { font-size: 8px; letter-spacing: .03em; }
-  .selectedWorkMagazine .placeholder--phone > span { font-size: 6px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .selectedWorkMagazine .record, .selectedWorkMagazine .equalizer i { animation: none; }
   .selectedWorkMagazine .tone-arm { transition: none; }
@@ -377,6 +336,7 @@
   letter-spacing: .015em; font-weight: 600; color: #504940;
 }
 .selectedWorkMagazine .work-index button span { font-size: 14px; margin-right: 6px; }
+.selectedWorkMagazine .work-index button .work-index-title { font: inherit; margin-right: 0; }
 .selectedWorkMagazine .work-index button[aria-current] { text-decoration-thickness: 2px; text-underline-offset: 7px; }
 .selectedWorkMagazine .editorial {
   padding: 30px clamp(24px, 2.5vw, 48px) 36px;
@@ -437,26 +397,6 @@
   .selectedWorkMagazine .ed-title { font-size: clamp(40px, 4.2vw, 64px); margin-top: 22px; }
   .selectedWorkMagazine .ed-lede { margin-top: 20px; }
 }
-@media (max-width: 900px) {
-  .selectedWorkMagazine .magazine-head { height: 92px; min-height: 0; padding: 10px 16px; gap: 14px; }
-  .selectedWorkMagazine .work-index { gap: 4px; }
-  .selectedWorkMagazine .work-index-items {
-    display: flex; flex-wrap: nowrap; gap: 0 22px; width: 100%;
-    overflow-x: auto; scrollbar-width: thin; scrollbar-color: #a89d8d transparent;
-  }
-  .selectedWorkMagazine .work-index button { flex: 0 0 auto; white-space: nowrap; }
-  .selectedWorkMagazine .project-layer { scroll-margin-top: 92px; }
-  .selectedWorkMagazine .editorial { padding: 28px 24px 36px; }
-  .selectedWorkMagazine .ed-title { font-size: clamp(40px, 10vw, 72px); margin-top: 24px; }
-  .selectedWorkMagazine .ed-lede { font-size: 20px; }
-  .selectedWorkMagazine .ed-block p { font-size: 17px; }
-  .selectedWorkMagazine .running-foot { height: auto; min-height: 48px; padding-block: 12px; grid-template-columns: 1fr; }
-  .selectedWorkMagazine .turntable { width: min(340px, 58%); }
-  .selectedWorkMagazine .turntable button { flex-wrap: wrap; gap: 8px; padding: 10px; }
-  .selectedWorkMagazine .turntable-copy { flex: 1 1 100px; }
-  .selectedWorkMagazine .record { width: 38px; height: 38px; }
-  .selectedWorkMagazine .tone-arm { left: 43px; height: 28px; }
-}
 
 /* Short magazine copy: one headline and one contribution, with the full tech list. */
 .selectedWorkMagazine .ed-lede {
@@ -465,10 +405,6 @@
 }
 .selectedWorkMagazine .ed-focus { margin-top: 28px; padding-top: 0; border-top: 0; }
 .selectedWorkMagazine .ed-focus p { max-width: 40ch; font-size: 19px; line-height: 1.75; margin-top: 12px; }
-@media (max-width: 900px) {
-  .selectedWorkMagazine .ed-lede { margin-top: 28px; font-size: 26px; }
-  .selectedWorkMagazine .ed-focus p { font-size: 19px; }
-}
 
 /* Magazine section colors: the same print details change with each project. */
 .selectedWorkMagazine .portfolio-book[data-theme="moonlight"], .selectedWorkMagazine .project-layer.theme-moonlight { --section-color: #294860; }
@@ -496,21 +432,7 @@
 .selectedWorkMagazine .turntable { border-color: color-mix(in srgb, var(--section-color) 40%, var(--paper)); }
 .selectedWorkMagazine .turntable-copy strong, .selectedWorkMagazine .turntable-copy > span { color: var(--section-color); }
 .selectedWorkMagazine .equalizer i, .selectedWorkMagazine .record > span { background-color: var(--section-color); }
-@media (max-width: 900px) {
-  .selectedWorkMagazine .layout-visual-left .editorial, .selectedWorkMagazine .layout-visual-right .editorial {
-    box-shadow: inset -5px 0 var(--section-color);
-  }
-}
 
 .chapter.chapterProjects { padding: 0; overflow: visible; background: #f3eee4; }
 .selectedWorkMagazine .prototype-shell,
 .selectedWorkMagazine .portfolio-book { height: calc(100svh - 66px); min-height: 0; }
-@media (max-width: 900px) {
-  .selectedWorkMagazine .prototype-shell,
-  .selectedWorkMagazine .portfolio-book { height: auto; }
-  .selectedWorkMagazine .magazine-head { top: 66px; z-index: 10; }
-  .selectedWorkMagazine .project-layer { scroll-margin-top: 170px; }
-}
-@media (max-width: 760px) {
-  .selectedWorkMagazine .magazine-head { top: 58px; }
-}

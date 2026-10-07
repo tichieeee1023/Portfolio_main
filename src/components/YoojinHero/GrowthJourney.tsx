@@ -1,14 +1,19 @@
 import { useEffect, useRef } from "react";
 import { GROWTH } from "./growthData";
 
-export function GrowthJourney({ index, transitioning, complete }: { index: number; transitioning: boolean; complete: boolean }) {
-  return <>
+export function GrowthJourney({ index, complete }: { index: number; complete: boolean }) {
+  return (
     <nav className={`growthJourney ${complete ? "isComplete" : ""}`} aria-label="개발자 성장 단계">
       <ol>{GROWTH.map((step, i) => <li key={step.name} className={i === index ? "isCurrent" : i < index ? "isPassed" : ""} aria-current={i === index ? "step" : undefined}>
         <span className="growthNode" aria-hidden="true">{i < index ? "✓" : `0${i + 1}`}</span>
         <span className="growthName">{step.name}</span>
       </li>)}</ol>
     </nav>
+  );
+}
+
+export function GrowthIdentity({ index, transitioning }: { index: number; transitioning: boolean }) {
+  return (
     <div className={`growthIdentity ${transitioning ? "isEvolving" : ""}`} key={index}>
       <span className="growthRank">
         <b>{GROWTH[index].rank}</b>
@@ -19,7 +24,7 @@ export function GrowthJourney({ index, transitioning, complete }: { index: numbe
         <p>{GROWTH[index].skill}</p>
       </div>
     </div>
-  </>;
+  );
 }
 
 export function AcquisitionFireworks() {

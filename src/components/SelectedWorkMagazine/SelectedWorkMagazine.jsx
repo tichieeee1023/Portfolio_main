@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 
 import gsap from 'gsap';
 import { CHROME_SWITCH_AT, DURATION, getParts, paintIntro, paintTransition, resetParts } from './transition.js';
@@ -57,13 +57,13 @@ function ProjectEditorial({ project }) {
       <h2 className="ed-title" aria-label={project.title.join(' ')}>
         {project.title.map(line => <span className="mask" key={line} aria-hidden="true"><span className="mask-in js-title-line">{line}</span></span>)}
       </h2>
-      <p className="ed-lede js-reveal">{project.description}</p>
-      <section className="ed-block ed-focus js-reveal"><span className="ed-label">{project.focusLabel}</span><p>{project.focus}</p></section>
-      {project.meta && <p className="project-meta js-reveal">{project.meta}</p>}
-      <section className="ed-block built-with js-reveal">
+      <p className="ed-lede js-reveal"><span className="desktop-copy">{project.description}</span><span className="mobile-copy">{project.mobileDescription}</span></p>
+      <section className="ed-block ed-focus js-reveal"><span className="ed-label">{project.focusLabel}</span><p><span className="desktop-copy">{project.focus}</span><span className="mobile-copy">{project.mobileFocus || project.focus}</span></p></section>
+      <section className="ed-block built-with js-reveal" aria-label="사용 기술">
         <span className="ed-label">BUILT WITH</span>
         <ul className="ed-tech">{project.tech.map(item => <li className="tech-chip" key={item}>{item}</li>)}</ul>
       </section>
+      {project.meta && <p className="project-meta js-reveal">{project.meta}</p>}
       <div className="ed-links js-reveal">
         {project.live && <a href={project.live} target="_blank" rel="noreferrer">LIVE SITE ↗</a>}
         {project.github && <a href={project.github} target="_blank" rel="noreferrer">GITHUB ↗</a>}
@@ -95,12 +95,62 @@ export default function SelectedWorkMagazine() {
   const wheelTimer = useRef(null);
   const touchStartY = useRef(null);
   const lockUntilRef = useRef(0);
+  const compactTimelineRef = useRef(null);
+  const compactStageRef = useRef(null);
+  const swipeRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [audioStopToken, setAudioStopToken] = useState(0);
   const activeProject = PROJECTS[activeIndex];
   const isCompact = () => window.matchMedia(COMPACT_QUERY).matches;
   const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const setThemeOnBook = project => { if (bookRef.current) bookRef.current.dataset.theme = project.theme; };
+  const showLayer = index => {
+    layerRefs.current.forEach((layer, i) => {
+      resetParts(getParts(layer));
+      layer.classList.remove('is-turning');
+      layer.classList.toggle('is-active', i === index);
+      layer.inert = i !== index;
+      layer.setAttribute('aria-hidden', String(i !== index));
+    });
+    if (compactStageRef.current) compactStageRef.current.style.height = '';
+  };
+  const turnCompact = index => {
+    if (!PROJECTS[index] || index === activeIndexRef.current) return;
+    compactTimelineRef.current?.kill();
+    const from = activeIndexRef.current;
+    showLayer(from);
+    const outgoing = layerRefs.current[from];
+    const incoming = layerRefs.current[index];
+    const stage = compactStageRef.current;
+    const direction = index > from ? 1 : -1;
+    // Reading and direct navigation stay available while a short sheet turn plays.
+    activeIndexRef.current = index;
+    setActiveIndex(index);
+    setThemeOnBook(PROJECTS[index]);
+    setAudioStopToken(value => value + 1);
+    const focusWasInPage = outgoing.contains(document.activeElement);
+    outgoing.inert = true;
+    outgoing.setAttribute('aria-hidden', 'true');
+    incoming.inert = false;
+    incoming.setAttribute('aria-hidden', 'false');
+    outgoing.classList.add('is-turning');
+    incoming.classList.add('is-turning');
+    incoming.classList.add('is-active');
+    stage.style.height = `${Math.max(outgoing.offsetHeight, incoming.offsetHeight)}px`;
+    const navHeight = document.querySelector('.chapterNav')?.getBoundingClientRect().height ?? 58;
+    window.scrollTo({ top: window.scrollY + bookRef.current.getBoundingClientRect().top - navHeight, behavior: 'instant' });
+    const finish = () => {
+      showLayer(index);
+      if (focusWasInPage) incoming.querySelector('.editorial')?.focus({ preventScroll: true });
+      compactTimelineRef.current = null;
+    };
+    if (prefersReduced()) { finish(); return; }
+    compactTimelineRef.current = gsap.timeline({ onComplete: finish })
+      .set(outgoing, { zIndex: 2, transformOrigin: direction > 0 ? 'left center' : 'right center' })
+      .set(incoming, { zIndex: 1 })
+      .fromTo(incoming, { xPercent: direction * 10 }, { xPercent: 0, duration: .35, ease: 'power2.out' }, 0)
+      .to(outgoing, { xPercent: -direction * 102, rotationY: -direction * 6, duration: .35, ease: 'power2.inOut' }, 0);
+  };
 
   const tweenIntro = (target, onDone) => {
     const intro = introRef.current;
@@ -154,10 +204,7 @@ export default function SelectedWorkMagazine() {
     const A = getParts(layers[forward ? from : to]);
     const B = getParts(layers[forward ? to : from]);
     const settle = () => {
-      layers.forEach((layer, i) => {
-        resetParts(getParts(layer));
-        layer.classList.toggle('is-active', i === to);
-      });
+      showLayer(to);
       activeIndexRef.current = to;
       setActiveIndex(to);
       setThemeOnBook(PROJECTS[to]);
@@ -187,9 +234,7 @@ export default function SelectedWorkMagazine() {
   };
   const jumpTo = index => {
     if (isCompact()) {
-      setAudioStopToken(value => value + 1);
-      layerRefs.current[index]?.scrollIntoView({ behavior: 'instant', block: 'start' });
-      setActiveIndex(index);
+      turnCompact(index);
       return;
     }
     if (!openedRef.current) { if (index === 0) openMagazine(); return; }
@@ -206,6 +251,7 @@ export default function SelectedWorkMagazine() {
       const index = event.detail;
       if (!Number.isInteger(index) || !PROJECTS[index]) return;
       gsap.killTweensOf([projectMotion, coverMotion]);
+      compactTimelineRef.current?.kill();
       animatingRef.current = false;
       openedRef.current = true;
       coverMotion.p = 1;
@@ -215,17 +261,15 @@ export default function SelectedWorkMagazine() {
       setActiveIndex(index);
       setAudioStopToken(value => value + 1);
       setThemeOnBook(PROJECTS[index]);
-      layers.forEach((layer, i) => {
-        resetParts(getParts(layer));
-        layer.classList.toggle('is-active', i === index);
-      });
+      showLayer(index);
       if (isCompact()) requestAnimationFrame(() => layers[index].scrollIntoView({ block: 'start' }));
     };
     setThemeOnBook(PROJECTS[0]);
-    layers.forEach((layer, i) => layer.classList.toggle('is-active', i === 0));
-    paintIntro(intro, 0);
+    showLayer(0);
+    paintIntro(intro, isCompact() ? 1 : 0);
+    intro.inert = isCompact();
     activeIndexRef.current = 0;
-    openedRef.current = false;
+    openedRef.current = isCompact();
     animatingRef.current = false;
     const inViewport = () => {
       const rect = bookRef.current?.getBoundingClientRect();
@@ -290,14 +334,14 @@ export default function SelectedWorkMagazine() {
     const mq = window.matchMedia(COMPACT_QUERY);
     const onModeChange = () => {
       gsap.killTweensOf([motion.current, introMotion.current]);
+      compactTimelineRef.current?.kill();
       animatingRef.current = false;
       setAudioStopToken(value => value + 1);
+      if (mq.matches) openedRef.current = true;
       paintIntro(intro, openedRef.current ? 1 : 0);
-      if (!mq.matches) setActiveIndex(activeIndexRef.current);
-      layers.forEach((layer, i) => {
-        resetParts(getParts(layer));
-        layer.classList.toggle('is-active', i === activeIndexRef.current);
-      });
+      intro.inert = openedRef.current;
+      setActiveIndex(activeIndexRef.current);
+      showLayer(activeIndexRef.current);
     };
     window.addEventListener('selected-work:navigate', onNavigate);
     window.addEventListener('wheel', onWheel, { passive: false });
@@ -314,40 +358,55 @@ export default function SelectedWorkMagazine() {
       mq.removeEventListener('change', onModeChange);
       window.clearTimeout(wheelTimer.current);
       gsap.killTweensOf([projectMotion, coverMotion]);
+      compactTimelineRef.current?.kill();
     };
-  }, []);
-
-  useEffect(() => {
-    const updateVisible = () => {
-      if (!window.matchMedia(COMPACT_QUERY).matches) return;
-      const anchor = window.innerHeight * .35;
-      let closest = 0;
-      let distance = Infinity;
-      layerRefs.current.forEach((layer, index) => {
-        const rect = layer.getBoundingClientRect();
-        const delta = rect.top <= anchor && rect.bottom > anchor ? 0 : Math.abs(rect.top - anchor);
-        if (delta < distance) { closest = index; distance = delta; }
-      });
-      setActiveIndex(closest);
-    };
-    window.addEventListener('scroll', updateVisible, { passive: true });
-    updateVisible();
-    return () => window.removeEventListener('scroll', updateVisible);
   }, []);
 
   return (
     <div className="selectedWorkMagazine"><div className="prototype-shell">
+      <header className="mobile-work-intro">
+        <span>02 / SELECTED WORK</span>
+        <h2>프로젝트 소개<span aria-hidden="true">.</span></h2>
+        <p>직접 만든 여섯 개의 프로젝트.</p>
+      </header>
       <div ref={bookRef} className="portfolio-book" data-theme={activeProject.theme}>
         <MagazineIntro introRef={introRef} onOpen={openMagazine} />
         <section className="magazine-shell" aria-label="Selected work magazine">
           <header className="running-head magazine-head">
             <WorkIndex projects={PROJECTS} activeIndex={activeIndex} onSelect={jumpTo} />
-            <span>{activeProject.id} / {COUNT}</span>
+            <span className="project-page-count">{activeProject.id} / {COUNT}</span>
+            <button className="mobile-project-step" type="button" disabled={activeIndex === PROJECTS.length - 1}
+              onClick={() => jumpTo(activeIndexRef.current + 1)}
+              aria-label={activeIndex < PROJECTS.length - 1 ? `다음 프로젝트: ${PROJECTS[activeIndex + 1].koTitle}` : '마지막 프로젝트'}>
+              <span aria-hidden="true">→</span>
+            </button>
           </header>
-          <div className="stage">
+          <div className="stage" ref={compactStageRef}
+            onPointerDown={event => {
+              swipeRef.current = null;
+              if (!isCompact() || !event.isPrimary || event.button !== 0 ||
+                event.target.closest('button, a, input, textarea, select, video[controls], [contenteditable="true"]')) return;
+              swipeRef.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }}
+            onPointerCancel={() => { swipeRef.current = null; }}
+            onLostPointerCapture={() => { swipeRef.current = null; }}
+            onPointerUp={event => {
+              const start = swipeRef.current;
+              swipeRef.current = null;
+              if (!start || start.id !== event.pointerId || !isCompact()) return;
+              const dx = start.x - event.clientX;
+              const dy = start.y - event.clientY;
+              if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.4) jumpTo(activeIndexRef.current + (dx > 0 ? 1 : -1));
+            }}>
             {PROJECTS.map((project, index) => <ProjectLayer key={project.slug} project={project} index={index}
               active={activeIndex === index} stopToken={audioStopToken} layerRef={el => { layerRefs.current[index] = el; }} />)}
           </div>
+          <nav className="mobile-project-nav" aria-label="프로젝트 이전·다음 이동">
+            <button type="button" disabled={activeIndex === 0} onClick={() => jumpTo(activeIndexRef.current - 1)}>← 이전 프로젝트</button>
+            <button type="button" disabled={activeIndex === PROJECTS.length - 1} onClick={() => jumpTo(activeIndexRef.current + 1)}>다음 프로젝트 →</button>
+          </nav>
+          <p className="mobile-project-status" role="status" aria-live="polite">{activeProject.id} / {COUNT} · {activeProject.koTitle}</p>
           <footer className="running-foot magazine-foot">
             <span>{activeProject.title.join(' ')} — {activeProject.koTitle}</span>
             <span>{activeIndex < PROJECTS.length - 1 ? 'SCROLL FOR NEXT PROJECT →' : 'END OF SELECTED WORK'}</span>

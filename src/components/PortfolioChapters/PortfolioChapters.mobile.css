@@ -1,0 +1,227 @@
+/* Mobile layout and touch presentation. Loaded after the shared styles. */
+
+@media (max-width: 760px) {
+  .chapter { padding: 86px 0; scroll-margin-top: 58px; }
+  .chapterShell { width: calc(100% - 38px); }
+  .chapterNav { height: 58px; grid-template-columns: 34px minmax(0, 1fr); padding: 0 18px; }
+  .chapterBrand { font-size: 25px; }
+  .chapterNavLinks { justify-content: flex-start; gap: 19px; overflow-x: auto; scrollbar-width: none; }
+  .chapterNavLinks::-webkit-scrollbar { display: none; }
+  .chapterNavLinks a { font-size: 9px; }
+  .chapterNavLinks a span { display: none; }
+  .chapterHeading { margin-bottom: 44px; }
+  .chapterHeading h2 { font-size: clamp(50px, 13vw, 82px); }
+  .chapterHeadingTop { font-size: 9px; }
+  .aboutGrid { grid-template-columns: 1fr; gap: 55px; }
+  .aboutPortrait { max-width: 500px; margin: auto; }
+  .aboutStory h3 { font-size: clamp(43px, 9vw, 68px); }
+  .aboutTraits { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .aboutTraits span { display: block; font-size: 11px; }
+  .aboutDetail { margin-top: 100px; }
+  .aboutDetailHead { font-size: 8px; }
+  .transcreationTitle { grid-template-columns: 1fr; gap: 8px; padding: 42px 0 26px; font-size: clamp(54px, 17vw, 92px); }
+  .transcreationTitle > span:last-child { text-align: left; }
+  .transcreationTitle b { display: none; }
+  .transcreationResult { grid-template-columns: 1fr; gap: 34px; padding: 30px 0 48px; }
+  .transcreationResult strong { text-align: left; font-size: clamp(50px, 15vw, 86px); white-space: normal; }
+  .transcreationNotes { grid-template-columns: 1fr; }
+  .transcreationNotes article, .transcreationNotes article:nth-child(2), .transcreationNotes .transcreationFrontend { grid-column: auto; min-height: 180px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .transcreationNotes .transcreationFrontend { border-bottom: 0; }
+  .transcreationNotes h4 { margin-top: 38px; }
+  .backgroundIntro { align-items: flex-start; flex-direction: column; gap: 24px; }
+  .backgroundIntro > span { max-width: 100%; }
+  .backgroundGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workGrid { grid-template-columns: 1fr; gap: 17px; }
+  .workCard, .workCard:nth-child(2), .workCard:nth-child(3) { display: flex; flex-direction: column; grid-column: auto; }
+  .workCard:last-child .workCardImage { order: 0; }
+  .workCardImage, .workCard:nth-child(2) .workCardImage, .workCard:nth-child(3) .workCardImage { height: clamp(230px, 60vw, 410px); min-height: 0; }
+  .workCard h3 { font-size: clamp(27px, 6vw, 43px); }
+  .skillGrid, .playGrid { grid-template-columns: 1fr; }
+  .skillCard { min-height: 355px; }
+  .skillCardEnglish { margin-top: 36px; }
+  .playCardVisual { height: 300px; }
+  .playCardBody p { min-height: 0; }
+  .contactBottom { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 430px) {
+  .chapterNavLinks { gap: 13px; }
+  .chapterNavLinks a { font-size: 9px; }
+  .chapterHeading h2 { font-size: 12.8vw; }
+  .aboutPortraitMeta { font-size: 8px; }
+  .aboutTraits { grid-template-columns: 1fr; }
+  .aboutTraits span { display: flex; }
+  .workCardBody { padding: 22px; }
+  .workCardImage, .workCard:nth-child(2) .workCardImage, .workCard:nth-child(3) .workCardImage { height: 220px; }
+  .playCardVisual { height: 235px; }
+  .playCardBody { padding: 23px; }
+  .contactMail { gap: 30px; }
+  .chapterEnd { font-size: 8px; }
+}
+
+@media (max-width: 760px) {
+  .chapterHeading::before { font-size: clamp(110px, 42vw, 220px); top: -.2em; }
+  .hWord--outline .hWordInner { -webkit-text-stroke: 1.5px var(--ink); }
+  .chapterSeam { font-size: 11px; }
+}
+
+@media (max-width: 760px) {
+  .chapterAbout { padding: 0; }
+  .chapterShell--about { width: calc(100% - 38px); }
+  .aboutScreen {
+    min-height: auto;
+    display: block;
+    padding: 86px 0;
+    scroll-margin-top: 58px;
+  }
+  .aboutScreen--cover { min-height: calc(100svh - 58px); display: flex; justify-content: center; }
+  .aboutScrollCue { bottom: 30px; }
+  .aboutScreen--profile .aboutPortrait { max-width: 500px; }
+  .aboutHeadlineLine { white-space: normal; }
+  .aboutScreen--transcreation .aboutDetail,
+  .aboutScreen--background .aboutDetail { margin: 0; }
+  .aboutScreen--transcreation .transcreationNotes article { min-height: 180px; }
+  .aboutScreen--background .backgroundGrid { grid-template-rows: repeat(2, minmax(0, 1fr)); }
+  .aboutScreen--background { padding: 52px 0 64px; }
+  .aboutScreen--background .aboutDetailHead { font-size: 9px; letter-spacing: .1em; }
+  .aboutScreen--background .backgroundIntro { gap: 12px; padding: 24px 0 26px; }
+  .aboutScreen--background .backgroundIntro p {
+    font-size: clamp(30px, 8.5vw, 44px); line-height: 1.08; letter-spacing: -.065em;
+  }
+  .aboutScreen--background .backgroundIntro > span { font-size: 12px; line-height: 1.6; }
+  .portfolioChapters .backgroundFull { display: none; }
+  .portfolioChapters .backgroundCompact { display: inline; }
+  .aboutScreen--background .backgroundCard {
+    min-width: 0; min-height: 224px; padding: 16px 12px;
+  }
+  .aboutScreen--background .backgroundIndex { font-size: 8px; letter-spacing: .08em; line-height: 1.5; }
+  .aboutScreen--background .backgroundCard h4 {
+    margin: 24px 0 16px; font-size: clamp(19px, 5.3vw, 36px);
+    line-height: .98; letter-spacing: -.065em;
+  }
+  .aboutScreen--background .backgroundCard p {
+    margin: 0 0 12px; font-size: 11px; line-height: 1.65;
+    word-break: normal; overflow-wrap: anywhere;
+  }
+  .aboutScreen--background .backgroundCard small {
+    margin-top: auto; font-size: 9px; line-height: 1.5; letter-spacing: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .topButton {
+    width: 50px;
+    height: 50px;
+    right: 14px;
+    bottom: 14px;
+  }
+  .topButton[data-section="projects"] { display: none; }
+}
+
+@media (max-width: 760px) {
+  .chapterShell,
+  .chapterShell--about {
+    width: calc(100% - 32px);
+  }
+
+  .chapter {
+    padding: 72px 0;
+  }
+
+  .chapterNav {
+    padding-inline: 16px;
+  }
+
+  .chapterNavLinks {
+    min-width: 0;
+    padding-bottom: 2px;
+  }
+
+  .chapterHeadingTop,
+  .aboutDetailHead,
+  .contactOverline {
+    font-size: 8px;
+    letter-spacing: .11em;
+  }
+
+  .chapterHeading h2 {
+    font-size: clamp(46px, 14vw, 78px);
+    line-height: .92;
+  }
+
+  .chapterHeading p,
+  .aboutLead,
+  .backgroundCard p,
+  .workCardSummary,
+  .playCardBody p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .aboutGrid {
+    gap: 38px;
+  }
+
+  .aboutStory h3 {
+    font-size: clamp(39px, 10vw, 62px);
+  }
+
+  .aboutTraits {
+    gap: 8px;
+  }
+
+  .aboutTraits span {
+    font-size: 10px;
+  }
+
+  .transcreationResult strong {
+    font-size: clamp(46px, 14vw, 78px);
+    line-height: .9;
+    overflow-wrap: anywhere;
+  }
+
+  .workCardBody {
+    padding: 24px 20px 26px;
+  }
+
+  .workCard h3 {
+    font-size: clamp(26px, 8vw, 40px);
+  }
+
+  .skillCard {
+    min-height: 0;
+    padding: 26px 22px;
+  }
+
+  .skillCardEnglish {
+    margin-top: 52px;
+  }
+
+  .playCardBody {
+    padding: 24px 20px 28px;
+  }
+
+  .contactPrelude {
+    margin-top: 58px;
+  }
+
+  .chapterContact h2 {
+    font-size: clamp(50px, 14vw, 86px);
+  }
+
+  .contactMail {
+    width: 100%;
+    justify-content: space-between;
+    gap: 18px;
+    font-size: 13px;
+  }
+
+  .contactDetails {
+    gap: 16px;
+  }
+
+  .chapterEnd {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+}

@@ -1025,145 +1025,6 @@ span:nth-child(5) {
    MOBILE
 ========================================= */
 
-@media (max-width: 768px) {
-  .heroHeader {
-    padding: 18px;
-  }
-
-  .headerBrand span {
-    display: none;
-  }
-
-  .heroHeader nav {
-    gap: 13px;
-  }
-
-  .heroHeader nav a {
-    font-size: 7px;
-  }
-
-  .heroImage {
-    object-position:
-      58% center;
-  }
-
-  .kineticTypography {
-    left: 17px;
-
-    top: 21%;
-
-    transform: none;
-
-    width:
-      calc(
-        100% - 34px
-      );
-  }
-
-  .keywordFilled {
-    font-size: 18vw;
-  }
-
-  .keywordOutline {
-    font-size: 13vw;
-
-    -webkit-text-stroke:
-      1.1px
-      var(--ink);
-  }
-
-  .scenePhrase {
-    margin-top: 9px;
-
-    font-size: 7px;
-  }
-
-  .navigationControl {
-    top: auto;
-
-    left: 18px;
-    right: 18px;
-
-    bottom: 110px;
-
-    transform: none;
-
-    align-items: stretch;
-  }
-
-  .nextControl {
-    width: 100%;
-
-    min-width: 0;
-  }
-
-  .prevControl {
-    position: absolute;
-
-    left: 0;
-
-    bottom: 67px;
-  }
-
-  .gameFooter {
-    left: 12px;
-    right: 12px;
-
-    bottom: 12px;
-
-    width: auto;
-
-    min-height: 72px;
-
-    padding:
-      0 14px;
-
-    gap: 15px;
-  }
-
-  .footerLevel {
-    width: 70px;
-  }
-
-  .levelNumber strong {
-    font-size: 23px;
-  }
-
-  .footerInfo {
-    gap: 13px;
-  }
-
-  .footerInfoItem strong {
-    font-size: 8px;
-  }
-
-  .footerInfoItem:nth-child(3) {
-    display: none;
-  }
-
-  .footerDivider {
-    display: none;
-  }
-
-  .ssrReward {
-    top: 15%;
-
-    right: 18px;
-  }
-
-  .ssrRewardStars {
-    gap: 4px;
-  }
-
-  .ssrRewardStars span {
-    font-size: 20px;
-  }
-
-  .ssrReward > strong {
-    font-size: 58px;
-  }
-
-}
 /* Transient full-viewport artwork, created only while a scene changes. */
 .heroMotion {
   position: absolute;
@@ -1294,16 +1155,6 @@ span:nth-child(5) {
   0% { opacity: 0; transform: scale(1.65) rotate(-8deg); }
   50% { opacity: 1; transform: scale(0.96) rotate(1deg); }
   100% { opacity: 1; transform: scale(1) rotate(0); }
-}
-@media (max-width: 768px) {
-  .heroMotion { perspective: 750px; }
-  .motionPiece { background-position: 58% center; }
-  .motionAwakeningTitle { gap: 16px; }
-  .motionAwakeningTitle strong { font-size: 19vw; }
-  .scene-4 .keywordFilled { font-size: 16vw; }
-  .scene-4 .keywordOutline { font-size: 13vw; }
-  .scene-4 .kineticTypography { top: 27%; }
-  .ssrReward { top: 11%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ssrReward,
@@ -1558,36 +1409,6 @@ span:nth-child(5) {
   top: -19px;
   font-size: 25px;
 }
-@media (max-width: 768px) {
-  .keywordEcho {
-    left: 12px;
-    top: -8px;
-    font-size: 18vw;
-    -webkit-text-stroke-width: 0.8px;
-  }
-  .scene-4 .keywordEcho { font-size: 16vw; }
-  .ambientOrbit { top: 39%; right: 10%; width: 66px; }
-  .ambientStar { top: 35%; left: 6%; font-size: 28px; }
-  .ambientTag { bottom: 29%; right: 7%; font-size: 7px; }
-  .ambientCross { left: 20%; bottom: 36%; font-size: 25px; }
-  .ambientDash { top: 11%; right: 16%; width: 34px; }
-  .dialogueBox {
-    bottom: 235px;
-    width: calc(100% - 32px);
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 15px 10px;
-    min-height: 118px;
-    padding: 15px 16px;
-  }
-  .dialogueSpeaker { grid-column: 1 / -1; }
-  .dialogueAvatar { flex-basis: 35px; width: 35px; height: 35px; font-size: 18px; }
-  .dialogueMeta strong { font-size: 12px; }
-  .dialogueMeta small,
-  .dialogueAdvance small { font-size: 7px; }
-  .dialogueCopy { font-size: 13px; }
-  .dialogueAdvance { gap: 6px; }
-  .dialogueAdvance > span { width: 27px; height: 27px; font-size: 16px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .heroAmbient,
   .keywordEcho,
@@ -1634,11 +1455,6 @@ span:nth-child(5) {
 @keyframes dialogueSheen {
   from { background-position: 120% 0; }
   to { background-position: -120% 0; }
-}
-@media (max-width: 768px) {
-  .typeAccent { width: 98px; height: 2px; margin-top: 10px; }
-  .typeAccent::after { width: 8px; height: 8px; top: -3px; }
-  .ambientStar { left: auto; right: 15%; top: 42%; font-size: 31px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dialogueBox::before { animation: none; }
@@ -1763,35 +1579,6 @@ span:nth-child(5) {
 /* CTA 자리를 비워 nav와 겹치지 않게 */
 .heroHeader nav { margin-right: 172px; }
 
-@media (max-width: 768px) {
-  .skipCta {
-    top: 8px;
-    right: 18px;
-    min-height: 40px;
-    padding: 0 14px;
-    justify-content: center;
-  }
-  .skipCta small { display: none; }
-  .heroHeader nav { margin-right: 120px; gap: 12px; }
-  .heroHeader nav a { font-size: 11px; letter-spacing: 0.1em; }
-
-  /* 모바일: 소개 문구를 헤더 아래 한 줄로 */
-  .headerBrand { position: static; }
-  .headerBrand span {
-    display: block;
-    position: absolute;
-    left: 18px;
-    top: calc(100% - 8px);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-  }
-
-  .scenePhrase { font-size: 11px; }
-  .footerInfoItem strong { font-size: 10px; }
-  .ambientTag { font-size: 10px; }
-  .dialogueAdvance small { font-size: 10px; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .skipCta { transition: none; }
@@ -1809,15 +1596,6 @@ span:nth-child(5) {
 }
 
 /* 모바일: 움직이는 이미지 위의 backdrop-filter는 프레임마다 재계산되므로 끈다 */
-@media (max-width: 768px) {
-  .dialogueBox,
-  .nextControl,
-  .gameFooter,
-  .ambientTag {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
 
 /* navigateToChapter("top")가 섹션에 포커스를 줄 때 링이 그려지지 않도록 */
 .yoojinHero:focus { outline: none; }
@@ -1867,32 +1645,6 @@ span:nth-child(5) {
 @keyframes buttonSheen { to { transform: translateX(85%); } }
 @keyframes frameAcquire { from { opacity: 0; clip-path: inset(0 50%); } to { opacity: 1; clip-path: inset(0); } }
 @keyframes acquisitionSettle { 0% { opacity: 0; transform: translate(-20vw,0) scale(1.4) rotate(-6deg); } 18%,55% { opacity: 1; transform: translate(-12vw,0) scale(1.25); } 100% { opacity: 1; transform: translate(0,0) scale(1); } }
-@media (max-width: 768px) {
-  .growthJourney { top: 58px; width: calc(100% - 32px); padding: 11px 12px; }
-  .growthJourney li { gap: 6px; }
-  .growthJourney li:not(:last-child)::after { margin: 0 7px; }
-  .growthJourney li:last-child { flex: 1; }
-  .growthJourney li.isCurrent { flex: 2.6; }
-  .growthName { display: none; font-size: 10px; white-space: nowrap; }
-  .isCurrent .growthName { display: inline; }
-  .growthNode { width: 24px; height: 24px; flex-basis: 24px; }
-  .growthIdentity { left: 18px; bottom: 233px; padding: 10px 13px; gap: 12px; max-width: calc(100% - 36px); }
-  .growthRank { width: 51px; min-height: 51px; flex: 0 0 51px; font-size: 10px; }
-  .growthRank > span { font-size: 7px; letter-spacing: 1px; }
-  .growthIdentity strong { font-size: 19px; }
-  .growthIdentity small { font-size: 9px; }
-  .growthIdentity p { font-size: 11px; max-width: 240px; }
-  .scene-4 .growthRank { font-size: 22px; }
-  .nextControl { min-width: 0; padding: 13px 16px; }
-  .nextControl strong { font-size: 16px; }
-  .dialogueBox { bottom: 337px; }
-  .isAcquired .ssrReward { top: 155px; right: 23px; animation-name: acquisitionSettleMobile; }
-  .ssrReward > strong { font-size: 55px; }
-  .ssrRewardStars span { font-size: 18px; }
-  .isAcquired .ssrReward > small { font-size: 9px; }
-  .acquisitionFrame { inset: 6px; }
-  .scene-4 .kineticTypography { top: 34%; }
-}
 @keyframes acquisitionSettleMobile { 0% { opacity: 0; transform: translate(-8vw,0) scale(1.15); } 20%,55% { opacity: 1; transform: translate(-5vw,0) scale(1.05); } 100% { opacity: 1; transform: none; } }
 @media (max-height: 650px) and (min-width: 769px) { .growthIdentity { bottom: 120px; padding: 10px 16px; } .growthJourney { top: 14px; padding-block: 8px; } }
 @media (prefers-reduced-motion: reduce) {
@@ -1912,9 +1664,6 @@ span:nth-child(5) {
 @media (min-width: 769px) and (max-width: 1399px) {
   .growthJourney .growthName { display: none; }
   .growthJourney .isCurrent .growthName { display: inline; white-space: nowrap; }
-}
-@media (max-width: 768px) {
-  .headerBrand span { display: none; }
 }
 /* =========================================================
    DESIGN REFRESH — 성장 카드(좌하단) / SSR 보상
@@ -2093,22 +1842,6 @@ span:nth-child(5) {
   box-shadow: none;
 }
 
-@media (max-width: 768px) {
-  .heroStage .growthIdentity .growthRank { width: 64px; padding: 14px 0 12px; gap: 8px; }
-  .growthRank > b { font-size: 18px; }
-  .heroStage.scene-4 .growthIdentity .growthRank > b { font-size: 20px; }
-  .growthPips i { width: 5px; height: 5px; }
-  .heroStage .growthIdentity > div { padding: 13px 16px 13px 14px; }
-  .heroStage .growthIdentity strong { font-size: 17px; }
-  .heroStage .growthIdentity small { margin-bottom: 6px; font-size: 9px; }
-  .heroStage .growthIdentity p { max-width: 200px; font-size: 11px; }
-  .ssrReward { padding: 16px 20px 14px; }
-  .heroStage .ssrReward > strong { margin-top: 12px; font-size: 56px; }
-  .heroStage .ssrRewardStars { margin-top: 14px; }
-  .heroStage .ssrReward .ssrName { margin-top: 12px; padding-top: 10px; font-size: 9px; }
-  .heroStage.isAcquired .ssrReward { animation-name: ssrReveal; }
-  .acquisitionFrame { inset: 8px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .heroStage .growthIdentity::before { animation: none; }
 }
@@ -2169,12 +1902,6 @@ span:nth-child(5) {
 .heroStage.isAcquired .nextControl .nextArrow { border-color: var(--ink); color: var(--ink); }
 .heroStage.isAcquired .nextControl:hover .nextArrow { background: var(--ink); color: #d9b57e; }
 
-@media (max-width: 768px) {
-  .heroStage .nextControl { min-width: 0; gap: 18px; padding: 12px 12px 12px 16px; }
-  .heroStage .nextControl strong { font-size: 15px; }
-  .heroStage .nextControl small { font-size: 9px; }
-  .heroStage .nextControl .nextArrow { flex-basis: 34px; width: 34px; height: 34px; font-size: 17px; }
-}
 
 /* =========================================================
    DESIGN REFRESH 2 — 전체 시스템 정리
@@ -2477,28 +2204,6 @@ span:nth-child(5) {
 }
 
 /* ---------- 모바일 ---------- */
-@media (max-width: 768px) {
-  .heroStage { --gutter: 18px; }
-  .heroStage .kineticTypography { width: calc(100% - 2 * var(--gutter)); }
-  .heroStage .growthIdentity { bottom: 233px; }
-  .heroStage .gameFooter {
-    left: var(--gutter);
-    right: var(--gutter);
-    bottom: 12px;
-    width: auto;
-    min-height: 64px;
-    gap: 18px;
-    padding: 0 16px;
-  }
-  .heroStage .levelNumber strong { font-size: 22px; }
-  .heroStage .footerInfo { gap: 14px; }
-  .heroStage .footerInfoItem strong { font-size: 10px; }
-  .heroStage .growthJourney { padding: 10px 12px; }
-  .heroStage .dialogueBox { padding: 15px 16px; }
-  .heroStage .dialogueAvatar { flex-basis: 34px; width: 34px; height: 34px; font-size: 16px; }
-  .heroStage .dialogueAdvance > span { width: 28px; height: 28px; font-size: 15px; }
-  .heroStage .scenePhrase::before { width: 18px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .heroStage .growthJourney.isComplete { animation: none; }
 }
@@ -2736,3 +2441,5 @@ span:nth-child(5) {
   .heroStage .ssrRewardStars,
   .heroStage .ssrReward .ssrName { display: none; }
 }
+
+/* Final mobile layout pass: keep the hero readable in narrow and short viewports. */
