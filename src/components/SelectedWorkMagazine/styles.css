@@ -437,3 +437,17 @@
 .chapter.chapterProjects { padding: 0; overflow: visible; background: #f3eee4; }
 .selectedWorkMagazine .prototype-shell,
 .selectedWorkMagazine .portfolio-book { height: calc(100svh - 66px); min-height: 0; }
+
+/* Project destinations: recognizable icons and readable touch targets. */
+.selectedWorkMagazine .ed-links { gap: 12px; flex-wrap: wrap; }
+.selectedWorkMagazine .ed-links a {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--section-color) 35%, var(--paper));
+  border-radius: 2px; background: color-mix(in srgb, var(--section-color) 4%, var(--paper));
+  color: var(--section-color); font-size: 15px; line-height: 1.2; letter-spacing: 0; font-weight: 700;
+  text-decoration: none; transition: background .2s, border-color .2s;
+}
+.selectedWorkMagazine .ed-links a:hover { background: color-mix(in srgb, var(--section-color) 9%, var(--paper)); border-color: var(--section-color); }
+.selectedWorkMagazine .ed-links svg { width: 20px; height: 20px; flex: 0 0 20px; }
+.selectedWorkMagazine .ed-links .ed-link-arrow { font-size: 14px; margin-left: 2px; }
+@media (max-width: 900px) { .selectedWorkMagazine .ed-links a { font-size: 16px; } }

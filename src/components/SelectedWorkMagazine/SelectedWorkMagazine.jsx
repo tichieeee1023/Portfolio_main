@@ -45,6 +45,19 @@ function ProjectVisual({ project, active, stopToken }) {
   );
 }
 
+
+function ProjectLinkIcon({ github = false }) {
+  return github ? (
+    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9" />
+    </svg>
+  );
+}
+
 function ProjectEditorial({ project }) {
   return (
     <article className="editorial js-editorial" tabIndex={0} aria-label={`${project.title.join(' ')} 상세 설명`}>
@@ -65,8 +78,8 @@ function ProjectEditorial({ project }) {
       </section>
       {project.meta && <p className="project-meta js-reveal">{project.meta}</p>}
       <div className="ed-links js-reveal">
-        {project.live && <a href={project.live} target="_blank" rel="noreferrer">LIVE SITE ↗</a>}
-        {project.github && <a href={project.github} target="_blank" rel="noreferrer">GITHUB ↗</a>}
+        {project.live && <a href={project.live} target="_blank" rel="noopener noreferrer" aria-label={`${project.koTitle} 홈페이지 (새 탭)`}><ProjectLinkIcon /><span>홈페이지</span><span className="ed-link-arrow" aria-hidden="true">↗</span></a>}
+        {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label={`${project.koTitle} GitHub (새 탭)`}><ProjectLinkIcon github /><span>GitHub</span><span className="ed-link-arrow" aria-hidden="true">↗</span></a>}
       </div>
     </article>
   );
@@ -156,6 +169,7 @@ export default function SelectedWorkMagazine() {
     const intro = introRef.current;
     if (!intro) return;
     animatingRef.current = true;
+    if (bookRef.current) bookRef.current.dataset.pageTurning = "true";
     gsap.killTweensOf(introMotion.current);
     gsap.to(introMotion.current, {
       p: target, duration: target === 1 ? 1.0 : 0.78, ease: 'none',
@@ -165,7 +179,9 @@ export default function SelectedWorkMagazine() {
         intro.inert = target === 1;
         openedRef.current = target === 1;
         animatingRef.current = false;
+        if (bookRef.current) bookRef.current.dataset.pageTurning = "false";
         lockUntilRef.current = performance.now() + 420;
+      if (bookRef.current) bookRef.current.dataset.pageLockedUntil = String(lockUntilRef.current);
         onDone?.();
       },
     });
@@ -194,7 +210,7 @@ export default function SelectedWorkMagazine() {
     tweenIntro(0);
   };
 
-  // Preserve the v8 transition driver, timing and reverse playback.
+  // Slide whole spreads at their resting size, including reverse navigation.
   const transitionTo = to => {
     const from = activeIndexRef.current;
     if (animatingRef.current || !openedRef.current || to === from || to < 0 || to >= PROJECTS.length) return;
@@ -209,14 +225,19 @@ export default function SelectedWorkMagazine() {
       setActiveIndex(to);
       setThemeOnBook(PROJECTS[to]);
       animatingRef.current = false;
+      if (bookRef.current) bookRef.current.dataset.pageTurning = "false";
       lockUntilRef.current = performance.now() + 420;
+      if (bookRef.current) bookRef.current.dataset.pageLockedUntil = String(lockUntilRef.current);
     };
     if (prefersReduced()) { settle(); return; }
     animatingRef.current = true;
+    if (bookRef.current) bookRef.current.dataset.pageTurning = "true";
     let chromeIndex = from;
     const m = motion.current;
     gsap.killTweensOf(m);
     m.p = forward ? 0 : 1;
+    resetParts(A);
+    resetParts(B);
     paintTransition(A, B, m.p);
     gsap.to(m, {
       p: forward ? 1 : 0, duration: DURATION, ease: 'none',
@@ -253,6 +274,7 @@ export default function SelectedWorkMagazine() {
       gsap.killTweensOf([projectMotion, coverMotion]);
       compactTimelineRef.current?.kill();
       animatingRef.current = false;
+      if (bookRef.current) bookRef.current.dataset.pageTurning = "false";
       openedRef.current = true;
       coverMotion.p = 1;
       paintIntro(intro, 1);
@@ -271,6 +293,7 @@ export default function SelectedWorkMagazine() {
     activeIndexRef.current = 0;
     openedRef.current = isCompact();
     animatingRef.current = false;
+    if (bookRef.current) bookRef.current.dataset.pageTurning = "false";
     const inViewport = () => {
       const rect = bookRef.current?.getBoundingClientRect();
       return rect && rect.top <= 68 && rect.bottom >= window.innerHeight * .6;
@@ -325,7 +348,7 @@ export default function SelectedWorkMagazine() {
     };
     const onTouchStart = event => { touchStartY.current = event.touches?.[0]?.clientY ?? null; };
     const onTouchEnd = event => {
-      if (gsap.isTweening(window)) return;
+      if (event.defaultPrevented || gsap.isTweening(window)) return;
       if (isCompact() || !inViewport() || touchStartY.current == null || animatingRef.current) return;
       const endY = event.changedTouches?.[0]?.clientY ?? touchStartY.current;
       const diff = touchStartY.current - endY;
@@ -340,6 +363,7 @@ export default function SelectedWorkMagazine() {
       gsap.killTweensOf([motion.current, introMotion.current]);
       compactTimelineRef.current?.kill();
       animatingRef.current = false;
+      if (bookRef.current) bookRef.current.dataset.pageTurning = "false";
       setAudioStopToken(value => value + 1);
       if (mq.matches) openedRef.current = true;
       paintIntro(intro, openedRef.current ? 1 : 0);
@@ -375,7 +399,7 @@ export default function SelectedWorkMagazine() {
         <a className="mobile-work-open" href="#work-pages"><span>프로젝트 보기</span><b aria-hidden="true">↓</b></a>
         <small className="mobile-cover-foot">YOOJIN / PORTFOLIO · 2026</small>
       </header>
-      <div id="work-pages" ref={bookRef} className="portfolio-book" data-theme={activeProject.theme}>
+      <div id="work-pages" ref={bookRef} className="portfolio-book" data-theme={activeProject.theme} data-project-index={activeIndex}>
         <MagazineIntro introRef={introRef} onOpen={openMagazine} />
         <section className="magazine-shell" aria-label="Selected work magazine">
           <header className="running-head magazine-head">

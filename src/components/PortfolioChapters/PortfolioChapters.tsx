@@ -58,6 +58,28 @@ export default function PortfolioChapters() {
   const [showAboutPager, setShowAboutPager] = useState(false);
   const [showTopButton, setShowTopButton] = useState(false);
 
+  const [emailCopyStatus, setEmailCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const emailCopyTimer = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (emailCopyTimer.current !== null) window.clearTimeout(emailCopyTimer.current);
+  }, []);
+
+  const copyEmail = async () => {
+    if (emailCopyTimer.current !== null) window.clearTimeout(emailCopyTimer.current);
+    try {
+      await navigator.clipboard.writeText('curencandy001@gmail.com');
+      setEmailCopyStatus('copied');
+    } catch {
+      setEmailCopyStatus('failed');
+    }
+    emailCopyTimer.current = window.setTimeout(() => {
+      setEmailCopyStatus('idle');
+      emailCopyTimer.current = null;
+    }, 3000);
+  };
+
+
   useEffect(() => {
     const host = root.current;
     if (!host) return;
@@ -125,12 +147,12 @@ export default function PortfolioChapters() {
 
     const scrollToTop = () => scrollWindowTo(0, 0.9);
 
-    // Keep the last ABOUT spread and WORK cover in the same paging flow.
+    // Keep all chapter boundaries in the same paging flow as ABOUT.
     const workSection = host.querySelector<HTMLElement>('#projects');
-    const backgroundScreen = aboutScreens[aboutScreens.length - 1];
     let boundaryUntil = 0;
     let boundaryTimer = 0;
     let boundaryTouch: { x: number; y: number } | null = null;
+    let boundaryTouchConsumed = false;
     const navHeight = () => host.querySelector('.chapterNav')?.getBoundingClientRect().height ?? NAV_HEIGHT;
     const compactCoverAtTop = () => {
       const cover = workSection?.querySelector('.mobile-work-intro')?.getBoundingClientRect();
@@ -140,69 +162,122 @@ export default function PortfolioChapters() {
       const book = workSection?.querySelector('.portfolio-book')?.getBoundingClientRect();
       return window.matchMedia('(max-width: 900px)').matches && book && Math.abs(book.top - navHeight()) <= 16;
     };
-    const boundaryDirection = (direction: number) => {
-      if (!workSection || !backgroundScreen) return false;
-      const work = workSection.getBoundingClientRect();
-      const background = backgroundScreen.getBoundingClientRect();
-      const nav = navHeight();
-      if (direction > 0 && compactCoverAtTop()) return true;
-      if (direction < 0 && compactBookAtTop()) return true;
-      if (direction > 0) return background.top <= nav + 12 && background.bottom > nav &&
-        work.top > nav + 12 && work.top <= window.innerHeight + 12;
-      const cover = workSection.querySelector<HTMLElement>('.intro-sheet');
+
+    // Resolve the next chapter only after the current spread has been read.
+    const pageTarget = (direction: number): HTMLElement | null => {
       const compact = window.matchMedia('(max-width: 900px)').matches;
-      return Math.abs(work.top - nav) <= 16 && (compact || (cover && !cover.inert));
+      const book = workSection?.querySelector<HTMLElement>('.portfolio-book');
+      if (direction > 0 && compactCoverAtTop()) return book ?? null;
+      if (direction < 0 && compactBookAtTop()) return workSection;
+      const steps = [
+        ...aboutScreens, workSection, ...(compact ? [book] : []),
+        host.querySelector<HTMLElement>('#skills'),
+        host.querySelector<HTMLElement>('#experiments'),
+        host.querySelector<HTMLElement>('#contact'),
+      ].filter((step): step is HTMLElement => Boolean(step));
+      const nav = navHeight();
+      let current = -1;
+      steps.forEach((step, index) => { if (step.getBoundingClientRect().top <= nav + 12) current = index; });
+      if (current < 0) return null;
+      const step = steps[current];
+      const rect = step.getBoundingClientRect();
+      if (rect.bottom <= nav) return null;
+      if (step === workSection && !compact && book) {
+        if (book.dataset.pageTurning === 'true' || performance.now() < Number(book.dataset.pageLockedUntil ?? 0)) return null;
+        const cover = book.querySelector<HTMLElement>('.intro-sheet');
+        const last = book.querySelectorAll('.work-index button').length - 1;
+        if (direction > 0 && (!cover?.inert || Number(book.dataset.projectIndex) !== last)) return null;
+        if (direction < 0 && cover?.inert) return null;
+      }
+      if (direction > 0) {
+        if (rect.bottom > window.innerHeight + 12) return null;
+        return steps[current + 1] ?? null;
+      }
+      if (rect.top < nav - 16) {
+        if (rect.height > window.innerHeight - nav + 12) return null;
+        return step;
+      }
+      return steps[current - 1] ?? null;
     };
-    const crossWorkBoundary = (direction: number, destination?: HTMLElement | null) => {
-      const target = destination ?? (direction > 0
-        ? compactCoverAtTop() ? workSection?.querySelector<HTMLElement>('.portfolio-book') : workSection
-        : compactBookAtTop() ? workSection : backgroundScreen);
+    const canReadInside = (target: EventTarget | null, direction: number) => {
+      if (!(target instanceof Element)) return false;
+      const reader = target.closest<HTMLElement>('.detail-body, .skillCardBody, .editorial, textarea, select');
+      if (!reader || reader.scrollHeight <= reader.clientHeight + 2) return false;
+      return direction > 0
+        ? reader.scrollTop + reader.clientHeight < reader.scrollHeight - 2
+        : reader.scrollTop > 2;
+    };
+    const scrollToPage = (direction: number, destination?: HTMLElement | null) => {
+      const target = destination ?? pageTarget(direction);
       if (!target) return;
       gestureUsed = true;
       boundaryUntil = performance.now() + (reduced ? 180 : 1100);
-      if (direction > 0) workSection?.classList.add('is-entering');
+      if (target === workSection && direction > 0) workSection?.classList.add('is-entering');
       window.clearTimeout(boundaryTimer);
       boundaryTimer = window.setTimeout(() => workSection?.classList.remove('is-entering'), 1100);
       scrollWindowTo(window.scrollY + target.getBoundingClientRect().top - navHeight(), .78);
     };
-    const handleWorkBoundaryWheel = (event: WheelEvent) => {
+
+    let pageWheelTotal = 0;
+    let pageWheelAt = 0;
+    const handlePageWheel = (event: WheelEvent) => {
       if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
-      if (performance.now() < boundaryUntil) { boundaryUntil = Math.max(boundaryUntil, performance.now() + 180); event.preventDefault(); return; }
-      if (isWindowTweening() || !boundaryDirection(Math.sign(event.deltaY))) return;
+      const now = performance.now();
+      if (now < boundaryUntil) {
+        boundaryUntil = Math.max(boundaryUntil, now + 180);
+        pageWheelTotal = 0;
+        event.preventDefault();
+        return;
+      }
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+      const delta = event.deltaY * unit;
+      const direction = Math.sign(delta);
+      if (canReadInside(event.target, direction) || isWindowTweening() || !pageTarget(direction)) return;
       event.preventDefault();
-      crossWorkBoundary(Math.sign(event.deltaY));
+      if (now - pageWheelAt > WHEEL_GESTURE_GAP || Math.sign(pageWheelTotal) !== direction) pageWheelTotal = 0;
+      pageWheelAt = now;
+      pageWheelTotal += delta;
+      if (Math.abs(pageWheelTotal) < WHEEL_THRESHOLD) return;
+      pageWheelTotal = 0;
+      scrollToPage(direction);
     };
-    const handleBoundaryTouchStart = (event: TouchEvent) => {
+    const handlePageTouchStart = (event: TouchEvent) => {
       boundaryTouch = null;
+      boundaryTouchConsumed = false;
       if (event.touches.length !== 1 || (event.target as Element).closest('button, a, input, textarea, select')) return;
       boundaryTouch = { x: event.touches[0].clientX, y: event.touches[0].clientY };
     };
-    const handleBoundaryTouchMove = (event: TouchEvent) => {
+    const handlePageTouchMove = (event: TouchEvent) => {
       if (!boundaryTouch || event.touches.length !== 1) return;
       const dy = boundaryTouch.y - event.touches[0].clientY;
       const dx = boundaryTouch.x - event.touches[0].clientX;
       if (Math.abs(dy) < 16 || Math.abs(dx) > Math.abs(dy)) return;
-      if (performance.now() < boundaryUntil) { event.preventDefault(); return; }
-      if (isWindowTweening() || !boundaryDirection(Math.sign(dy))) return;
+      if (boundaryTouchConsumed || performance.now() < boundaryUntil) { event.preventDefault(); return; }
+      if (canReadInside(event.target, Math.sign(dy)) || isWindowTweening() || !pageTarget(Math.sign(dy))) return;
       event.preventDefault();
-      crossWorkBoundary(Math.sign(dy));
+      boundaryTouchConsumed = true;
+      scrollToPage(Math.sign(dy));
     };
-    const handleBoundaryTouchEnd = () => { boundaryTouch = null; };
-    const handleBoundaryKey = (event: KeyboardEvent) => {
+    const handlePageTouchEnd = (event: TouchEvent) => {
+      if (boundaryTouchConsumed && event.cancelable) event.preventDefault();
+      boundaryTouch = null;
+      boundaryTouchConsumed = false;
+    };
+    const handlePageKey = (event: KeyboardEvent) => {
       if ((event.target as Element).closest('button, a, input, textarea, select, [contenteditable]')) return;
       const direction = ['ArrowDown', 'PageDown'].includes(event.key) ? 1 : ['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 0;
       if (!direction) return;
       if (performance.now() < boundaryUntil) { event.preventDefault(); return; }
-      if (!boundaryDirection(direction)) return;
+      if (canReadInside(event.target, direction) || !pageTarget(direction)) return;
       event.preventDefault();
-      if (performance.now() >= boundaryUntil && !isWindowTweening()) crossWorkBoundary(direction);
+      if (performance.now() >= boundaryUntil && !isWindowTweening()) scrollToPage(direction);
     };
-    window.addEventListener('wheel', handleWorkBoundaryWheel, { passive: false, capture: true });
-    window.addEventListener('touchstart', handleBoundaryTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleBoundaryTouchMove, { passive: false });
-    window.addEventListener('touchend', handleBoundaryTouchEnd);
-    window.addEventListener('touchcancel', handleBoundaryTouchEnd);
-    window.addEventListener('keydown', handleBoundaryKey, true);
+    window.addEventListener('wheel', handlePageWheel, { passive: false, capture: true });
+    window.addEventListener('touchstart', handlePageTouchStart, { passive: true });
+    window.addEventListener('touchmove', handlePageTouchMove, { passive: false });
+    window.addEventListener('touchend', handlePageTouchEnd, { passive: false, capture: true });
+    window.addEventListener('touchcancel', handlePageTouchEnd, { passive: false, capture: true });
+    window.addEventListener('keydown', handlePageKey, true);
 
 
     const handleWheelPaging = (event: WheelEvent) => {
@@ -438,7 +513,7 @@ export default function PortfolioChapters() {
           ? workSection?.querySelector<HTMLElement>('.portfolio-book') : workSection;
         if (!destination) return;
         event.preventDefault();
-        crossWorkBoundary(1, destination);
+        scrollToPage(1, destination);
         if (!destination.hasAttribute('tabindex')) destination.setAttribute('tabindex', '-1');
         destination.focus({ preventScroll: true });
         history.replaceState(null, '', '#' + id);
@@ -486,12 +561,12 @@ export default function PortfolioChapters() {
       host.removeEventListener('click', handleLink);
       window.removeEventListener('hashchange', handleHashChange);
       bindWheel(false);
-      window.removeEventListener('wheel', handleWorkBoundaryWheel, true);
-      window.removeEventListener('touchstart', handleBoundaryTouchStart);
-      window.removeEventListener('touchmove', handleBoundaryTouchMove);
-      window.removeEventListener('touchend', handleBoundaryTouchEnd);
-      window.removeEventListener('touchcancel', handleBoundaryTouchEnd);
-      window.removeEventListener('keydown', handleBoundaryKey, true);
+      window.removeEventListener('wheel', handlePageWheel, true);
+      window.removeEventListener('touchstart', handlePageTouchStart);
+      window.removeEventListener('touchmove', handlePageTouchMove);
+      window.removeEventListener('touchend', handlePageTouchEnd, true);
+      window.removeEventListener('touchcancel', handlePageTouchEnd, true);
+      window.removeEventListener('keydown', handlePageKey, true);
       window.clearTimeout(boundaryTimer);
       workSection?.classList.remove('is-entering');
       chapterObserver.disconnect();
@@ -686,14 +761,16 @@ export default function PortfolioChapters() {
         <div className="skillGrid">
           {skillGroups.map((group) => <article className="skillCard" key={group.number} data-reveal>
             <div className="skillCardTop"><span>{group.number} / {SKILL_TOTAL}</span><span aria-hidden="true">↗</span></div>
-            <p className="skillCardEnglish">{group.english}</p>
-            <h3>{group.title}</h3>
-            <p className="skillCardDescription">{group.description}</p>
-            <div className="skillTags">{group.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
+            <div className="skillCardBody" tabIndex={0} role="region" aria-label={group.title}>
+              <p className="skillCardEnglish">{group.english}</p>
+              <h3>{group.title}</h3>
+              <p className="skillCardDescription">{group.description}</p>
+              <div className="skillTags">{group.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
+            </div>
             <a href={group.href} className="skillEvidence">작업에서 보기 <span>{group.evidence}</span><span aria-hidden="true">↗</span></a>
           </article>)}
         </div>
-        <p className="skillFootnote" data-reveal>기획의 맥락을 읽고 → 구조를 세우고 → 작은 화면과 예외 상황까지 확인합니다.</p>
+        <p className="skillFootnote">기획의 맥락을 읽고 → 구조를 세우고 → 작은 화면과 예외 상황까지 확인합니다.</p>
       </div>
     </section>
 
@@ -707,9 +784,24 @@ export default function PortfolioChapters() {
         <div className="contactOverline" data-reveal><span>{TOTAL} / {TOTAL}</span><span>THE NEXT CHAPTER</span></div>
         <p className="contactPrelude" data-reveal>이제 다음 이야기를 함께 만들 차례입니다.</p>
         <h2 id="contact-title" data-reveal>함께 만들<br /><em>화면이 있나요?</em></h2>
-        <div className="contactBottom" data-reveal>
-          <a className="contactMail" href="mailto:curencandy001@gmail.com">이메일 보내기 <span aria-hidden="true">↗</span></a>
-          <div className="contactDetails"><a href="mailto:curencandy001@gmail.com">curencandy001@gmail.com</a><a href="https://github.com/tichieeee1023" target="_blank" rel="noopener noreferrer">GITHUB ↗</a></div>
+        <div className="contactBottom">
+          <div className="contactActions">
+            <a className="contactMail" href="mailto:curencandy001@gmail.com">이메일 보내기 <span aria-hidden="true">↗</span></a>
+            <button className="contactCopyButton" type="button" onClick={copyEmail}>
+              {emailCopyStatus === 'copied' ? '복사 완료' : '이메일 복사'}
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" focusable="false">
+                <rect x="8" y="8" width="12" height="12" rx="2" />
+                <path d="M16 8V4H4v12h4" />
+              </svg>
+            </button>
+          </div>
+          <div className="contactDetails">
+            <a className="contactEmailAddress" href="mailto:curencandy001@gmail.com">curencandy001@gmail.com</a>
+            <a className="contactGithub" href="https://github.com/tichieeee1023" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <p className="contactCopyStatus" role="status" aria-live="polite">
+              {emailCopyStatus === 'copied' ? '이메일 주소를 복사했어요.' : emailCopyStatus === 'failed' ? '이메일 주소를 선택해 복사해 주세요.' : ''}
+            </p>
+          </div>
         </div>
         <footer className="chapterEnd"><span>LEE YOOJIN / FRONTEND DEVELOPER</span><a href="#top">BACK TO TOP ↑</a></footer>
       </div>

@@ -9,6 +9,32 @@ const MEDIA = {
   jajak: { pc: '/media/jajak-pc.webp', mobile: '/media/jajak-mobile.webm' },
 };
 const media = (slug, kind) => asset(MEDIA[slug]?.[kind] || null);
+const LINKS = {
+  "moonlight": {
+    "live": "https://moon-light-three.vercel.app/",
+    "github": "https://github.com/tichieeee1023/moon-light"
+  },
+  "daily": {
+    "live": "https://daily-harvest-psi.vercel.app/",
+    "github": "https://github.com/tichieeee1023/Daily_Harvest"
+  },
+  "b612": {
+    "live": "https://the-little-prince-b612.vercel.app/",
+    "github": "https://github.com/tichieeee1023/TheLittlePrince-B612"
+  },
+  "forlog": {
+    "live": "https://tae0419.github.io/forlog2/Home/index.html",
+    "github": "https://github.com/TAE0419/forlog2"
+  },
+  "midnight": {
+    "live": "https://tae0419.github.io/midnightChord/pages/opening/",
+    "github": "https://github.com/TAE0419/midnightChord"
+  },
+  "jajak": {
+    "live": "https://jajak-ten.vercel.app/cart",
+    "github": "https://github.com/jiwoo1012/TeamProject2"
+  }
+};
 const entries = [
   {
     slug: 'moonlight', group: 'personal', category: 'COMMERCE EXPERIENCE',
@@ -84,6 +110,6 @@ export const PROJECTS = entries.map((project, index) => ({
   layout: index % 2 === 0 ? 'visual-left' : 'visual-right',
   pcSrc: media(project.slug, 'pc', ['webp', 'png', 'jpg', 'jpeg']) || asset(project.existingPc) || null,
   mobileSrc: media(project.slug, 'mobile', ['webm', 'mp4', 'gif', 'webp', 'png', 'jpg']),
-  live: null,
-  github: null,
+  live: LINKS[project.slug]?.live || null,
+  github: LINKS[project.slug]?.github || null,
 }));
