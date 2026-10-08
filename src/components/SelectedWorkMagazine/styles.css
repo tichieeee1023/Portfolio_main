@@ -289,18 +289,19 @@
 .selectedWorkMagazine .placeholder--phone > span { font-size: 8px; letter-spacing: .06em; }
 .selectedWorkMagazine .placeholder--phone strong { overflow-wrap: anywhere; line-height: 1.6; }
 .selectedWorkMagazine .turntable { position: absolute; z-index: 4; bottom: 25px; left: 24px; width: min(290px, 54%); background: var(--paper); color: var(--ink); border: 1px solid #b6a994; box-shadow: 0 5px 20px #0002; }
-.selectedWorkMagazine .turntable button { position: relative; display: flex; align-items: center; width: 100%; min-height: 88px; gap: 12px; padding: 12px; text-align: left; }
-.selectedWorkMagazine .turntable button:disabled { cursor: default; }
+.selectedWorkMagazine .turntable-inner { position: relative; display: flex; align-items: center; width: 100%; min-height: 88px; gap: 12px; padding: 12px; text-align: left; }
 .selectedWorkMagazine .record { display: grid; place-items: center; flex-shrink: 0; width: 62px; height: 62px; border-radius: 50%; background: repeating-radial-gradient(#292625 0 2px, #141312 3px 4px); animation: record-spin 4s linear infinite paused; }
 .selectedWorkMagazine .record > span { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; background: #9a5c38; color: #fff3; font: 8px Georgia, serif; }
 .selectedWorkMagazine .tone-arm { position: absolute; left: 74px; top: 12px; width: 3px; height: 40px; border-radius: 3px; background: #b09c82; transform-origin: top; transform: rotate(-12deg); transition: transform .3s; }
 .selectedWorkMagazine .turntable-copy { display: grid; gap: 8px; }
 .selectedWorkMagazine .turntable-copy strong { font-size: 9px; letter-spacing: .08em; }
 .selectedWorkMagazine .turntable-copy > span { font-size: 7px; letter-spacing: .05em; line-height: 1.5; color: #78634e; }
+.selectedWorkMagazine .turntable-copy .turntable-episode { display: grid; gap: 3px; }
+.selectedWorkMagazine .turntable-episode > span { font-size: .88em; line-height: 1.35; }
 .selectedWorkMagazine .equalizer { display: flex; gap: 2px; align-items: center; height: 18px; margin-left: auto; }
 .selectedWorkMagazine .equalizer i { width: 2px; height: 12px; background: var(--accent); transform: scaleY(.25); animation: sound-wave .7s ease-in-out infinite alternate paused; animation-delay: calc(var(--bar) * -.13s); }
-.selectedWorkMagazine .is-playing .record, .selectedWorkMagazine .is-playing .equalizer i { animation-play-state: running; }
-.selectedWorkMagazine .is-playing .tone-arm { transform: rotate(22deg); }
+.selectedWorkMagazine .is-active .record, .selectedWorkMagazine .is-active .equalizer i { animation-play-state: running; }
+.selectedWorkMagazine .is-active .tone-arm { transform: rotate(22deg); }
 @keyframes record-spin { to { transform: rotate(360deg); } }
 @keyframes sound-wave { to { transform: scaleY(1); } }
 @media (min-width: 901px) and (max-height: 800px) {

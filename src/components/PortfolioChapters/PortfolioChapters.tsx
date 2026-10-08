@@ -7,13 +7,14 @@ import { buildAboutTimeline } from './aboutMotion';
 import { aboutPagerLabels, chapters, pad, skillGroups, SKILL_TOTAL, TOTAL } from './chapterData';
 import './PortfolioChapters.css';
 import SelectedWorkMagazine from '../SelectedWorkMagazine/SelectedWorkMagazine';
+import PlayGallery from '../PlayGallery/PlayGallery';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 /** sticky 내비 높이(데스크톱). CSS의 .chapterNav height, scroll-margin-top과 맞춰야 한다. */
 const NAV_HEIGHT = 66;
 /** 배경이 어두운 챕터. TOP 버튼 색을 반전시키는 데 쓴다. */
-const DARK_CHAPTERS = new Set(['experiments', 'contact']);
+const DARK_CHAPTERS = new Set(['contact']);
 
 function SectionHeading({ id, number, eyebrow, title, description }: { id: string; number: string; eyebrow: string; title: string; description: string }) {
   // 글자 단위로 쪼개면 한글 단어 중간에서 줄이 바뀌므로 "단어 단위"로 마스크 처리한다.
@@ -124,7 +125,88 @@ export default function PortfolioChapters() {
 
     const scrollToTop = () => scrollWindowTo(0, 0.9);
 
+    // Keep the last ABOUT spread and WORK cover in the same paging flow.
+    const workSection = host.querySelector<HTMLElement>('#projects');
+    const backgroundScreen = aboutScreens[aboutScreens.length - 1];
+    let boundaryUntil = 0;
+    let boundaryTimer = 0;
+    let boundaryTouch: { x: number; y: number } | null = null;
+    const navHeight = () => host.querySelector('.chapterNav')?.getBoundingClientRect().height ?? NAV_HEIGHT;
+    const compactCoverAtTop = () => {
+      const cover = workSection?.querySelector('.mobile-work-intro')?.getBoundingClientRect();
+      return window.matchMedia('(max-width: 900px)').matches && cover && Math.abs(cover.top - navHeight()) <= 16;
+    };
+    const compactBookAtTop = () => {
+      const book = workSection?.querySelector('.portfolio-book')?.getBoundingClientRect();
+      return window.matchMedia('(max-width: 900px)').matches && book && Math.abs(book.top - navHeight()) <= 16;
+    };
+    const boundaryDirection = (direction: number) => {
+      if (!workSection || !backgroundScreen) return false;
+      const work = workSection.getBoundingClientRect();
+      const background = backgroundScreen.getBoundingClientRect();
+      const nav = navHeight();
+      if (direction > 0 && compactCoverAtTop()) return true;
+      if (direction < 0 && compactBookAtTop()) return true;
+      if (direction > 0) return background.top <= nav + 12 && background.bottom > nav &&
+        work.top > nav + 12 && work.top <= window.innerHeight + 12;
+      const cover = workSection.querySelector<HTMLElement>('.intro-sheet');
+      const compact = window.matchMedia('(max-width: 900px)').matches;
+      return Math.abs(work.top - nav) <= 16 && (compact || (cover && !cover.inert));
+    };
+    const crossWorkBoundary = (direction: number, destination?: HTMLElement | null) => {
+      const target = destination ?? (direction > 0
+        ? compactCoverAtTop() ? workSection?.querySelector<HTMLElement>('.portfolio-book') : workSection
+        : compactBookAtTop() ? workSection : backgroundScreen);
+      if (!target) return;
+      gestureUsed = true;
+      boundaryUntil = performance.now() + (reduced ? 180 : 1100);
+      if (direction > 0) workSection?.classList.add('is-entering');
+      window.clearTimeout(boundaryTimer);
+      boundaryTimer = window.setTimeout(() => workSection?.classList.remove('is-entering'), 1100);
+      scrollWindowTo(window.scrollY + target.getBoundingClientRect().top - navHeight(), .78);
+    };
+    const handleWorkBoundaryWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
+      if (performance.now() < boundaryUntil) { boundaryUntil = Math.max(boundaryUntil, performance.now() + 180); event.preventDefault(); return; }
+      if (isWindowTweening() || !boundaryDirection(Math.sign(event.deltaY))) return;
+      event.preventDefault();
+      crossWorkBoundary(Math.sign(event.deltaY));
+    };
+    const handleBoundaryTouchStart = (event: TouchEvent) => {
+      boundaryTouch = null;
+      if (event.touches.length !== 1 || (event.target as Element).closest('button, a, input, textarea, select')) return;
+      boundaryTouch = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    };
+    const handleBoundaryTouchMove = (event: TouchEvent) => {
+      if (!boundaryTouch || event.touches.length !== 1) return;
+      const dy = boundaryTouch.y - event.touches[0].clientY;
+      const dx = boundaryTouch.x - event.touches[0].clientX;
+      if (Math.abs(dy) < 16 || Math.abs(dx) > Math.abs(dy)) return;
+      if (performance.now() < boundaryUntil) { event.preventDefault(); return; }
+      if (isWindowTweening() || !boundaryDirection(Math.sign(dy))) return;
+      event.preventDefault();
+      crossWorkBoundary(Math.sign(dy));
+    };
+    const handleBoundaryTouchEnd = () => { boundaryTouch = null; };
+    const handleBoundaryKey = (event: KeyboardEvent) => {
+      if ((event.target as Element).closest('button, a, input, textarea, select, [contenteditable]')) return;
+      const direction = ['ArrowDown', 'PageDown'].includes(event.key) ? 1 : ['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 0;
+      if (!direction) return;
+      if (performance.now() < boundaryUntil) { event.preventDefault(); return; }
+      if (!boundaryDirection(direction)) return;
+      event.preventDefault();
+      if (performance.now() >= boundaryUntil && !isWindowTweening()) crossWorkBoundary(direction);
+    };
+    window.addEventListener('wheel', handleWorkBoundaryWheel, { passive: false, capture: true });
+    window.addEventListener('touchstart', handleBoundaryTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleBoundaryTouchMove, { passive: false });
+    window.addEventListener('touchend', handleBoundaryTouchEnd);
+    window.addEventListener('touchcancel', handleBoundaryTouchEnd);
+    window.addEventListener('keydown', handleBoundaryKey, true);
+
+
     const handleWheelPaging = (event: WheelEvent) => {
+      if (event.defaultPrevented) return;
       if (event.ctrlKey) return; // 트랙패드 핀치 줌은 막지 않는다
       if (!aboutSection || aboutScreens.length === 0 || !desktopQuery.matches) return;
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
@@ -231,7 +313,7 @@ export default function PortfolioChapters() {
 
     // HERO가 화면에서 벗어나면 우하단 TOP 버튼을 노출한다.
     let heroVisibilityObserver: IntersectionObserver | null = null;
-    const heroSection = document.getElementById('top');
+    const heroSection = document.querySelector('.heroEntry') ?? document.getElementById('top');
     if (heroSection) {
       heroVisibilityObserver = new IntersectionObserver(([entry]) => {
         setShowTopButton(!entry?.isIntersecting);
@@ -351,6 +433,17 @@ export default function PortfolioChapters() {
         history.replaceState(null, '', location.pathname + location.search);
         return;
       }
+      if (link?.classList.contains('backgroundWorkNext') || link?.classList.contains('mobile-work-open')) {
+        const destination = link.classList.contains('mobile-work-open')
+          ? workSection?.querySelector<HTMLElement>('.portfolio-book') : workSection;
+        if (!destination) return;
+        event.preventDefault();
+        crossWorkBoundary(1, destination);
+        if (!destination.hasAttribute('tabindex')) destination.setAttribute('tabindex', '-1');
+        destination.focus({ preventScroll: true });
+        history.replaceState(null, '', '#' + id);
+        return;
+      }
       if (!resolveTarget(id)) return;
       event.preventDefault();
       pageTween?.kill(); // 진행 중이던 ABOUT 장면 이동과 네이티브 스크롤이 겹치지 않게
@@ -393,6 +486,14 @@ export default function PortfolioChapters() {
       host.removeEventListener('click', handleLink);
       window.removeEventListener('hashchange', handleHashChange);
       bindWheel(false);
+      window.removeEventListener('wheel', handleWorkBoundaryWheel, true);
+      window.removeEventListener('touchstart', handleBoundaryTouchStart);
+      window.removeEventListener('touchmove', handleBoundaryTouchMove);
+      window.removeEventListener('touchend', handleBoundaryTouchEnd);
+      window.removeEventListener('touchcancel', handleBoundaryTouchEnd);
+      window.removeEventListener('keydown', handleBoundaryKey, true);
+      window.clearTimeout(boundaryTimer);
+      workSection?.classList.remove('is-entering');
       chapterObserver.disconnect();
       aboutScreenObserver?.disconnect();
       aboutSectionObserver?.disconnect();
@@ -460,29 +561,28 @@ export default function PortfolioChapters() {
           <div className="aboutScrollCue" aria-hidden="true"><span>SCROLL TO READ</span><i /></div>
         </div>
 
-        <div className="aboutScreen aboutScreen--profile">
+        <div id="about-profile" className="aboutScreen aboutScreen--profile">
           <div className="aboutGrid">
             <div className="aboutPortrait">
               <div className="aboutPortraitImage"><img src="/assets/profile/yoojin-04.webp" alt="프론트엔드 개발자 이유진의 포트폴리오 캐릭터" loading="lazy" decoding="async" /></div>
               <div className="aboutPortraitMeta"><span>CHARACTER FILE / LEE YOOJIN</span><span>FRONTEND DEVELOPER</span></div>
             </div>
             <div className="aboutStory">
-              <p className="aboutKicker">READ → INTERPRET → BUILD</p>
-              <h3 className="aboutHeadline" aria-label="모호한 요구사항 속에서 본질을 찾아, 사용하기 편한 명료한 화면으로 번역합니다.">
-                <span className="aboutHeadlineLine">모호한 요구사항 속에서</span>
-                <span className="aboutHeadlineLine">본질을 찾아,</span>
-                <span className="aboutHeadlineLine">사용하기 편한</span>
-                <span className="aboutHeadlineLine">명료한 화면으로</span>
-                <span className="aboutHeadlineLine aboutHeadlineAccent">번역합니다.</span>
-              </h3>
-              <p className="aboutLead">언어와 문학을 전공하고 번역하며 맥락과 의도를 읽는 법을 익혔습니다. 자영업을 하며 아이디어를 실제 결과물로 옮겼습니다.</p>
-              <p className="aboutLead aboutLead--strong">아이디어가 떠오르면 직접 구현해보고, 테스트하며, 반복해서 개선합니다.</p>
-              <div className="aboutTraits">
-                <span><b>01</b> 본질을 읽는 구조화</span>
-                <span><b>02</b> 의미를 형태로 바꾸는 재해석</span>
-                <span><b>03</b> 반복해서 다듬는 개선</span>
+              <div className="aboutStatement">
+                <p className="aboutKicker">READ → INTERPRET → BUILD</p>
+                <h3 className="aboutHeadline" aria-label="모호한 요구의 본질을 찾아, 사용하기 편한 화면으로 번역합니다.">
+                  <span className="aboutHeadlineLine">모호한 요구의 본질을 찾아,</span>
+                  <span className="aboutHeadlineLine">사용하기 편한 화면으로</span>
+                  <span className="aboutHeadlineLine aboutHeadlineAccent">번역합니다.</span>
+                </h3>
               </div>
-              <a className="textLink" href="#projects">만든 것들 보기 <span aria-hidden="true">↗</span></a>
+              <div className="aboutBio">
+                <p className="aboutLead">
+                  <span>언어를 배우고 번역을 하며 맥락과 의도를 읽는 법을 익혔습니다.</span>
+                  <span>일을 하면서는 주로 아이디어를 눈에 보이는 결과로 옮겼습니다.</span>
+                </p>
+                <a className="textLink" href="#projects">만든 것들 보기 <span aria-hidden="true">↗</span></a>
+              </div>
             </div>
           </div>
         </div>
@@ -546,11 +646,14 @@ export default function PortfolioChapters() {
                 <p><b>중앙대학교</b><br /><span className="backgroundFull">일본어문학전공 · 국어국문학 복수전공</span><span className="backgroundCompact">일본어문학 · 국어국문학</span></p>
                 <small><span className="backgroundFull">규슈대학교 JLCC 교환학생 · JLPT N1</span><span className="backgroundCompact">규슈대 교환 · JLPT N1</span></small>
               </article>
-              <article className="backgroundCard">
+              <article className="backgroundCard backgroundCard--development">
                 <span className="backgroundIndex">02 / DEVELOPMENT</span>
                 <h4>FRONTEND</h4>
                 <p><b><span className="backgroundFull">이젠아카데미 DX 안산교육센터</span><span className="backgroundCompact">이젠아카데미 DX 안산</span></b><br /><span className="backgroundFull">생성형 AI 활용 프론트엔드 개발자 양성과정</span><span className="backgroundCompact">AI 활용 프론트엔드 과정</span></p>
-                <small><span className="backgroundFull">960 HOURS · HTML / CSS / JavaScript / React</span><span className="backgroundCompact">960H · JS / React</span></small>
+                <div className="backgroundHours">
+                  <strong>960<span>H</span></strong>
+                  <small>HTML / CSS<br />JAVASCRIPT / REACT</small>
+                </div>
               </article>
               <article className="backgroundCard">
                 <span className="backgroundIndex">03 / AI &amp; WORKFLOW</span>
@@ -565,6 +668,9 @@ export default function PortfolioChapters() {
                 <small><span className="backgroundFull">FROM IDEA TO REAL OUTPUT</span><span className="backgroundCompact">아이디어에서 운영까지</span></small>
               </article>
             </div>
+            <a className="backgroundWorkNext" href="#projects">
+              <span>NEXT / SELECTED WORK</span><strong>WORK INDEX</strong><b aria-hidden="true">↘</b>
+            </a>
           </div>
         </div>
       </div>
@@ -591,28 +697,8 @@ export default function PortfolioChapters() {
       </div>
     </section>
 
-    <section id="experiments" className="chapter chapterPlay" aria-labelledby="experiments-title">
-      <div className="chapterShell">
-        <SectionHeading id="experiments-title" number="04" eyebrow="SMALL EXPERIMENTS" title="만들며 배운 것" description="완성된 서비스 밖에서도 움직임과 반응을 작게 실험합니다." />
-        <div className="playGrid">
-          <article className="playCard playCard--motion" data-reveal>
-            <div className="playCardVisual playSceneStrip" role="img" aria-label="포트폴리오 히어로의 성장 장면 3개">
-              <img src="/assets/profile/yoojin-00.webp" alt="" loading="lazy" />
-              <img src="/assets/profile/yoojin-02.webp" alt="" loading="lazy" />
-              <img src="/assets/profile/yoojin-04.webp" alt="" loading="lazy" />
-              <span className="playVisualLabel">01 → 03 → 05</span>
-            </div>
-            <div className="playCardBody"><span>01 / MOTION STUDY</span><h3>한 장의 카드가 완성되기까지</h3><p>이 페이지의 첫 장면. 스크롤에 따라 표정, 문장, 역할이 바뀌고 마지막에 SSR 카드로 이어집니다.</p><a href="#top" className="textLink">첫 장면 다시 보기 <span aria-hidden="true">↗</span></a></div>
-          </article>
-          <article className="playCard playCard--bricks" data-reveal>
-            <div className="playCardVisual brickScene" aria-hidden="true">
-              <div className="brickRows">{Array.from({ length: 24 }, (_, index) => <i key={index} />)}</div>
-              <div className="brickBall" /><div className="brickPaddle" /><span className="playVisualLabel">CANVAS / GAME LOOP</span>
-            </div>
-            <div className="playCardBody"><span>02 / CANVAS STUDY</span><h3>Retro Brick Breaker</h3><p>순수 JavaScript와 Canvas로 게임 루프, 패들 조작, 벽돌 충돌과 재시작을 연습한 작은 프로젝트입니다.</p><a href="https://github.com/tichieeee1023/bricksGame" target="_blank" rel="noopener noreferrer" className="textLink">코드 보기 <span aria-hidden="true">↗</span></a></div>
-          </article>
-        </div>
-      </div>
+    <section id="experiments" className="chapter chapterPlay chapterPlay--gallery" aria-labelledby="experiments-title">
+      <PlayGallery />
     </section>
 
     <section id="contact" className="chapter chapterContact" aria-labelledby="contact-title">

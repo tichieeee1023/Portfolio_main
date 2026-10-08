@@ -18,7 +18,6 @@ export function buildAboutTimeline(screen: HTMLElement): gsap.core.Timeline | nu
     const kicker = screen.querySelector('.aboutKicker');
     const lines = screen.querySelectorAll('.aboutHeadlineLine');
     const leads = screen.querySelectorAll('.aboutLead');
-    const traits = screen.querySelector('.aboutTraits');
     const link = screen.querySelector('.textLink');
 
     tl.fromTo(portrait,
@@ -33,9 +32,6 @@ export function buildAboutTimeline(screen: HTMLElement): gsap.core.Timeline | nu
       .fromTo(leads,
         { y: 24, opacity: 0 },
         { y: 0, opacity: 1, duration: .58, stagger: .08, clearProps: 'transform,opacity' }, .58)
-      .fromTo(traits,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: .55, clearProps: 'transform,opacity' }, .73)
       .fromTo(link,
         { x: -12, opacity: 0 },
         { x: 0, opacity: 1, duration: .5, clearProps: 'transform,opacity' }, .82);

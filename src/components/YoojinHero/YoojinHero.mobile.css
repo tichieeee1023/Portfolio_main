@@ -13,8 +13,7 @@
   .heroStage .marquee,
   .heroStage .scenePhrase,
   .heroStage .ssrReward,
-  .heroStage .growthIdentity .growthRank,
-  .heroStage .characterHitbox span { display: none; }
+  .heroStage .growthIdentity .growthRank { display: none; }
 
   .heroStage .growthJourney {
     top: 0; left: 0; right: 0; width: 100%;
@@ -58,11 +57,12 @@
   }
   .heroStage .keywordEcho,
   .heroStage.scene-4 .keywordEcho { font-size: clamp(38px, 13vw, 80px); }
+  .heroStage .keywordEcho,
+  .heroStage.scene-4 .keywordEcho { left: 8px; top: -4px; }
   .heroStage .typeAccent { width: 80px; height: 2px; margin-top: 10px; }
   .heroStage .imageWash {
     background: linear-gradient(0deg, #f3eee3cc 0%, #f3eee350 28%, transparent 48%);
   }
-  .heroStage .characterHitbox { left: 15%; top: 15%; width: 65%; height: 42%; }
   .heroStage .growthIdentity {
     position: static;
     width: auto; max-width: none; min-height: 0; gap: 0;
@@ -74,13 +74,6 @@
   .heroStage .growthIdentity small { margin-bottom: 4px; font-size: 9px; }
   .heroStage .growthIdentity strong { font-size: 18px; }
   .heroStage .growthIdentity p { margin-top: 5px; max-width: none; font-size: 12px; line-height: 1.5; }
-  .heroStage .dialogueBox {
-    left: 16px; right: 16px; bottom: calc(var(--mobile-footer-height) + 154px);
-    width: auto; max-height: 30svh; min-height: 0; overflow-y: auto;
-    grid-template-columns: minmax(0, 1fr) auto; padding: 12px 14px; gap: 10px;
-  }
-  .heroStage .dialogueSpeaker { grid-column: 1 / -1; }
-  .heroStage .dialogueCopy { font-size: 13px; }
 }
 @media (max-width: 768px) and (max-height: 500px) {
   .heroStage { min-height: 420px; }
@@ -90,4 +83,21 @@
   .heroStage.scene-4 .keywordFilled { font-size: 9vw; }
   .heroStage .keywordOutline,
   .heroStage.scene-4 .keywordOutline { font-size: 6vw; }
+}
+
+/* Keep illustration detail around the face; soften artwork behind the mobile text. */
+@media (max-width: 768px) {
+  .heroStage[data-mobile-journey="true"] .imageStack {
+    filter: saturate(.97) contrast(.99);
+  }
+  .heroStage[data-mobile-journey="true"] .imageWash {
+    background: linear-gradient(180deg,
+      rgba(243, 238, 227, .38) 0%,
+      rgba(243, 238, 227, .14) 13%,
+      rgba(243, 238, 227, .02) 28%,
+      rgba(243, 238, 227, .02) 48%,
+      rgba(243, 238, 227, .36) 70%,
+      rgba(243, 238, 227, .46) 83%,
+      rgba(243, 238, 227, .16) 100%);
+  }
 }

@@ -1,0 +1,33 @@
+@media (max-width: 768px) {
+  .heroStage[data-mobile-journey="true"] .heroFooter {
+    background: rgba(38, 33, 29, .76);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+  .heroStage[data-mobile-journey="true"][data-transitioning="true"] .navigationControl {
+    opacity: 1; visibility: visible; transition: none;
+  }
+  .heroStage[data-mobile-journey="true"] .nextControl { position: relative; overflow: visible; }
+  .heroStage[data-mobile-journey="true"] .nextControl.isMobileLevelUpPressed {
+    animation: mobileLevelPress .35s ease-out; opacity: 1;
+    box-shadow: 0 0 0 3px #d9b57e, 0 0 24px #e8bd7470;
+  }
+  .mobileLevelFeedback {
+    position: absolute; z-index: 2; top: -34px; left: 50%; pointer-events: none;
+    padding: 5px 8px; background: #191715e6; color: #f4deb2; white-space: nowrap;
+    font: 900 12px/1 ui-monospace, monospace; letter-spacing: .04em;
+    animation: mobileLevelRise .75s ease-out both;
+  }
+  .mobileLevelFeedback i { position: absolute; width: 5px; height: 5px; background: #e8bd74; animation: mobileLevelSpark .65s ease-out both; }
+  .mobileLevelFeedback i:nth-child(1) { left: -10px; top: 5px; --spark-x: -16px; }
+  .mobileLevelFeedback i:nth-child(2) { left: 50%; top: -8px; --spark-x: 0px; }
+  .mobileLevelFeedback i:nth-child(3) { right: -10px; top: 5px; --spark-x: 16px; }
+  @keyframes mobileLevelPress { 0%,100% { transform: translateY(0) scale(1); } 35% { transform: translateY(3px) scale(.96); } 70% { transform: translateY(-3px) scale(1.02); } }
+  @keyframes mobileLevelRise { 0% { opacity: 0; transform: translate(-50%, 8px); } 20%,60% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -18px); } }
+  @keyframes mobileLevelSpark { 0% { opacity: 1; transform: translate(0,0); } 100% { opacity: 0; transform: translate(var(--spark-x), -26px); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroStage[data-mobile-journey="true"] .nextControl.isMobileLevelUpPressed,
+  .mobileLevelFeedback { animation: none; }
+  .mobileLevelFeedback { transform: translateX(-50%); }
+  .mobileLevelFeedback i { display: none; }
+}

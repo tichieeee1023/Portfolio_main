@@ -11,6 +11,10 @@ import { LAST_SCENE, SCENES, SCENE_POINTS, SCROLL_END } from "./heroScenes";
 import { pad2, prefersReducedMotion } from "./heroUtils";
 import { useAmbientMotion, useDialogueMotion, useKineticTypography } from "./useHeroAnimations";
 import { navigateToChapter } from "../PortfolioChapters/chapterNavigation";
+import MobileHeroIntro from "./MobileHeroIntro";
+import { MOBILE_SCENES } from "./mobileScenes";
+import { useMobileLevelUpFeedback } from "./useMobileLevelUpFeedback";
+import "./MobileLevelUpFeedback.css";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -38,6 +42,37 @@ const pickSceneIndex = (progress: number, direction: number, current: number) =>
 };
 
 export default function YoojinHero() {
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  const [journeyStarted, setJourneyStarted] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsMobile(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  const startMobileJourney = () => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+    setJourneyStarted(true);
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+      const hero = document.getElementById("top");
+      hero?.setAttribute("tabindex", "-1");
+      hero?.focus({ preventScroll: true });
+    });
+  };
+
+  return (
+    <div className="heroEntry">
+      {isMobile && !journeyStarted
+        ? <MobileHeroIntro onStartJourney={startMobileJourney} onViewProjects={() => navigateToChapter("projects")} />
+        : <HeroJourney key={isMobile ? "mobile" : "desktop"} mobileMode={isMobile} />}
+    </div>
+  );
+}
+
+function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const motionRef = useRef<HTMLDivElement>(null);
@@ -79,7 +114,9 @@ export default function YoojinHero() {
   const [revolutionDone, setRevolutionDone] = useState(false);
   const [acquisitionVisible, setAcquisitionVisible] = useState(false);
 
-  const currentScene = SCENES[sceneIndex];
+  const scenes = mobileMode ? MOBILE_SCENES : SCENES;
+  const currentScene = scenes[sceneIndex];
+  const levelFeedback = useMobileLevelUpFeedback();
 
   useKineticTypography(sceneIndex, {
     sectionRef,
@@ -101,7 +138,7 @@ export default function YoojinHero() {
     let cancelled = false;
 
     const decodeAll = Promise.all(
-      SCENES.map(async (scene) => {
+      scenes.map(async (scene) => {
         const image = new Image();
         image.src = scene.image;
         try {
@@ -124,7 +161,7 @@ export default function YoojinHero() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [scenes]);
 
   /* ========================================
      MAIN SCROLL
@@ -142,8 +179,8 @@ export default function YoojinHero() {
         stage,
         host,
         layers: imageRefs.current.filter((layer): layer is HTMLDivElement => layer !== null),
-        images: SCENES.map((scene) => scene.image),
-        transitions: SCENES.map((scene) => scene.transition),
+        images: scenes.map((scene) => scene.image),
+        transitions: scenes.map((scene) => scene.transition),
         onStart: () => {
           lockExitRef.current = desiredSceneRef.current === LAST_SCENE;
           setIsTransitioning(true);
@@ -251,7 +288,7 @@ export default function YoojinHero() {
       triggerRef.current = null;
       motionApiRef.current = null;
     };
-  }, []);
+  }, [scenes]);
 
 
 
@@ -335,7 +372,7 @@ export default function YoojinHero() {
 
     const index = Math.max(
       0,
-      Math.min(SCENES.length - 1, targetIndex)
+      Math.min(scenes.length - 1, targetIndex)
     );
 
     const progress = SCENE_POINTS[index];
@@ -381,11 +418,12 @@ export default function YoojinHero() {
 
       if (!revolutionDone || isTransitioning) return;
 
-      navigateToChapter("projects");
+      navigateToChapter(mobileMode ? "about-profile" : "projects");
 
       return;
     }
 
+    if (mobileMode) levelFeedback.play();
     moveToScene(sceneIndex + 1);
   };
 
@@ -423,6 +461,7 @@ export default function YoojinHero() {
       <div
         ref={stageRef}
         className={`heroStage scene-${sceneIndex} ${acquisitionVisible ? "isAcquired" : ""}`}
+        data-mobile-journey={mobileMode ? "true" : undefined}
       >
         {/* A11Y: 문서의 유일한 h1 + 화면 변화 안내 */}
 
@@ -430,7 +469,7 @@ export default function YoojinHero() {
         <div className="srOnly" role="status" aria-live="polite" aria-atomic="true">
           {dialogueOpen
             ? `이유진: ${currentScene.dialogue[dialogueIndex]}`
-            : `${currentScene.level} / ${pad2(SCENES.length)}. ${currentScene.job}. ${currentScene.title}. ${currentScene.phrase}`}
+            : `${currentScene.level} / ${pad2(scenes.length)}. ${currentScene.job}. ${currentScene.title}. ${currentScene.phrase}`}
         </div>
 
         {/* SKIP: 첫 포커스 요소이자, 연출 중에도 항상 보이는 프로젝트 바로가기 */}
@@ -440,7 +479,7 @@ export default function YoojinHero() {
         {/* IMAGE */}
 
         <div className="imageStack">
-          {SCENES.map((scene, index) => (
+          {scenes.map((scene, index) => (
             <div
               key={scene.image}
               ref={(el) => {
@@ -450,7 +489,7 @@ export default function YoojinHero() {
             >
               <img
                 src={scene.image}
-                alt={`이유진 캐릭터 이미지 (${scene.level} / ${pad2(SCENES.length)})`}
+                alt={`이유진 캐릭터 이미지 (${scene.level} / ${pad2(scenes.length)})`}
                 className="heroImage"
                 draggable={false}
               />
@@ -562,20 +601,22 @@ export default function YoojinHero() {
 
         {/* CHARACTER */}
 
-        <button
-          type="button"
-          className="characterHitbox"
-          aria-disabled={isTransitioning}
-          aria-expanded={dialogueOpen}
-          onClick={handleCharacter}
-          aria-label="이유진 대사 보기"
-        >
-          <span>
-            TAP
-          </span>
-        </button>
+        {!mobileMode && (
+          <button
+            type="button"
+            className="characterHitbox"
+            aria-disabled={isTransitioning}
+            aria-expanded={dialogueOpen}
+            onClick={handleCharacter}
+            aria-label="이유진 대사 보기"
+          >
+            <span>
+              TAP
+            </span>
+          </button>
+        )}
 
-        {dialogueOpen && (
+        {!mobileMode && dialogueOpen && (
           <button
             ref={dialogueRef}
             type="button"
@@ -643,13 +684,14 @@ export default function YoojinHero() {
 
           <button
             type="button"
-            className={`nextControl ${
+            className={`nextControl ${mobileMode && levelFeedback.active ? "isMobileLevelUpPressed" : ""} ${
               sceneIndex === LAST_SCENE && !revolutionDone
                 ? "isWaiting"
                 : ""
             }`}
             aria-disabled={isTransitioning || (sceneIndex === LAST_SCENE && !revolutionDone)}
             onClick={handleNext}
+            aria-label={mobileMode && sceneIndex === LAST_SCENE && revolutionDone ? "이유진 소개 보기" : undefined}
           >
             <span className="nextCopy">
               <small>
@@ -674,11 +716,16 @@ export default function YoojinHero() {
                 <path className="risePath" d="M21 43 48 16M29 16h19v19" />
               </svg>
             </span>
-            <span className="mobileNextCopy">
+            <span className={`mobileNextCopy ${isTransitioning || sceneIndex === LAST_SCENE ? "mobileNextCopy--korean" : ""}`}>
               {isTransitioning ? "전환 중…" : sceneIndex === LAST_SCENE
-                ? revolutionDone ? "작업 보기" : "전환 중…"
+                ? revolutionDone ? mobileMode ? "소개 보기" : "작업 보기" : "전환 중…"
                 : "LEVEL UP ↑"}
             </span>
+            {mobileMode && levelFeedback.active && (
+              <span key={levelFeedback.sequence} className="mobileLevelFeedback" aria-hidden="true">
+                +1 LEVEL UP<i /><i /><i />
+              </span>
+            )}
           </button>
         </div>
         </footer>

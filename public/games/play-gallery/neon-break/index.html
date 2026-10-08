@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit:wght@400;700&display=swap" rel="stylesheet">
+    <title>Retro Brick Breaker</title>
+
+    <style>
+        body {
+            background-color: #0b0518;
+        }
+
+        #gameBox {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        canvas {
+            max-width: calc(100vw - 32px);
+            height: auto;
+            border: 6px double #00f0ff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px #00f0ff, inset 0 0 15px rgba(0, 240, 255, 0.5);
+            margin: 0 auto;
+
+            background: linear-gradient(rgba(18, 10, 36, 1) 50%,
+                    rgba(0, 0, 0, 0.4) 50%);
+            background-size: 100% 4px;
+
+        }
+
+        #restratBtn {
+            position: absolute;
+            left: 50%;
+            top: 58%;
+            transform: translate(-50%, -50%);
+            padding: 10px 25px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+
+            font-family: "Orbit", sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            box-shadow: none;
+            transition: all 0.1s ease;
+        }
+
+        #restratBtn:hover {
+            background-color: #ffffff;
+            color: #0b0518;
+        }
+
+        #startScreen {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        #startScreen h1 {
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00f0ff;
+            font-family: "Orbit", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            font-size: 40px;
+        }
+
+        #startScreen span {
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00f0ff;
+            font-family: "Orbit", sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            font-size: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-group button {
+            padding: 12px 25px;
+            font-family: "Orbit", sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        #easyBtn {
+            background-color: #8ecace;
+            color: #111;
+        }
+
+        #easyBtn:hover {
+            transform: scale(1.1);
+            background-color: #39ff14;
+        }
+
+        #hardBtn {
+            background-color: #ff6b6b;
+            color: #111;
+        }
+
+        #hardBtn:hover {
+            transform: scale(1.1);
+            background-color: #ff007f;
+        }
+
+        /* 올클리어 전용 이펙트 */
+
+        .clear-rainbow {
+            border: 6px solid transparent !important;
+            background-image: linear-gradient(#150022, #000000), 
+                              linear-gradient(120deg, #ff007f, #ffcc00, #39ff14, #00f0ff, #7f00ff, #ff007f) !important;
+            background-origin: border-box !important;
+            background-clip: content-box, border-box !important;
+            background-size: 300% 300% !important;
+            
+            /* 무지개 스펙트럼이 흐르듯 회전하는 애니메이션 */
+            animation: rainbowFlow 4s linear infinite !important;
+            box-shadow: 0 0 35px rgba(57, 255, 20, 0.4), inset 0 0 25px rgba(0, 240, 255, 0.3) !important;
+        }
+
+        @keyframes rainbowFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
+        /* 하단 경고문구 */
+
+        #warningText {
+            position: fixed;
+            bottom: 8%; 
+            left: 50%;
+            transform: translateX(-50%);
+            
+            margin: 0;
+            font-family: "Orbit", sans-serif;
+            font-size: 12px; 
+            font-weight: 700;
+            color: #ff3333; 
+            letter-spacing: 1px;
+            text-align: center;
+            
+            text-shadow: 0 0 5px rgba(157, 44, 44, 0.5);
+            opacity: 0.8;
+            
+            animation: blink 1.5s infinite alternate;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.4; }
+            100% { opacity: 0.9; }
+        }
+
+        #warningText2 {
+            position: fixed;
+            bottom: 10%; 
+            left: 50%;
+            transform: translateX(-50%);
+            
+            margin: 0;
+            font-family: "Orbit", sans-serif;
+            font-size: 12px; 
+            font-weight: 700;
+            color: #ebe7e6; 
+            letter-spacing: 1px;
+            text-align: center;
+            
+            text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+            opacity: 0.8;
+            
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div id="gameBox">
+        <canvas width="920" height="585"></canvas>
+
+        <div id="startScreen">
+            <h1>도전! 벽돌깨기 게임</h1>
+            <span>Retro Brick Breaker</span>
+            <div class="btn-group">
+                <button id="easyBtn">EASY MODE</button>
+                <button id="hardBtn">HARD MODE</button>
+            </div>
+        </div>
+
+        <button id="restratBtn">다시 시작</button>
+    </div>
+    <div class="text-Box">
+    <p id="warningText">⚠️ 주의: 조작 시 마우스와 키보드 중 하나만 사용해주세요!</p>
+    <p id="warningText2">모드 다시 선택 : 새로고침 (F5) 을 눌러주세요</p>
+    </div>
+
+    <!-- 자바스크립트 영역 -->
+    <script src="./main_Sound.js"></script>
+
+
+</body>
+
+</html>

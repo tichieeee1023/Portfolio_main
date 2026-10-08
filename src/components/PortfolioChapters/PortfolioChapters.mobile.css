@@ -19,15 +19,40 @@
   .aboutTraits span { display: block; font-size: 11px; }
   .aboutDetail { margin-top: 100px; }
   .aboutDetailHead { font-size: 8px; }
-  .transcreationTitle { grid-template-columns: 1fr; gap: 8px; padding: 42px 0 26px; font-size: clamp(54px, 17vw, 92px); }
-  .transcreationTitle > span:last-child { text-align: left; }
-  .transcreationTitle b { display: none; }
-  .transcreationResult { grid-template-columns: 1fr; gap: 34px; padding: 30px 0 48px; }
-  .transcreationResult strong { text-align: left; font-size: clamp(50px, 15vw, 86px); white-space: normal; }
-  .transcreationNotes { grid-template-columns: 1fr; }
-  .transcreationNotes article, .transcreationNotes article:nth-child(2), .transcreationNotes .transcreationFrontend { grid-column: auto; min-height: 180px; border-right: 0; border-bottom: 1px solid var(--line); }
-  .transcreationNotes .transcreationFrontend { border-bottom: 0; }
-  .transcreationNotes h4 { margin-top: 38px; }
+  /* Two strengths merge into one frontend practice on a compact mobile spread. */
+  .aboutScreen.aboutScreen--transcreation { padding: 44px 0 48px; }
+  .aboutScreen--transcreation .aboutDetailHead { gap: 12px; align-items: center; font-size: 10px; }
+  .aboutScreen--transcreation .transcreationTitle { display: none; }
+  .aboutScreen--transcreation .transcreationResult {
+    display: flex; flex-direction: column-reverse; align-items: flex-start;
+    gap: 22px; padding: 28px 0 26px;
+  }
+  .aboutScreen--transcreation .transcreationResult strong {
+    text-align: left; font-size: clamp(64px, 20.5vw, 94px);
+    line-height: .86; letter-spacing: -.08em; white-space: normal;
+  }
+  .aboutScreen--transcreation .transcreationResult strong em { display: block; }
+  .aboutScreen--transcreation .transcreationResult p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .aboutScreen--transcreation .transcreationNotes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aboutScreen--transcreation .transcreationNotes article {
+    display: flex; flex-direction: column; min-height: 176px;
+    padding: 22px 16px; border-bottom: 1px solid var(--line);
+  }
+  .aboutScreen--transcreation .transcreationNotes article:nth-child(2) { border-right: 0; }
+  .aboutScreen--transcreation .transcreationNotes article > span { font-size: 10px; letter-spacing: .08em; }
+  .aboutScreen--transcreation .transcreationNotes h4 { margin: 22px 0 12px; font-size: 20px; line-height: 1.3; text-wrap: balance; }
+  .aboutScreen--transcreation .transcreationNotes p { margin-top: auto; font-size: 13px; line-height: 1.55; }
+  .aboutScreen--transcreation .transcreationArrow {
+    display: grid; grid-column: 1 / -1; min-width: 0; height: 40px;
+    border-right: 0; font-size: 0;
+  }
+  .aboutScreen--transcreation .transcreationArrow::after { content: '\2193'; font-size: 28px; line-height: 1; }
+  .aboutScreen--transcreation .transcreationNotes .transcreationFrontend {
+    grid-column: 1 / -1; min-height: 0; padding: 22px 24px;
+    border: 0; gap: 8px;
+  }
+  .aboutScreen--transcreation .transcreationNotes .transcreationFrontend h4 { margin: 0; font-size: 28px; line-height: 1.1; }
+  .aboutScreen--transcreation .transcreationNotes .transcreationFrontend p { margin: 0; font-size: 15px; line-height: 1.55; }
   .backgroundIntro { align-items: flex-start; flex-direction: column; gap: 24px; }
   .backgroundIntro > span { max-width: 100%; }
   .backgroundGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -80,7 +105,6 @@
   .aboutHeadlineLine { white-space: normal; }
   .aboutScreen--transcreation .aboutDetail,
   .aboutScreen--background .aboutDetail { margin: 0; }
-  .aboutScreen--transcreation .transcreationNotes article { min-height: 180px; }
   .aboutScreen--background .backgroundGrid { grid-template-rows: repeat(2, minmax(0, 1fr)); }
   .aboutScreen--background { padding: 52px 0 64px; }
   .aboutScreen--background .aboutDetailHead { font-size: 9px; letter-spacing: .1em; }
@@ -106,6 +130,9 @@
   .aboutScreen--background .backgroundCard small {
     margin-top: auto; font-size: 9px; line-height: 1.5; letter-spacing: 0;
   }
+  .aboutScreen--background .backgroundHours { gap: 7px; }
+  .aboutScreen--background .backgroundHours strong { font-size: clamp(30px, 9vw, 42px); }
+  .aboutScreen--background .backgroundHours small { margin: 0; font-size: 7px; line-height: 1.35; letter-spacing: .06em; }
 }
 
 @media (max-width: 760px) {
@@ -174,11 +201,6 @@
     font-size: 10px;
   }
 
-  .transcreationResult strong {
-    font-size: clamp(46px, 14vw, 78px);
-    line-height: .9;
-    overflow-wrap: anywhere;
-  }
 
   .workCardBody {
     padding: 24px 20px 26px;
@@ -224,4 +246,23 @@
     flex-wrap: wrap;
     row-gap: 10px;
   }
+}
+
+@media (max-width: 760px) {
+  .aboutScreen.aboutScreen--profile { padding: 44px 0 52px; }
+  .aboutScreen--profile .aboutGrid { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .aboutScreen--profile .aboutStory { display: contents; }
+  .aboutScreen--profile .aboutStatement { grid-row: 1; }
+  .aboutScreen--profile .aboutPortrait { grid-row: 2; width: calc(100% - 12px); max-width: 480px; padding: 12px 12px 10px; }
+  .aboutScreen--profile .aboutBio { grid-row: 3; padding-top: 0; border: 0; }
+  .aboutScreen--profile .aboutKicker { margin-bottom: 16px; font-size: 11px; }
+  .portfolioChapters .aboutScreen--profile .aboutStory h3.aboutHeadline {
+    margin: 0; font-size: clamp(32px, 8.8vw, 52px); line-height: 1.16; letter-spacing: -.055em;
+  }
+  .aboutScreen--profile .aboutPortraitImage { aspect-ratio: 4 / 3; }
+  .aboutScreen--profile .aboutPortraitImage img { object-position: center 30%; }
+  .aboutScreen--profile .aboutPortrait::before { top: 24px; left: 24px; }
+  .aboutScreen--profile .aboutPortraitMeta { padding-top: 10px; font-size: 10px; letter-spacing: .03em; }
+  .aboutScreen--profile .aboutLead { margin-bottom: 22px; font-size: 18px; line-height: 1.7; }
+  .aboutScreen--profile .textLink { min-height: 52px; font-size: 16px; }
 }

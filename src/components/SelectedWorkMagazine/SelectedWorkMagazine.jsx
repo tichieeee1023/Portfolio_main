@@ -21,7 +21,7 @@ function MagazineIntro({ introRef, onOpen }) {
       </header>
       <aside className="intro-rail" aria-hidden="true"><span>WORK</span><small>01—{COUNT}</small></aside>
       <div className="intro-body">
-        <p className="intro-kicker">A SMALL MAGAZINE OF SELECTED PROJECTS</p>
+        <p className="intro-kicker">FROM BACKGROUND TO SELECTED WORK</p>
         <h2 id="projects-title">SELECTED<br /><em>WORK</em></h2>
         <p className="intro-copy">여섯 개의 프로젝트를 한 장씩 넘겨보는 작은 포트폴리오 매거진.</p>
         <button className="open-button" type="button" onClick={onOpen}><span>OPEN MAGAZINE</span><span>↘</span></button>
@@ -40,7 +40,7 @@ function ProjectVisual({ project, active, stopToken }) {
         <div className="phone-notch" />
         <div className="phone-screen"><ProjectMedia src={project.mobileSrc} title={project.title.join(' ')} phone /></div>
       </div>
-      {project.special?.type === 'audio-turntable' && <MidnightTurntable audioSrc={project.special.audioSrc} active={active} stopToken={stopToken} />}
+      {project.special?.type === 'turntable-visualizer' && <MidnightTurntable active={active} />}
     </figure>
   );
 }
@@ -284,6 +284,8 @@ export default function SelectedWorkMagazine() {
       (openedRef.current && activeIndexRef.current === PROJECTS.length - 1 && direction > 0)
     );
     const onWheel = event => {
+      if (event.defaultPrevented) return;
+      if (gsap.isTweening(window) && inViewport()) { event.preventDefault(); return; }
       if (isCompact() || !inViewport() || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       if (atBoundary(event.deltaY)) return;
       // Overflowing copy stays readable without changing the project transition.
@@ -306,6 +308,7 @@ export default function SelectedWorkMagazine() {
       transitionTo(activeIndexRef.current + direction);
     };
     const onKeyDown = event => {
+      if (event.defaultPrevented || gsap.isTweening(window)) return;
       if (isCompact() || !inViewport() || event.target.closest?.('button, a, input, textarea, select, .editorial')) return;
       const direction = ['ArrowDown', 'PageDown', 'ArrowRight'].includes(event.key) ? 1 : -1;
       if (atBoundary(direction)) return;
@@ -322,6 +325,7 @@ export default function SelectedWorkMagazine() {
     };
     const onTouchStart = event => { touchStartY.current = event.touches?.[0]?.clientY ?? null; };
     const onTouchEnd = event => {
+      if (gsap.isTweening(window)) return;
       if (isCompact() || !inViewport() || touchStartY.current == null || animatingRef.current) return;
       const endY = event.changedTouches?.[0]?.clientY ?? touchStartY.current;
       const diff = touchStartY.current - endY;
@@ -365,11 +369,13 @@ export default function SelectedWorkMagazine() {
   return (
     <div className="selectedWorkMagazine"><div className="prototype-shell">
       <header className="mobile-work-intro">
-        <span>02 / SELECTED WORK</span>
-        <h2>프로젝트 소개<span aria-hidden="true">.</span></h2>
-        <p>직접 만든 여섯 개의 프로젝트.</p>
+        <span>02 / WORK INDEX</span>
+        <h2 aria-label="선택한 프로젝트">SELECTED<br /><em>WORK</em></h2>
+        <p>배경과 경험을 바탕으로 만든<br />여섯 개의 프로젝트.</p>
+        <a className="mobile-work-open" href="#work-pages"><span>프로젝트 보기</span><b aria-hidden="true">↓</b></a>
+        <small className="mobile-cover-foot">YOOJIN / PORTFOLIO · 2026</small>
       </header>
-      <div ref={bookRef} className="portfolio-book" data-theme={activeProject.theme}>
+      <div id="work-pages" ref={bookRef} className="portfolio-book" data-theme={activeProject.theme}>
         <MagazineIntro introRef={introRef} onOpen={openMagazine} />
         <section className="magazine-shell" aria-label="Selected work magazine">
           <header className="running-head magazine-head">
@@ -380,6 +386,7 @@ export default function SelectedWorkMagazine() {
               aria-label={activeIndex < PROJECTS.length - 1 ? `다음 프로젝트: ${PROJECTS[activeIndex + 1].koTitle}` : '마지막 프로젝트'}>
               <span aria-hidden="true">→</span>
             </button>
+            <p className="mobile-swipe-hint"><span aria-hidden="true">↔</span>좌우로 밀어 프로젝트 넘기기</p>
           </header>
           <div className="stage" ref={compactStageRef}
             onPointerDown={event => {

@@ -1,9 +1,14 @@
-// Add files at these paths and restart Vite/build; absent assets never request broken URLs.
-const assets = import.meta.glob('/public/selected-work/{work,media,audio}/*', { eager: true, query: '?url', import: 'default' });
-const asset = (path) => assets[`/public/selected-work${path}`] || null;
-const media = (slug, kind, extensions) => extensions.flatMap(extension =>
-  ['work', 'media'].map(folder => asset(`/${folder}/${slug}-${kind}.${extension}`))
-).find(Boolean) || null;
+// Static URLs map to files in public/selected-work/media; public assets are served from the site root.
+const asset = (path) => path ? `/selected-work${path}` : null;
+const MEDIA = {
+  moonlight: { pc: '/media/moonlight-pc.webp', mobile: '/media/moonlight-mobile.webm' },
+  daily: { pc: '/media/harvest-pc.webp', mobile: '/media/daily-mobile.mp4' },
+  b612: { pc: '/media/b612-pc.webp', mobile: '/media/b612-mobile.webm' },
+  forlog: { pc: '/media/forlog-pc.webp', mobile: '/media/forlog-mobile.webm' },
+  midnight: { pc: '/media/midnight-pc.webp', mobile: '/media/midnight-mobile.webm' },
+  jajak: { pc: '/media/jajak-pc.webp', mobile: '/media/jajak-mobile.webm' },
+};
+const media = (slug, kind) => asset(MEDIA[slug]?.[kind] || null);
 const entries = [
   {
     slug: 'moonlight', group: 'personal', category: 'COMMERCE EXPERIENCE',
@@ -54,7 +59,7 @@ const entries = [
     tech: ['HTML5', 'CSS3', 'JavaScript', 'JSON', 'Git / GitHub'],
     tags: ['Content Structure', 'Pagination', 'Playback UI', 'TTS', 'BGM'],
     meta: 'SHORT SPRINT',
-    special: { type: 'audio-turntable', audioSrc: asset('/audio/midnight-sample.mp3') },
+    special: { type: 'turntable-visualizer' },
   },
   {
     slug: 'jajak', group: 'team', category: 'SERVICE INTEGRATION',
