@@ -1,5 +1,6 @@
 import { LAST_SCENE } from "./heroScenes";
 import { MOBILE_SCENES } from "./mobileScenes";
+import MobileMenu from "../common/MobileMenu";
 import "./MobileHeroIntro.css";
 
 type Props = {
@@ -10,24 +11,32 @@ type Props = {
 export default function MobileHeroIntro({ onStartJourney, onViewProjects }: Props) {
   return (
     <section id="top" className="mobileHeroIntro" aria-label="이유진 프론트엔드 포트폴리오">
-      <img className="mobileIntroBackdrop" src={MOBILE_SCENES[LAST_SCENE].image} alt="작업 공간에 앉아 있는 이유진 포트폴리오 캐릭터" fetchPriority="high" decoding="async" />
-      <div className="mobileIntroPortrait">
-        <div className="mobileIntroBrand" aria-hidden="true"><img src="/brand/yj-horizontal-dark.png" className="mobileIntroBrandLogo" alt="" width="563" height="165" decoding="async" /></div>
-        <h1 className="mobileIntroIdentity" aria-label="프론트엔드 개발자 이유진">
-          <span>FRONTEND DEVELOPER</span>
-          <strong>YOOJIN</strong>
-        </h1>
-      </div>
-      <div className="mobileIntroActions">
-        <p>비개발자에서 프론트엔드까지,<br />다섯 단계의 성장 기록.</p>
-        <button type="button" className="mobileIntroProjects" onClick={onViewProjects}>
-          대표 작업 보기 <span aria-hidden="true">↗</span>
-        </button>
-        <button type="button" className="mobileIntroStart" onClick={onStartJourney}>
-          <span className="mobileIntroPlay" aria-hidden="true">▶</span>
-          <span className="mobileIntroStartCopy"><strong>유진 키우기 시작</strong><small>눌러서 성장 과정 보기</small></span>
-          <span className="mobileIntroStartArrow" aria-hidden="true">→</span>
-        </button>
+      <img
+        className="mobileIntroBackdrop"
+        src={MOBILE_SCENES[LAST_SCENE].image}
+        alt="창가에서 노트북을 보며 커피를 마시는 이유진 포트폴리오 일러스트"
+        fetchPriority="high"
+        decoding="async"
+      />
+      <header className="mobileIntroHeader">
+        <a href="#top" className="mobileIntroLogo" aria-label="이유진 포트폴리오 첫 화면">
+          <img src="/brand/yj-monogram-light.png" alt="YJ" width="161" height="165" />
+        </a>
+        <MobileMenu light />
+      </header>
+      <div className="mobileIntroContent">
+        <p className="mobileIntroEyebrow">LEE YOOJIN / PORTFOLIO</p>
+        <h1 className="mobileIntroTitle">프론트엔드 개발자<strong>이유진</strong></h1>
+        <div className="mobileIntroRule" aria-hidden="true" />
+        <p className="mobileIntroDescription">대표 작업과 다섯 단계의 성장 기록을 소개합니다.</p>
+        <div className="mobileIntroButtons">
+          <button type="button" className="mobileIntroProjects" onClick={onViewProjects}>
+            <span>대표 작업 보기</span><span aria-hidden="true">↗</span>
+          </button>
+          <button type="button" className="mobileIntroStart" onClick={onStartJourney}>
+            <span>5단계 성장 보기</span><span aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
     </section>
   );

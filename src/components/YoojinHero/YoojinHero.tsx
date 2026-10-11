@@ -12,6 +12,7 @@ import { pad2, prefersReducedMotion } from "./heroUtils";
 import { useAmbientMotion, useDialogueMotion, useKineticTypography } from "./useHeroAnimations";
 import { navigateToChapter } from "../PortfolioChapters/chapterNavigation";
 import MobileHeroIntro from "./MobileHeroIntro";
+import MobileMenu from "../common/MobileMenu";
 import { MOBILE_SCENES } from "./mobileScenes";
 import { useMobileLevelUpFeedback } from "./useMobileLevelUpFeedback";
 import "./MobileLevelUpFeedback.css";
@@ -515,6 +516,7 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
             </a>
           </div>
 
+          {mobileMode && <MobileMenu />}
           <nav aria-label="주요 메뉴">
             <a href="#about">
               ABOUT

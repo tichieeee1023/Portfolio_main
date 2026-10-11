@@ -41,3 +41,18 @@
 @media (prefers-reduced-motion: reduce) {
   .chapterBrandLogo, .headerBrandLogo { transition: none; }
 }
+
+/* Mobile header logo size is controlled by the dedicated mobile layout. */
+@media (max-width: 768px) {
+  .heroStage .heroHeader { justify-content: space-between; }
+  .heroStage .heroHeader .mobileSiteMenu { margin-left: auto; }
+  .chapterMobileMenu { display: flex; align-items: center; justify-content: flex-end; }
+  .chapterNav { grid-template-columns: 44px minmax(0, 1fr); justify-content: space-between; }
+  .chapterNavLinks { display: none; }
+  .chapterNav .chapterBrandLogo { width: 32px; height: 32px; }
+  .chapterNav .mobileSiteMenuTrigger { color: #30241d; }
+  .chapterNav[data-section="projects"] .mobileSiteMenuTrigger { color: #fff8ed; }
+}
+@media (min-width: 769px) {
+  .chapterMobileMenu { display: none; }
+}

@@ -8,6 +8,7 @@ import { aboutPagerLabels, chapters, pad, skillGroups, SKILL_TOTAL, TOTAL } from
 import './PortfolioChapters.css';
 import SelectedWorkMagazine from '../SelectedWorkMagazine/SelectedWorkMagazine';
 import PlayGallery from '../PlayGallery/PlayGallery';
+import MobileMenu from '../common/MobileMenu';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -643,6 +644,7 @@ export default function PortfolioChapters() {
       <div className="chapterNavLinks">
         {chapters.map((chapter, index) => <a key={chapter.id} href={'#' + chapter.id} aria-current={active === chapter.id ? 'location' : undefined}><span>{pad(index + 1)}</span>{chapter.label}</a>)}
       </div>
+      <div className="chapterMobileMenu"><MobileMenu light={active === 'projects'} active={active} /></div>
       <div className="chapterProgress" aria-hidden="true" />
     </nav>
 
