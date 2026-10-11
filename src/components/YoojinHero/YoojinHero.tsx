@@ -15,6 +15,7 @@ import MobileHeroIntro from "./MobileHeroIntro";
 import { MOBILE_SCENES } from "./mobileScenes";
 import { useMobileLevelUpFeedback } from "./useMobileLevelUpFeedback";
 import "./MobileLevelUpFeedback.css";
+import "./heroEditorialRefresh.css";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -431,12 +432,10 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
      DIALOGUE
   ======================================== */
 
+  // 성장 서사를 건너뛰되 포트폴리오로 이탈하지 않고 마지막 SSR 장면으로 이동한다.
   const handleSkip = () => {
-    navigateToChapter("projects");
-  };
-
-  const handleAbout = () => {
-    glideToChapter("about");
+    if (sceneIndex === LAST_SCENE) return;
+    moveToScene(LAST_SCENE);
   };
 
   const handleCharacter = () => {
@@ -472,9 +471,9 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
             : `${currentScene.level} / ${pad2(scenes.length)}. ${currentScene.job}. ${currentScene.title}. ${currentScene.phrase}`}
         </div>
 
-        {/* SKIP: 첫 포커스 요소이자, 연출 중에도 항상 보이는 프로젝트 바로가기 */}
+        {/* 중간 성장 단계를 건너뛰고 SSR로 이동하는 버튼은 아래 heroFooter에 배치 */}
 
-        <GrowthJourney index={sceneIndex} complete={acquisitionVisible} />
+        {mobileMode && <GrowthJourney index={sceneIndex} complete={acquisitionVisible} />}
 
         {/* IMAGE */}
 
@@ -511,19 +510,17 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
 
         <header className="heroHeader">
           <div className="headerBrand">
-            <a href="#top">
-              YOOJIN
+            <a href="#top" aria-label="이유진 포트폴리오 맨 위로">
+              <img src="/brand/yj-horizontal-dark.png" className="headerBrandLogo" alt="YOOJIN — Frontend Developer" width="563" height="165" decoding="async" />
             </a>
-
-            <span>
-              FRONTEND DEVELOPER · REACT / TYPESCRIPT
-            </span>
           </div>
 
           <nav aria-label="주요 메뉴">
             <a href="#about">
               ABOUT
             </a>
+
+            <a href="#projects">WORK</a>
 
             <a href="#contact">
               CONTACT
@@ -647,15 +644,17 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
 
         <footer className="heroFooter" aria-label="성장 단계와 프로젝트 이동">
           <GrowthIdentity index={sceneIndex} transitioning={isTransitioning} />
-          <button
-            type="button"
-            className="skipCta"
-            onClick={handleSkip}
-            aria-label="인트로 건너뛰고 프로젝트 보기"
-          >
-            <small>SKIP INTRO</small>
-            <strong>PROJECTS ↗</strong>
-          </button>
+          {sceneIndex !== LAST_SCENE && (
+            <button
+              type="button"
+              className="skipCta"
+              onClick={handleSkip}
+              aria-label="중간 성장 단계를 건너뛰고 최종 SSR 레벨 5로 이동"
+            >
+              <small>SKIP EVOLUTION</small>
+              <strong>최종 단계로 ↗</strong>
+            </button>
+          )}
         <div className="navigationControl">
           <button
             type="button"
@@ -668,19 +667,6 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
               PREV
             </span>
           </button>
-
-          {sceneIndex === LAST_SCENE && revolutionDone && (
-            <button
-              type="button"
-              className="aboutChapterControl"
-              onClick={handleAbout}
-              aria-label="이유진 소개 보기"
-            >
-              <small>NEXT / ABOUT</small>
-              <strong>카드 밖의 이야기</strong>
-              <span aria-hidden="true">↓</span>
-            </button>
-          )}
 
           <button
             type="button"
@@ -730,6 +716,17 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
         </div>
         </footer>
 
+        {/* 아래 스크롤은 ABOUT으로, VIEW WORK 버튼은 프로젝트 직행이라는 두 동선을 구분한다. */}
+        {!mobileMode && sceneIndex === LAST_SCENE && revolutionDone && !isTransitioning && (
+          <div className="scrollAboutHint" aria-label="아래로 스크롤하면 자기소개가 이어집니다">
+            <span className="scrollAboutHint__copy">
+              <small>NEXT / ABOUT</small>
+              <strong>아래로 스크롤해 소개 보기</strong>
+            </span>
+            <span className="scrollAboutHint__arrow" aria-hidden="true">↓</span>
+          </div>
+        )}
+
         {/* SSR */}
 
         {sceneIndex === LAST_SCENE &&
@@ -743,7 +740,7 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
               <div className="ssrRewardStars" aria-hidden="true">
                 <span /><span /><span /><span /><span />
               </div>
-              <small className="ssrName">이유진 · FRONTEND DEVELOPER</small>
+              <small className="ssrName">DEVELOPER UNLOCKED</small>
             </div>
             </>
           )}

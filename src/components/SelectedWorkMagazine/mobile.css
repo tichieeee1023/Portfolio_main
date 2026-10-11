@@ -204,7 +204,7 @@
   .selectedWorkMagazine .work-index button[aria-current]::after { height: 3px; }
   .selectedWorkMagazine .mobile-project-step { color: var(--project-accent); border-color: currentColor; }
   .selectedWorkMagazine .mobile-project-step:hover:not(:disabled) { background: var(--project-accent); color: var(--paper); border-color: var(--project-accent); }
-  .selectedWorkMagazine .mobile-project-step:not(:disabled) > span { animation: nextProjectPulse 1.8s ease-in-out infinite; }
+  .selectedWorkMagazine .mobile-project-step:not(:disabled) > span { animation: nextProjectPulse 1.8s ease-in-out 3; }
   .selectedWorkMagazine .mobile-swipe-hint { font-size: 12px; line-height: 1.5; color: #625549; }
   .selectedWorkMagazine .mobile-swipe-hint > span { font-size: 19px; color: var(--project-accent); }
   .selectedWorkMagazine .mobile-project-status {

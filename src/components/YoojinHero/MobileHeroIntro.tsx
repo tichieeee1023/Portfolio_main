@@ -12,7 +12,7 @@ export default function MobileHeroIntro({ onStartJourney, onViewProjects }: Prop
     <section id="top" className="mobileHeroIntro" aria-label="이유진 프론트엔드 포트폴리오">
       <img className="mobileIntroBackdrop" src={MOBILE_SCENES[LAST_SCENE].image} alt="작업 공간에 앉아 있는 이유진 포트폴리오 캐릭터" fetchPriority="high" decoding="async" />
       <div className="mobileIntroPortrait">
-        <div className="mobileIntroBrand" aria-hidden="true"><b>YOOJIN</b><span>FRONTEND PORTFOLIO</span></div>
+        <div className="mobileIntroBrand" aria-hidden="true"><img src="/brand/yj-horizontal-dark.png" className="mobileIntroBrandLogo" alt="" width="563" height="165" decoding="async" /></div>
         <h1 className="mobileIntroIdentity" aria-label="프론트엔드 개발자 이유진">
           <span>FRONTEND DEVELOPER</span>
           <strong>YOOJIN</strong>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 182" role="img"><title>YOOJIN brand</title><g>
+<path d="M18 72 C 48 31, 95 15, 154 21 C 183 23, 208 29, 231 39" fill="none" stroke="#c8a05f" stroke-width="3.4" stroke-linecap="round" opacity=".9"/>
+<path d="M19 74 C 73 96, 126 101, 187 84 C 207 79, 225 72, 239 64" fill="none" stroke="#c8a05f" stroke-width="2.2" stroke-linecap="round" opacity=".34"/>
+<text x="54" y="126" fill="#2b1e17" font-family="Georgia, Times New Roman, serif" font-weight="700" font-size="112" letter-spacing="-.08em">Y</text>
+<text x="114" y="143" fill="#2b1e17" font-family="Georgia, Times New Roman, serif" font-weight="700" font-size="122" letter-spacing="-.09em">J</text>
+<path d="M136 18v20" fill="none" stroke="#c8a05f" stroke-width="1.8" stroke-linecap="round"/><circle cx="136" cy="42" r="2.4" fill="#c8a05f"/>
+<path d="M136 146v10" fill="none" stroke="#c8a05f" stroke-width="1.5"/><circle cx="136" cy="160" r="2.1" fill="#c8a05f"/>
+<path d="M136 6l4 4-4 4-4-4Z M136 170l3.6 3.6-3.6 3.6-3.6-3.6Z" fill="#c8a05f"/>
+<path transform="translate(211 80)" d="M 0 -11 L 2.42 -2.42 L 11 0 L 2.42 2.42 L 0 11 L -2.42 2.42 L -11 0 L -2.42 -2.42 Z" fill="#c8a05f"/><path transform="translate(224 80)" d="M 0 -4 L 0.88 -0.88 L 4 0 L 0.88 0.88 L 0 4 L -0.88 0.88 L -4 0 L -0.88 -0.88 Z" fill="#6f5c4d"/>
+</g></svg>

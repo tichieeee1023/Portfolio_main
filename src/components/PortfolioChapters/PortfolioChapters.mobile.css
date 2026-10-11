@@ -3,8 +3,9 @@
 @media (max-width: 760px) {
   .chapter { padding: 86px 0; scroll-margin-top: 58px; }
   .chapterShell { width: calc(100% - 38px); }
-  .chapterNav { height: 58px; grid-template-columns: 34px minmax(0, 1fr); padding: 0 18px; }
+  .chapterNav { height: 58px; grid-template-columns: 42px minmax(0, 1fr); padding: 0 18px; }
   .chapterBrand { font-size: 25px; }
+  .chapterBrandLogo { width: 34px; height: 34px; }
   .chapterNavLinks { justify-content: flex-start; gap: 19px; overflow-x: auto; scrollbar-width: none; }
   .chapterNavLinks::-webkit-scrollbar { display: none; }
   .chapterNavLinks a { font-size: 9px; }

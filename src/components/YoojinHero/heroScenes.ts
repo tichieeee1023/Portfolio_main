@@ -90,8 +90,8 @@ export const SCENES: Scene[] = [
   {
     image: "/assets/profile/yoojin-04.webp",
     transition: "awakening",
-    keyword: "FRONTEND",
-    outline: "DEVELOPER",
+    keyword: "DEVELOPER",
+    outline: "FRONTEND",
     phrase: "INTERACTION MAKER",
     marquee:
       "FRONTEND • REACT • TYPESCRIPT • INTERACTION • FRONTEND • REACT • ",

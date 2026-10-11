@@ -1,15 +1,24 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-export default function ProjectMedia({ src, title, phone = false }) {
+export default function ProjectMedia({ src, title, phone = false, enabled = true, active = true }) {
   const [failedSrc, setFailedSrc] = useState(null);
   const videoRef = useRef(null);
   const [paused, setPaused] = useState(true);
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (!active || !enabled || reducedMotion) video.pause();
+    else void video.play().catch(() => setPaused(true));
+    return () => video.pause();
+  }, [src, enabled, active, reducedMotion]);
   const togglePlayback = async () => {
     const video = videoRef.current;
     if (!video) return;
     if (!video.paused) { video.pause(); return; }
     try { await video.play(); } catch { setPaused(true); }
   };
+  if (src && !enabled) return <div className="media-deferred" aria-hidden="true" />;
   if (!src || failedSrc === src) return (
     <div className={`placeholder ${phone ? 'placeholder--phone' : 'placeholder--pc'}`}>
       <span>{phone ? 'MOBILE VIEW' : 'PROJECT PREVIEW'}</span>
@@ -20,7 +29,7 @@ export default function ProjectMedia({ src, title, phone = false }) {
   const label = `${title} ${phone ? '모바일' : 'PC'} 화면`;
   if (/\.(webm|mp4)(?:[?#]|$)/i.test(src)) {
     return <>
-      <video key={src} ref={videoRef} src={src} aria-label={label} autoPlay muted loop playsInline
+      <video key={src} ref={videoRef} src={src} aria-label={label} autoPlay={active && !reducedMotion} preload="none" muted loop playsInline
         onPlay={() => setPaused(false)} onPause={() => setPaused(true)}
         onError={() => setFailedSrc(src)} />
       <button className="media-playback" type="button" onClick={togglePlayback}
@@ -31,5 +40,5 @@ export default function ProjectMedia({ src, title, phone = false }) {
       </button>
     </>;
   }
-  return <img src={src} alt={label} draggable="false" onError={() => setFailedSrc(src)} />;
+  return <img src={src} alt={label} draggable="false" decoding="async" onError={() => setFailedSrc(src)} />;
 }

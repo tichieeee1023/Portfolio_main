@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import gsap from 'gsap';
 import { CHROME_SWITCH_AT, DURATION, getParts, paintIntro, paintTransition, resetParts } from './transition.js';
@@ -10,37 +10,53 @@ import './styles.css';
 
 const COUNT = String(PROJECTS.length).padStart(2, '0');
 const COMPACT_QUERY = '(max-width: 900px)';
+const readyImages = new Map();
+function prepareImage(src) {
+  if (!src) return Promise.resolve();
+  if (!readyImages.has(src)) {
+    const image = new Image();
+    image.src = src;
+    readyImages.set(src, image.decode().catch(() => {}));
+  }
+  return readyImages.get(src);
+}
 
 function MagazineIntro({ introRef, onOpen }) {
   return (
-    <section ref={introRef} className="intro-sheet" aria-label="Selected work magazine intro">
+    <section ref={introRef} className="intro-sheet" aria-label="나의 프로젝트 포트폴리오 표지">
       <div className="intro-fold" aria-hidden="true"><span /></div>
       <div className="intro-shadow" aria-hidden="true" />
       <header className="running-head intro-head">
-        <span>YOOJIN — PORTFOLIO</span><span>SELECTED WORK</span><span>ISSUE 01 · 2026</span>
+        <span>CHAPTER 02 / WORK</span><span>6개의 프로젝트 · 6가지 개발 경험</span><span>YOOJIN · FRONTEND PORTFOLIO</span>
       </header>
       <aside className="intro-rail" aria-hidden="true"><span>WORK</span><small>01—{COUNT}</small></aside>
       <div className="intro-body">
-        <p className="intro-kicker">FROM BACKGROUND TO SELECTED WORK</p>
-        <h2 id="projects-title">SELECTED<br /><em>WORK</em></h2>
-        <p className="intro-copy">여섯 개의 프로젝트를 한 장씩 넘겨보는 작은 포트폴리오 매거진.</p>
-        <button className="open-button" type="button" onClick={onOpen}><span>OPEN MAGAZINE</span><span>↘</span></button>
+        <p className="intro-kicker"><span className="intro-kicker-index">02</span><span>MY PROJECT PORTFOLIO <span aria-hidden="true">/</span> 개인 01—03 · 팀 04—06</span></p>
+        <h2 id="projects-title">MY<br /><em>WORK.</em></h2>
+        <p className="intro-copy"><strong>6개의 프로젝트,<br />6가지 개발 경험.</strong><span>각 프로젝트에서 구현한 기능과 담당 역할, 사용 기술을 확인할 수 있습니다.</span></p>
+        <button className="open-button" type="button" onClick={onOpen}><span>첫 프로젝트 보기</span><span aria-hidden="true">↘</span></button>
       </div>
-      <div className="intro-meta">{PROJECTS.map(p => <span key={p.id}>{p.id} {p.title.join(' ')}</span>)}</div>
-      <footer className="running-foot intro-foot"><span>SELECTED WORK / FRONTEND PORTFOLIO</span><span>SCROLL TO OPEN →</span></footer>
+      <div className="intro-meta">{PROJECTS.map(p => <span key={p.id}>{p.id} {p.koTitle}<small>{p.group === 'team' ? '팀' : '개인'}</small></span>)}</div>
+      <footer className="running-foot intro-foot"><span>MY WORK / 6 PROJECTS · 6 FIELDS</span><span>SCROLL TO OPEN →</span></footer>
     </section>
   );
 }
 
-function ProjectVisual({ project, active, stopToken }) {
+function ProjectVisual({ project, active, loadMedia, compact }) {
+  const [view, setView] = useState('pc');
+  const showMobile = compact && view === 'mobile' && Boolean(project.mobileSrc);
   return (
-    <figure className="visual js-visual">
-      <div className="visual-media js-media"><ProjectMedia src={project.pcSrc} title={project.title.join(' ')} /></div>
+    <figure className={`visual js-visual ${showMobile ? 'is-mobile-preview' : ''}`}>
+      <div className="visual-media js-media"><ProjectMedia src={showMobile ? project.mobileSrc : project.pcSrc} title={project.title.join(' ')} phone={showMobile} enabled={loadMedia} active={active} /></div>
       <div className="phone js-phone" role="group" aria-label={`${project.title.join(' ')} 모바일 화면`}>
         <div className="phone-notch" />
-        <div className="phone-screen"><ProjectMedia src={project.mobileSrc} title={project.title.join(' ')} phone /></div>
+        <div className="phone-screen"><ProjectMedia src={project.mobileSrc} title={project.title.join(' ')} phone enabled={loadMedia && active && !compact} active={active} /></div>
       </div>
       {project.special?.type === 'turntable-visualizer' && <MidnightTurntable active={active} />}
+      {project.pcSrc && project.mobileSrc && <div className="preview-switch" role="group" aria-label={`${project.koTitle} 화면 미리보기`}>
+        <button type="button" aria-pressed={!showMobile} onClick={() => setView('pc')}>PC</button>
+        <button type="button" aria-pressed={showMobile} onClick={() => setView('mobile')}>모바일</button>
+      </div>}
     </figure>
   );
 }
@@ -63,7 +79,7 @@ function ProjectEditorial({ project }) {
     <article className="editorial js-editorial" tabIndex={0} aria-label={`${project.title.join(' ')} 상세 설명`}>
       <span className="folio" aria-hidden="true">{project.id}</span>
       <header className="ed-top js-reveal">
-        <p className="ed-kicker">{project.id} / {project.group === 'team' ? 'TEAM PROJECT' : 'PERSONAL PROJECT'}</p>
+        <p className="ed-kicker">{project.id} / {project.group === 'team' ? '팀 프로젝트 · TEAM' : '개인 프로젝트 · PERSONAL'}</p>
         <span className="ed-kind">{project.category}</span>
       </header>
       {project.chapter && <p className="chapter-marker js-reveal">{project.chapter}</p>}
@@ -73,8 +89,11 @@ function ProjectEditorial({ project }) {
       <p className="ed-lede js-reveal"><span className="desktop-copy">{project.description}</span><span className="mobile-copy">{project.mobileDescription}</span></p>
       <section className="ed-block ed-focus js-reveal"><span className="ed-label">{project.focusLabel}</span><p><span className="desktop-copy">{project.focus}</span><span className="mobile-copy">{project.mobileFocus || project.focus}</span></p></section>
       <section className="ed-block built-with js-reveal" aria-label="사용 기술">
-        <span className="ed-label">BUILT WITH</span>
-        <ul className="ed-tech">{project.tech.map(item => <li className="tech-chip" key={item}>{item}</li>)}</ul>
+        <span className="ed-label">BUILT WITH <span className="tech-heading-ko">사용 기술</span></span>
+        <dl className="tech-groups">{project.techGroups.map((group, index) => <div className={index === 0 ? 'is-core' : ''} key={group.label}>
+          <dt>{group.label}</dt><dd><ul className="ed-tech">{group.items.map(item => <li className="tech-chip" key={item}>{item}</li>)}</ul></dd>
+        </div>)}</dl>
+        {project.group === 'team' && <p className="tech-scope-note">기술 목록은 팀 프로젝트 기준입니다. 제 작업 범위는 위의 ‘담당한 부분’에 정리했습니다.</p>}
       </section>
       {project.meta && <p className="project-meta js-reveal">{project.meta}</p>}
       <div className="ed-links js-reveal">
@@ -85,11 +104,11 @@ function ProjectEditorial({ project }) {
   );
 }
 
-function ProjectLayer({ project, index, layerRef, active, stopToken }) {
+function ProjectLayer({ project, index, layerRef, active, loadMedia, compact }) {
   return (
     <section ref={layerRef} id={`project-${project.slug}`} data-index={index} data-theme={project.theme}
       className={`project-layer theme-${project.theme} layout-${project.layout}`} aria-label={`${project.id} ${project.title.join(' ')}`}>
-      <ProjectVisual project={project} active={active} stopToken={stopToken} />
+      <ProjectVisual project={project} active={active} loadMedia={loadMedia} compact={compact} />
       <ProjectEditorial project={project} />
     </section>
   );
@@ -111,13 +130,25 @@ export default function SelectedWorkMagazine() {
   const compactTimelineRef = useRef(null);
   const compactStageRef = useRef(null);
   const swipeRef = useRef(null);
+  const navigationRequest = useRef(0);
+  const mountedRef = useRef(true);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [audioStopToken, setAudioStopToken] = useState(0);
+  const [outgoingIndex, setOutgoingIndex] = useState(null);
+  const [preparedIndex, setPreparedIndex] = useState(null);
+  const [mediaVisible, setMediaVisible] = useState(false);
+  const [compact, setCompact] = useState(() => window.matchMedia(COMPACT_QUERY).matches);
   const activeProject = PROJECTS[activeIndex];
   const isCompact = () => window.matchMedia(COMPACT_QUERY).matches;
   const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const setThemeOnBook = project => { if (bookRef.current) bookRef.current.dataset.theme = project.theme; };
+  useEffect(() => {
+    mountedRef.current = true;
+    const observer = new IntersectionObserver(([entry]) => setMediaVisible(entry.isIntersecting), { rootMargin: '240px 0px' });
+    if (bookRef.current) observer.observe(bookRef.current);
+    return () => { mountedRef.current = false; observer.disconnect(); };
+  }, []);
   const showLayer = index => {
+    setOutgoingIndex(null);
     layerRefs.current.forEach((layer, i) => {
       resetParts(getParts(layer));
       layer.classList.remove('is-turning');
@@ -132,6 +163,7 @@ export default function SelectedWorkMagazine() {
     compactTimelineRef.current?.kill();
     const from = activeIndexRef.current;
     showLayer(from);
+    setOutgoingIndex(from);
     const outgoing = layerRefs.current[from];
     const incoming = layerRefs.current[index];
     const stage = compactStageRef.current;
@@ -140,7 +172,6 @@ export default function SelectedWorkMagazine() {
     activeIndexRef.current = index;
     setActiveIndex(index);
     setThemeOnBook(PROJECTS[index]);
-    setAudioStopToken(value => value + 1);
     const focusWasInPage = outgoing.contains(document.activeElement);
     outgoing.inert = true;
     outgoing.setAttribute('aria-hidden', 'true');
@@ -186,8 +217,13 @@ export default function SelectedWorkMagazine() {
       },
     });
   };
-  const openMagazine = () => {
+  const openMagazine = async () => {
     if (animatingRef.current || openedRef.current) return;
+    const request = ++navigationRequest.current;
+    setPreparedIndex(0);
+    setMediaVisible(true);
+    await prepareImage(PROJECTS[0].pcSrc);
+    if (!mountedRef.current || request !== navigationRequest.current) return;
     setThemeOnBook(PROJECTS[0]);
     if (prefersReduced()) {
       introMotion.current.p = 1;
@@ -214,7 +250,7 @@ export default function SelectedWorkMagazine() {
   const transitionTo = to => {
     const from = activeIndexRef.current;
     if (animatingRef.current || !openedRef.current || to === from || to < 0 || to >= PROJECTS.length) return;
-    setAudioStopToken(value => value + 1);
+    setOutgoingIndex(from);
     const layers = layerRefs.current;
     const forward = to > from;
     const A = getParts(layers[forward ? from : to]);
@@ -253,7 +289,13 @@ export default function SelectedWorkMagazine() {
       onComplete: settle,
     });
   };
-  const jumpTo = index => {
+  const jumpTo = async index => {
+    if (!PROJECTS[index] || animatingRef.current || index === activeIndexRef.current) return;
+    const request = ++navigationRequest.current;
+    setPreparedIndex(index);
+    setMediaVisible(true);
+    await prepareImage(PROJECTS[index].pcSrc);
+    if (!mountedRef.current || request !== navigationRequest.current) return;
     if (isCompact()) {
       turnCompact(index);
       return;
@@ -265,12 +307,37 @@ export default function SelectedWorkMagazine() {
   useLayoutEffect(() => {
     const intro = introRef.current;
     if (!intro) return undefined;
-    const layers = layerRefs.current;
     const projectMotion = motion.current;
     const coverMotion = introMotion.current;
+    const onShowCover = () => {
+      // 모바일은 기존 모바일 표지 흐름을 사용한다.
+      if (isCompact()) return;
+      ++navigationRequest.current; // 진행 중인 이미지 로딩/프로젝트 점프 취소
+      gsap.killTweensOf([projectMotion, coverMotion]);
+      compactTimelineRef.current?.kill();
+      animatingRef.current = false;
+      wheelAccumulator.current = 0;
+      if (bookRef.current) {
+        bookRef.current.dataset.pageTurning = 'false';
+        bookRef.current.dataset.pageLockedUntil = '0';
+      }
+      activeIndexRef.current = 0;
+      setActiveIndex(0);
+      setOutgoingIndex(null);
+      setPreparedIndex(null);
+      setThemeOnBook(PROJECTS[0]);
+      showLayer(0);
+      coverMotion.p = 0;
+      paintIntro(intro, 0);
+      intro.inert = false;
+      openedRef.current = false;
+    };
     const onNavigate = event => {
       const index = event.detail;
       if (!Number.isInteger(index) || !PROJECTS[index]) return;
+      navigationRequest.current++;
+      setPreparedIndex(index);
+      setMediaVisible(true);
       gsap.killTweensOf([projectMotion, coverMotion]);
       compactTimelineRef.current?.kill();
       animatingRef.current = false;
@@ -281,10 +348,8 @@ export default function SelectedWorkMagazine() {
       intro.inert = true;
       activeIndexRef.current = index;
       setActiveIndex(index);
-      setAudioStopToken(value => value + 1);
       setThemeOnBook(PROJECTS[index]);
       showLayer(index);
-      if (isCompact()) requestAnimationFrame(() => layers[index].scrollIntoView({ block: 'start' }));
     };
     setThemeOnBook(PROJECTS[0]);
     showLayer(0);
@@ -328,7 +393,7 @@ export default function SelectedWorkMagazine() {
       wheelAccumulator.current = 0;
       if (!openedRef.current) { if (direction > 0) openMagazine(); return; }
       if (activeIndexRef.current === 0 && direction < 0) { closeMagazine(); return; }
-      transitionTo(activeIndexRef.current + direction);
+      void jumpTo(activeIndexRef.current + direction);
     };
     const onKeyDown = event => {
       if (event.defaultPrevented || gsap.isTweening(window)) return;
@@ -338,12 +403,12 @@ export default function SelectedWorkMagazine() {
       if (['ArrowDown', 'PageDown', 'ArrowRight'].includes(event.key)) {
         event.preventDefault();
         if (!openedRef.current) openMagazine();
-        else transitionTo(activeIndexRef.current + 1);
+        else void jumpTo(activeIndexRef.current + 1);
       }
       if (['ArrowUp', 'PageUp', 'ArrowLeft'].includes(event.key)) {
         event.preventDefault();
         if (openedRef.current && activeIndexRef.current === 0) closeMagazine();
-        else transitionTo(activeIndexRef.current - 1);
+        else void jumpTo(activeIndexRef.current - 1);
       }
     };
     const onTouchStart = event => { touchStartY.current = event.touches?.[0]?.clientY ?? null; };
@@ -356,21 +421,22 @@ export default function SelectedWorkMagazine() {
       if (Math.abs(diff) < 45) return;
       if (!openedRef.current && diff > 0) openMagazine();
       else if (openedRef.current && activeIndexRef.current === 0 && diff < 0) closeMagazine();
-      else transitionTo(activeIndexRef.current + (diff > 0 ? 1 : -1));
+      else void jumpTo(activeIndexRef.current + (diff > 0 ? 1 : -1));
     };
     const mq = window.matchMedia(COMPACT_QUERY);
     const onModeChange = () => {
+      setCompact(mq.matches);
       gsap.killTweensOf([motion.current, introMotion.current]);
       compactTimelineRef.current?.kill();
       animatingRef.current = false;
       if (bookRef.current) bookRef.current.dataset.pageTurning = "false";
-      setAudioStopToken(value => value + 1);
       if (mq.matches) openedRef.current = true;
       paintIntro(intro, openedRef.current ? 1 : 0);
       intro.inert = openedRef.current;
       setActiveIndex(activeIndexRef.current);
       showLayer(activeIndexRef.current);
     };
+    window.addEventListener('selected-work:show-cover', onShowCover);
     window.addEventListener('selected-work:navigate', onNavigate);
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('keydown', onKeyDown);
@@ -378,6 +444,7 @@ export default function SelectedWorkMagazine() {
     window.addEventListener('touchend', onTouchEnd, { passive: true });
     mq.addEventListener('change', onModeChange);
     return () => {
+      window.removeEventListener('selected-work:show-cover', onShowCover);
       window.removeEventListener('selected-work:navigate', onNavigate);
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('keydown', onKeyDown);
@@ -393,9 +460,9 @@ export default function SelectedWorkMagazine() {
   return (
     <div className="selectedWorkMagazine"><div className="prototype-shell">
       <header className="mobile-work-intro">
-        <span>02 / WORK INDEX</span>
-        <h2 aria-label="선택한 프로젝트">SELECTED<br /><em>WORK</em></h2>
-        <p>배경과 경험을 바탕으로 만든<br />여섯 개의 프로젝트.</p>
+        <span>02 / WORK · 나의 프로젝트</span>
+        <h2 aria-label="나의 프로젝트 포트폴리오">MY<br /><em>WORK.</em></h2>
+        <p><strong>6개의 프로젝트, 6가지 개발 경험.</strong><br />각 프로젝트의 구현 기능과 담당 역할, 사용 기술을 확인할 수 있습니다.</p>
         <a className="mobile-work-open" href="#work-pages"><span>프로젝트 보기</span><b aria-hidden="true">↓</b></a>
         <small className="mobile-cover-foot">YOOJIN / PORTFOLIO · 2026</small>
       </header>
@@ -431,7 +498,9 @@ export default function SelectedWorkMagazine() {
               if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.4) jumpTo(activeIndexRef.current + (dx > 0 ? 1 : -1));
             }}>
             {PROJECTS.map((project, index) => <ProjectLayer key={project.slug} project={project} index={index}
-              active={activeIndex === index} stopToken={audioStopToken} layerRef={el => { layerRefs.current[index] = el; }} />)}
+              active={activeIndex === index} compact={compact}
+              loadMedia={mediaVisible && (index === activeIndex || index === outgoingIndex || index === preparedIndex || index === activeIndex + 1)}
+              layerRef={el => { layerRefs.current[index] = el; }} />)}
           </div>
           <nav className="mobile-project-nav" aria-label="프로젝트 이전·다음 이동">
             <button type="button" disabled={activeIndex === 0} onClick={() => jumpTo(activeIndexRef.current - 1)}>← 이전 프로젝트</button>

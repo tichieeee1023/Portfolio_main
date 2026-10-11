@@ -6,6 +6,8 @@ import "./components/YoojinHero/heroControls.mobile.css";
 import "./components/PortfolioChapters/PortfolioChapters.mobile.css";
 import "./components/SelectedWorkMagazine/mobile.css";
 import "./mobile.polish.css";
+import "./portfolio.content.css";
+import "./brand-png.css";
 
 function App() {
   return (

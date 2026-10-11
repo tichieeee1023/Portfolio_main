@@ -36,6 +36,7 @@
     padding: 9px 16px; z-index: 60;
   }
   .heroStage .headerBrand a { font-size: 18px; }
+  .heroStage .headerBrandLogo { width: 154px; }
 
   /* The face stays in the upper image area; all large copy lives below it. */
   .heroStage .kineticTypography,

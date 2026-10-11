@@ -451,3 +451,43 @@
 .selectedWorkMagazine .ed-links svg { width: 20px; height: 20px; flex: 0 0 20px; }
 .selectedWorkMagazine .ed-links .ed-link-arrow { font-size: 14px; margin-left: 2px; }
 @media (max-width: 900px) { .selectedWorkMagazine .ed-links a { font-size: 16px; } }
+
+/* WORK INDEX: 영문 역량 카테고리는 유지하고 PC에서만 한글 의미를 보조 라벨로 표시. */
+.selectedWorkMagazine .work-index-tooltip { display: none; }
+@media (min-width: 901px) {
+  .selectedWorkMagazine .work-index-items { overflow: visible; }
+  .selectedWorkMagazine .work-index button { position: relative; }
+  .selectedWorkMagazine .work-index button .work-index-tooltip {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translate(-50%, -5px);
+    display: block;
+    width: max-content;
+    max-width: 220px;
+    margin: 0;
+    padding: 9px 12px;
+    border: 1px solid #967256;
+    background: #49372c;
+    box-shadow: 0 8px 22px rgba(36, 24, 17, .2);
+    color: #fff7ee;
+    font: 600 13px/1.4 Pretendard, "Noto Sans KR", sans-serif;
+    letter-spacing: 0;
+    white-space: nowrap;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .16s ease, transform .16s ease, visibility .16s;
+  }
+  .selectedWorkMagazine .work-index button:hover .work-index-tooltip,
+  .selectedWorkMagazine .work-index button:focus-visible .work-index-tooltip {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .selectedWorkMagazine .work-index-tooltip { transition: none; }
+}

@@ -1,0 +1,43 @@
+/* BRAND v8: original concept-art transparent PNGs, no redrawn SVG glyphs. */
+.heroStage .headerBrandLogo {
+  display: block;
+  width: clamp(142px, 11.1vw, 162px);
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+}
+.mobileIntroBrandLogo {
+  display: block;
+  width: 160px;
+  height: auto;
+  object-fit: contain;
+}
+.chapterBrandLogo {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+.chapterBrand:hover .chapterBrandLogo,
+.chapterBrand:focus-visible .chapterBrandLogo,
+.headerBrand a:hover .headerBrandLogo,
+.headerBrand a:focus-visible .headerBrandLogo {
+  filter: drop-shadow(0 0 2px rgba(198, 152, 83, .28));
+}
+.contactBrandEmblemSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (max-width: 1100px) {
+  .chapterBrandLogo { width: 36px; height: 36px; }
+}
+@media (max-width: 760px) {
+  .chapterBrandLogo { width: 32px; height: 32px; }
+  .heroStage .headerBrandLogo { width: 140px; }
+  .mobileIntroBrandLogo { width: 148px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chapterBrandLogo, .headerBrandLogo { transition: none; }
+}

@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { navigateToChapter } from './chapterNavigation';
+import { navigateToChapter, WORK_PROJECT_INDEX } from './chapterNavigation';
 import { buildAboutTimeline } from './aboutMotion';
 import { aboutPagerLabels, chapters, pad, skillGroups, SKILL_TOTAL, TOTAL } from './chapterData';
 import './PortfolioChapters.css';
@@ -220,6 +220,12 @@ export default function PortfolioChapters() {
 
     let pageWheelTotal = 0;
     let pageWheelAt = 0;
+    // Finish reading with this gesture. A fresh gesture may leave the chapter.
+    let readerWheelAt = 0;
+    let readerWheelDirection = 0;
+    const READER_GESTURE_GAP = 220;
+    let touchReadInside = false;
+    let keyReadInside = false;
     const handlePageWheel = (event: WheelEvent) => {
       if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
       const now = performance.now();
@@ -232,7 +238,20 @@ export default function PortfolioChapters() {
       const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
       const delta = event.deltaY * unit;
       const direction = Math.sign(delta);
-      if (canReadInside(event.target, direction) || isWindowTweening() || !pageTarget(direction)) return;
+      if (canReadInside(event.target, direction)) {
+        readerWheelAt = now;
+        readerWheelDirection = direction;
+        pageWheelTotal = 0;
+        return;
+      }
+      if (readerWheelDirection === direction && now - readerWheelAt < READER_GESTURE_GAP) {
+        readerWheelAt = now;
+        pageWheelTotal = 0;
+        event.preventDefault();
+        return;
+      }
+      readerWheelDirection = 0;
+      if (isWindowTweening() || !pageTarget(direction)) return;
       event.preventDefault();
       if (now - pageWheelAt > WHEEL_GESTURE_GAP || Math.sign(pageWheelTotal) !== direction) pageWheelTotal = 0;
       pageWheelAt = now;
@@ -244,6 +263,7 @@ export default function PortfolioChapters() {
     const handlePageTouchStart = (event: TouchEvent) => {
       boundaryTouch = null;
       boundaryTouchConsumed = false;
+      touchReadInside = false;
       if (event.touches.length !== 1 || (event.target as Element).closest('button, a, input, textarea, select')) return;
       boundaryTouch = { x: event.touches[0].clientX, y: event.touches[0].clientY };
     };
@@ -253,7 +273,9 @@ export default function PortfolioChapters() {
       const dx = boundaryTouch.x - event.touches[0].clientX;
       if (Math.abs(dy) < 16 || Math.abs(dx) > Math.abs(dy)) return;
       if (boundaryTouchConsumed || performance.now() < boundaryUntil) { event.preventDefault(); return; }
-      if (canReadInside(event.target, Math.sign(dy)) || isWindowTweening() || !pageTarget(Math.sign(dy))) return;
+      if (canReadInside(event.target, Math.sign(dy))) { touchReadInside = true; return; }
+      if (touchReadInside) { event.preventDefault(); return; }
+      if (isWindowTweening() || !pageTarget(Math.sign(dy))) return;
       event.preventDefault();
       boundaryTouchConsumed = true;
       scrollToPage(Math.sign(dy));
@@ -267,8 +289,11 @@ export default function PortfolioChapters() {
       if ((event.target as Element).closest('button, a, input, textarea, select, [contenteditable]')) return;
       const direction = ['ArrowDown', 'PageDown'].includes(event.key) ? 1 : ['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 0;
       if (!direction) return;
+      if (!event.repeat) keyReadInside = false;
       if (performance.now() < boundaryUntil) { event.preventDefault(); return; }
-      if (canReadInside(event.target, direction) || !pageTarget(direction)) return;
+      if (canReadInside(event.target, direction)) { keyReadInside = true; return; }
+      if (event.repeat && keyReadInside) { event.preventDefault(); return; }
+      if (!pageTarget(direction)) return;
       event.preventDefault();
       if (performance.now() >= boundaryUntil && !isWindowTweening()) scrollToPage(direction);
     };
@@ -489,7 +514,7 @@ export default function PortfolioChapters() {
     ------------------------------------------------------------------ */
     // 이 컴포넌트 안에 있는 요소만 대상으로 한다 (#top은 히어로라 따로 처리)
     const resolveTarget = (id: string) => {
-      const targetId = ['work-moonlight', 'work-harvest', 'work-b612'].includes(id) ? 'projects' : id;
+      const targetId = WORK_PROJECT_INDEX[id] === undefined ? id : 'work-pages';
       const element = targetId ? document.getElementById(targetId) : null;
       return element && host.contains(element) ? element : null;
     };
@@ -603,13 +628,21 @@ export default function PortfolioChapters() {
       <span aria-hidden="true">↑</span>
       <small>TOP</small>
     </button>
-    <Marquee text="STAGE CLEAR • NEXT CHAPTER" />
-    <nav className="chapterNav" aria-label="포트폴리오 목차">
-      <a className="chapterBrand" href="#top" aria-label="맨 위로">Y<span>.</span></a>
+    <Marquee text="MEET THE DEVELOPER • LEE YOOJIN" />
+    <nav className="chapterNav" data-section={active} aria-label="포트폴리오 목차">
+      <a className="chapterBrand" href="#top" aria-label="맨 위로">
+        <img
+          className="chapterBrandLogo"
+          src={active === 'projects' ? '/brand/yj-monogram-light.png' : '/brand/yj-monogram-dark.png'}
+          alt="YJ 로고"
+          width="161"
+          height="165"
+          decoding="async"
+        />
+      </a>
       <div className="chapterNavLinks">
         {chapters.map((chapter, index) => <a key={chapter.id} href={'#' + chapter.id} aria-current={active === chapter.id ? 'location' : undefined}><span>{pad(index + 1)}</span>{chapter.label}</a>)}
       </div>
-      <a className="chapterNavContact" href="mailto:curencandy001@gmail.com">LET’S TALK <span aria-hidden="true">↗</span></a>
       <div className="chapterProgress" aria-hidden="true" />
     </nav>
 
@@ -632,7 +665,7 @@ export default function PortfolioChapters() {
     <section id="about" className="chapter chapterAbout" aria-labelledby="about-title">
       <div className="chapterShell chapterShell--about">
         <div className="aboutScreen aboutScreen--cover">
-          <SectionHeading id="about-title" number="01" eyebrow="THE PERSON BEHIND THE CARD" title="카드 밖의 이야기" description="화면을 만드는 방식에는, 지금까지 읽고 만들고 다듬어온 시간이 담겨 있습니다." />
+          <SectionHeading id="about-title" number="01" eyebrow="MEET THE DEVELOPER" title="이제, 저를 소개합니다" description="프론트엔드 개발자 이유진입니다. 제가 화면을 만드는 방식과 그 바탕이 된 경험을 소개합니다." />
           <div className="aboutScrollCue" aria-hidden="true"><span>SCROLL TO READ</span><i /></div>
         </div>
 
@@ -656,7 +689,7 @@ export default function PortfolioChapters() {
                   <span>언어를 배우고 번역을 하며 맥락과 의도를 읽는 법을 익혔습니다.</span>
                   <span>일을 하면서는 주로 아이디어를 눈에 보이는 결과로 옮겼습니다.</span>
                 </p>
-                <a className="textLink" href="#projects">만든 것들 보기 <span aria-hidden="true">↗</span></a>
+                <a className="textLink" href="#work-moonlight">대표 프로젝트 보기 <span aria-hidden="true">↗</span></a>
               </div>
             </div>
           </div>
@@ -757,14 +790,17 @@ export default function PortfolioChapters() {
 
     <section id="skills" className="chapter chapterSkills" aria-labelledby="skills-title">
       <div className="chapterShell">
-        <SectionHeading id="skills-title" number="03" eyebrow="HOW I BUILD" title="기술과 방식" description="기술 이름보다, 그 기술로 어떤 문제를 다뤘는지 보여드리고 싶습니다." />
+        <SectionHeading id="skills-title" number="03" eyebrow="APPLIED IN PROJECTS" title="프로젝트에 활용한 기술" description="앞서 소개한 프로젝트에서 어떤 기술로 화면과 기능을 구현했는지 정리했습니다." />
         <div className="skillGrid">
           {skillGroups.map((group) => <article className="skillCard" key={group.number} data-reveal>
-            <div className="skillCardTop"><span>{group.number} / {SKILL_TOTAL}</span><span aria-hidden="true">↗</span></div>
+            <div className="skillCardTop"><span>{group.number} / {SKILL_TOTAL}</span></div>
             <div className="skillCardBody" tabIndex={0} role="region" aria-label={group.title}>
               <p className="skillCardEnglish">{group.english}</p>
               <h3>{group.title}</h3>
               <p className="skillCardDescription">{group.description}</p>
+              <ul className="skillApplications">{group.applications.map(application => <li key={application.project}>
+                <strong>{application.project}</strong><p>{application.detail}</p>
+              </li>)}</ul>
               <div className="skillTags">{group.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
             </div>
             <a href={group.href} className="skillEvidence">작업에서 보기 <span>{group.evidence}</span><span aria-hidden="true">↗</span></a>
@@ -782,6 +818,9 @@ export default function PortfolioChapters() {
       <Marquee text="LET'S BUILD • TOGETHER" repeat={4} variant="outline" />
       <div className="chapterShell">
         <div className="contactOverline" data-reveal><span>{TOTAL} / {TOTAL}</span><span>THE NEXT CHAPTER</span></div>
+        <div className="contactBrandEmblem" aria-hidden="true">
+          <img src="/brand/yj-emblem-light.png" className="contactBrandEmblemSvg" alt="" width="227" height="251" loading="lazy" decoding="async" />
+        </div>
         <p className="contactPrelude" data-reveal>이제 다음 이야기를 함께 만들 차례입니다.</p>
         <h2 id="contact-title" data-reveal>함께 만들<br /><em>화면이 있나요?</em></h2>
         <div className="contactBottom">

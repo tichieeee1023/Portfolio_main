@@ -5,7 +5,7 @@ export const chapters = [
   { id: 'projects', label: 'WORK', ko: '대표 작업' },
   { id: 'skills', label: 'TOOLKIT', ko: '기술' },
   { id: 'experiments', label: 'PLAY', ko: '실험' },
-  { id: 'contact', label: 'HELLO', ko: '연락' },
+  { id: 'contact', label: 'CONTACT', ko: '연락' },
 ];
 
 export const works = [
@@ -65,29 +65,41 @@ export const works = [
 export const skillGroups = [
   {
     number: '01',
-    title: '읽기 쉬운 화면과 사용자 설정',
+    title: 'React 화면과 사용자 설정',
     english: 'INTERFACE & UI SYSTEM',
-    description: '차트와 정보를 한눈에 읽고, 테마·글자 크기·화면 밀도 설정이 서비스 전반에 이어지도록 구성합니다.',
-    tools: ['React 19', 'Chart.js', 'react-chartjs-2', 'Sass / SCSS', 'localStorage', 'react-helmet-async'],
-    evidence: 'Daily Harvest · JAJAK',
+    description: '컴포넌트와 상태를 연결해 사용자의 설정이 화면 전체에 반영되도록 구현했습니다.',
+    applications: [
+      { project: '데일리 하비스트', detail: '테마·글자 크기·화면 밀도를 설정하고 localStorage에 저장합니다. Chart.js 차트로 통계를 보여줍니다.' },
+      { project: '달빛서점', detail: 'React Router로 화면을 나누고, Zustand로 장바구니와 찜 상태를 공유합니다.' },
+    ],
+    tools: ['React / Vite', 'React Router', 'Zustand', 'SCSS', 'Chart.js'],
+    evidence: '데일리 하비스트 · 달빛서점',
     href: '#work-harvest',
   },
   {
     number: '02',
-    title: '상품에서 주문까지 데이터 연결',
+    title: 'Firebase 데이터와 주문 처리',
     english: 'DATA & SERVICE INTEGRATION',
-    description: '상품 탐색과 장바구니를 주문으로 잇고, 최신 가격·재고를 확인해 주문 내역과 관리 화면에 반영합니다.',
-    tools: ['JavaScript ES6', 'React Router', 'Zustand', 'Firebase Authentication', 'Cloud Firestore', 'localStorage', 'JSON'],
-    evidence: 'Moonlight Bookstore · Forlog · JAJAK',
-    href: '#work-moonlight',
+    description: '브라우저에 저장한 상태와 서버의 최신 데이터를 연결하고, 인증·조회·저장 흐름을 다뤘습니다.',
+    applications: [
+      { project: '자작 · 담당 영역', detail: '장바구니의 상품 ID·수량을 최신 Firestore 상품과 결합하고, 가격·재고·판매 상태를 확인해 주문을 저장합니다.' },
+      { project: '어린왕자 B612', detail: 'Firebase 인증과 방명록 저장을 연결하고, Firestore 커서로 글 목록의 더보기를 구현합니다.' },
+    ],
+    tools: ['JavaScript', 'Firebase: Auth / Firestore', 'localStorage', 'Fetch API'],
+    evidence: '자작 · 어린왕자 B612',
+    href: '#work-jajak',
   },
   {
     number: '03',
-    title: '행동에 반응하는 인터랙션과 미디어',
+    title: 'Canvas와 화면 인터랙션',
     english: 'INTERACTION & MEDIA',
-    description: '방명록의 별가루와 화면 전환, 대시보드 모션, 팟캐스트 탐색·재생 UI를 각 콘텐츠에 맞게 구현합니다.',
-    tools: ['Framer Motion', 'GSAP', 'Canvas API', 'HTML5', 'CSS3', 'JavaScript', 'Vite', 'Git / GitHub'],
-    evidence: 'The Little Prince B612 · Daily Harvest · Midnight Chord',
+    description: '입력과 상태 변화에 맞춰 화면이 반응하도록 만들고, 모션 감소 설정과 작은 화면에서도 사용할 수 있게 조정합니다.',
+    applications: [
+      { project: '어린왕자 B612', detail: 'Framer Motion으로 화면 전환을 구성하고, Canvas로 별가루를 그립니다.' },
+      { project: '이 포트폴리오 · 벽돌깨기', detail: 'GSAP으로 성장 장면과 지면을 전환합니다. 벽돌깨기는 Canvas 충돌 판정과 Web Audio 효과음을 구현한 실습입니다.' },
+    ],
+    tools: ['Framer Motion', 'GSAP', 'Canvas API', 'Web Audio API'],
+    evidence: '어린왕자 B612',
     href: '#work-b612',
   },
 ];

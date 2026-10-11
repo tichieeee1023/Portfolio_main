@@ -20,21 +20,19 @@
 .chapterDot { color: var(--warm); }
 .chapterNav {
   position: sticky; top: 0; z-index: 30; height: 66px;
-  display: grid; grid-template-columns: 90px minmax(0, 1fr) 150px;
+  display: grid; grid-template-columns: 72px minmax(0, 1fr);
   align-items: center; gap: 28px; padding: 0 48px;
   background: rgba(243, 238, 227, .94); border-bottom: 1px solid var(--line);
   backdrop-filter: blur(18px);
 }
-.chapterBrand { font-size: 29px; font-weight: 900; letter-spacing: -.13em; line-height: 1; }
-.chapterBrand span { color: var(--warm); }
+.chapterBrand { display: inline-flex; align-items: center; justify-content: flex-start; line-height: 1; }
+.chapterBrandLogo { width: 46px; height: 46px; display: block; }
 .chapterNavLinks { display: flex; justify-content: center; gap: clamp(12px, 2.4vw, 40px); }
-.chapterNavLinks a, .chapterNavContact { font-size: 10px; font-weight: 800; letter-spacing: .12em; white-space: nowrap; }
+.chapterNavLinks a { font-size: 9px; font-weight: 800; letter-spacing: .12em; white-space: nowrap; }
 .chapterNavLinks a { display: flex; align-items: center; gap: 5px; color: #66564a; transition: color .25s; }
 .chapterNavLinks a span { font-size: 9px; opacity: .65; }
 .chapterNavLinks a:hover, .chapterNavLinks a[aria-current] { color: var(--ink); }
 .chapterNavLinks a[aria-current]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--warm); }
-.chapterNavContact { text-align: right; }
-.chapterNavContact span { color: var(--warm); font-size: 16px; margin-left: 8px; }
 .chapterHeading { margin-bottom: clamp(48px, 6vw, 96px); }
 .chapterHeadingTop { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 800; letter-spacing: .17em; }
 .chapterHeadingTop span:first-child { color: var(--warm); }
@@ -67,7 +65,7 @@
   transform-origin: left center;
 }
 .aboutLead { max-width: 580px; margin: 0 0 18px; color: #625549; font-size: clamp(15px, 1.25vw, 18px); line-height: 1.8; word-break: keep-all; }
-.aboutTraits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 35px 0; }
+.aboutTraits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 35px 0; }
 .aboutTraits span { padding-top: 13px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.5; font-weight: 700; }
 .aboutTraits b { display: block; margin-bottom: 7px; color: var(--warm); font-size: 10px; }
 
@@ -207,8 +205,8 @@
 .chapterEnd a:hover { color: #d8ac85; }
 
 @media (max-width: 1100px) {
-  .chapterNav { grid-template-columns: 45px 1fr; padding: 0 24px; gap: 15px; }
-  .chapterNavContact { display: none; }
+  .chapterNav { grid-template-columns: 56px 1fr; padding: 0 24px; gap: 15px; }
+  .chapterBrandLogo { width: 40px; height: 40px; }
   .chapterNavLinks { justify-content: flex-end; }
   .chapterShell { width: min(100% - 56px, 1400px); }
   .aboutGrid { gap: 46px; }
@@ -324,7 +322,7 @@
   width: 34%;
   height: 100%;
   background: var(--warm);
-  animation: aboutScrollCue 1.9s ease-in-out infinite;
+  animation: aboutScrollCue 1.9s ease-in-out 3;
 }
 @keyframes aboutScrollCue {
   0% { transform: translateX(-110%); }
@@ -372,11 +370,11 @@
 .aboutPager {
   position: fixed;
   z-index: 24;
-  left: clamp(18px, 2.1vw, 42px);
+  left: clamp(10px, 1.2vw, 22px);
   top: 50%;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 10px;
   transform: translate3d(-12px, -50%, 0);
   opacity: 0;
   visibility: hidden;
@@ -395,7 +393,7 @@
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: 32px 14px;
+  grid-template-columns: 28px 10px;
   align-items: center;
   gap: 12px;
   background: transparent;
@@ -403,8 +401,8 @@
   cursor: pointer;
 }
 .aboutPagerNumber {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: grid;
   place-items: center;
   background: var(--ink);
@@ -418,12 +416,12 @@
   transition: opacity .25s ease, transform .36s cubic-bezier(.16,1,.3,1), background .25s ease;
 }
 .aboutPagerDot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--warm);
   opacity: .26;
-  transform: scale(.72);
+  transform: scale(.76);
   box-shadow: 0 0 0 0 rgba(148, 89, 59, 0);
   transition: opacity .25s ease, transform .36s cubic-bezier(.16,1,.3,1), box-shadow .36s ease;
 }
@@ -437,8 +435,8 @@
 }
 .aboutPager button.is-active .aboutPagerDot {
   opacity: 1;
-  transform: scale(1.16);
-  box-shadow: 0 0 0 5px rgba(148, 89, 59, .08);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 4px rgba(148, 89, 59, .07);
 }
 .aboutPager button:focus-visible { outline: none; }
 .aboutPager button:focus-visible .aboutPagerNumber { outline: 2px solid var(--warm); outline-offset: 3px; }
@@ -460,7 +458,7 @@
 /* ABOUT은 JS가 한 번의 wheel gesture를 한 viewport 전환으로 제어한다.
    CSS scroll-snap은 트랙패드에서 이중 보정이 생기므로 사용하지 않는다. */
 
-@media (max-width: 1180px) {
+@media (max-width: 1440px) {
   .aboutPager { display: none; }
 }
 
@@ -738,4 +736,15 @@
   .chapterContact .chapterSeam--outline { font-size: 42px; }
   .chapterContact .contactPrelude { margin-top: 16px; }
   .chapterContact .contactBottom { margin-block: 18px; }
+}
+
+
+/* FIRST-REVIEW PATCH: ABOUT 숫자 네비게이션과 본문 충돌 방지.
+   큰 모니터는 기존 정렬을 그대로 두고, 폭이 좁은 데스크톱에서만
+   숫자 페이저 전용 공간을 왼쪽에 확보한다. */
+@media (min-width: 1181px) and (max-width: 1500px) {
+  .portfolioChapters .chapterShell--about {
+    box-sizing: border-box;
+    padding-left: clamp(54px, 5vw, 76px);
+  }
 }

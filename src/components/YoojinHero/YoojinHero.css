@@ -149,9 +149,7 @@
 .headerBrand {
   display: flex;
 
-  align-items: baseline;
-
-  gap: 17px;
+  align-items: center;
 }
 
 .headerBrand a {
@@ -159,11 +157,17 @@
 
   text-decoration: none;
 
-  font-size: 17px;
+  display: inline-flex;
 
-  font-weight: 900;
+  align-items: center;
+}
 
-  letter-spacing: -0.05em;
+.headerBrandLogo {
+  display: block;
+
+  width: clamp(176px, 16vw, 246px);
+
+  height: auto;
 }
 
 .headerBrand span {
@@ -1971,7 +1975,8 @@ span:nth-child(5) {
 
 /* ---------- ③ 헤더 · 스텝바 · SKIP ---------- */
 .heroStage .heroHeader { padding-inline: var(--gutter); }
-.heroStage .headerBrand a { letter-spacing: -0.04em; }
+.heroStage .headerBrand a { letter-spacing: 0; }
+.heroStage .headerBrandLogo { width: clamp(184px, 16vw, 252px); }
 .heroStage .headerBrand span { font-size: 11px; letter-spacing: 0.06em; opacity: 0.66; }
 .heroStage .heroHeader nav a {
   position: relative;
@@ -2443,3 +2448,78 @@ span:nth-child(5) {
 }
 
 /* Final mobile layout pass: keep the hero readable in narrow and short viewports. */
+
+
+/* =========================================================
+   FIRST-REVIEW PATCH — INTRO ONLY (원래 진화 · 타이포 · 이미지 보존)
+   1. 실제 메뉴와 게임 단계 UI 구별
+   2. 최종 LV.05 글자 대비 개선 (outline 유지)
+   3. 모바일 footer에서 숨겨진 SKIP 빈칸 정리
+========================================================= */
+@media (min-width: 769px) {
+  .heroStage .heroHeader {
+    min-height: 72px;
+    align-items: flex-start;
+    padding-top: 17px;
+    background: linear-gradient(180deg,
+      rgba(250, 245, 235, .94),
+      rgba(250, 245, 235, .82));
+    border-bottom: 1px solid rgba(78, 57, 41, .24);
+    box-shadow: 0 4px 18px rgba(42, 28, 17, .06);
+  }
+  .heroStage .heroHeader nav a {
+    color: #241a14;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-shadow: none;
+  }
+  .heroStage .headerBrand a { color: #241a14; }
+  .heroStage .headerBrandLogo { width: clamp(168px, 18vw, 214px); }
+  .heroStage .growthJourney {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    top: 15px;
+  }
+  .heroStage .growthJourney ol { flex: 1; min-width: 0; }
+  .heroStage .growthJourneyLabel {
+    flex: 0 0 auto;
+    border-right: 1px solid rgba(90, 68, 49, .24);
+    padding-right: 10px;
+    color: #6c5038;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+  }
+  /* 오른쪽 CTA 영역과 구분되는 메뉴 위치 유지 */
+  .heroStage .heroHeader nav { margin-right: 164px; }
+  .heroStage .skipCta { top: 13px; min-height: 45px; }
+}
+
+/* 최종 개발자 아웃라인을 없애지 않고 그림 뒤쪽만 차분하게 한다. */
+.heroStage.scene-4 .kineticTypography { isolation: isolate; }
+.heroStage.scene-4 .kineticTypography::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -28px -34px -20px -36px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 38% 51%,
+    rgba(248, 242, 232, .72) 0%,
+    rgba(248, 242, 232, .48) 39%,
+    rgba(248, 242, 232, .14) 72%,
+    transparent 100%);
+}
+@media (min-width: 769px) {
+  .heroStage.scene-4 .keywordOutline {
+    -webkit-text-stroke: 2px rgba(26, 21, 18, .98);
+    filter: drop-shadow(0 0 2px rgba(255, 251, 240, .85));
+  }
+}
+@media (max-width: 768px) {
+  .heroStage .growthJourneyLabel { display: none; }
+  .heroStage.scene-4 .heroFooter .navigationControl { grid-column: 1 / -1; }
+  .heroStage.scene-4 .kineticTypography::before { inset: -12px -6px; }
+}

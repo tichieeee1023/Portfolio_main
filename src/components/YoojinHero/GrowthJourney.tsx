@@ -4,6 +4,7 @@ import { GROWTH } from "./growthData";
 export function GrowthJourney({ index, complete }: { index: number; complete: boolean }) {
   return (
     <nav className={`growthJourney ${complete ? "isComplete" : ""}`} aria-label="개발자 성장 단계">
+      <span className="growthJourneyLabel" aria-hidden="true">GROWTH</span>
       <ol>{GROWTH.map((step, i) => <li key={step.name} className={i === index ? "isCurrent" : i < index ? "isPassed" : ""} aria-current={i === index ? "step" : undefined}>
         <span className="growthNode" aria-hidden="true">{i < index ? "✓" : `0${i + 1}`}</span>
         <span className="growthName">{step.name}</span>
@@ -19,7 +20,7 @@ export function GrowthIdentity({ index, transitioning }: { index: number; transi
         <b>{GROWTH[index].rank}</b>
         <span className="growthPips" aria-hidden="true">{GROWTH.map((_, i) => <i key={i} className={i <= index ? "isOn" : ""} />)}</span>
       </span>
-      <div><small>{index === 0 ? "PLAYER ORIGIN" : "LEVEL UP ↑"} / LV.0{index + 1}</small>
+      <div><small>{index === 0 ? "PLAYER ORIGIN" : "LEVEL UP ↑"} / LV.0{index + 1} / 05</small>
         <strong>{index === 4 ? "프론트엔드 개발자" : GROWTH[index].name}</strong>
         <p>{GROWTH[index].skill}</p>
       </div>
