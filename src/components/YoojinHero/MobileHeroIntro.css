@@ -5,7 +5,7 @@
 }
 .mobileIntroBackdrop {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  object-position: 52% 35%; filter: saturate(.95) contrast(1.02);
+  object-position: 52% 35%; filter: saturate(.92) contrast(.97);
 }
 .mobileHeroIntro::before {
   content: ""; position: absolute; z-index: 1; inset: 0; pointer-events: none;
@@ -13,6 +13,10 @@
     rgba(36,27,22,.56) 0%, rgba(36,27,22,.08) 22%, transparent 34%,
     rgba(36,27,22,.06) 42%, rgba(36,27,22,.54) 58%,
     rgba(30,22,18,.89) 82%, rgba(30,22,18,.96) 100%);
+}
+.mobileHeroIntro::after {
+  content: ""; position: absolute; z-index: 2; inset: 0; pointer-events: none;
+  background: rgba(246, 239, 221, .055);
 }
 .mobileIntroHeader {
   position: absolute; z-index: 5; top: max(14px, env(safe-area-inset-top));
@@ -27,11 +31,12 @@
 .mobileIntroEyebrow { margin: 0 0 12px; color: #ead2bc; font-family: Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: 600; letter-spacing: .18em; }
 .mobileIntroTitle {
   display: flex; flex-direction: column; gap: 0; margin: 0; color: #fffaf3;
-  font-family: 'Noto Serif KR', 'Noto Serif CJK KR', 'NanumMyeongjo', 'AppleMyungjo', Batang, serif;
+  font-family: Inter, Pretendard, Arial, sans-serif;
   font-size: clamp(26px, 7.4vw, 38px); font-weight: 700; line-height: 1.34; letter-spacing: -.065em;
   text-wrap: nowrap; word-break: keep-all; text-shadow: 0 2px 11px rgba(0,0,0,.22);
 }
-.mobileIntroTitle strong { display: block; font-size: clamp(49px, 14vw, 68px); font-weight: 750; line-height: 1.18; letter-spacing: -.055em; }
+.mobileIntroProfession { display: block; font-family: Inter, Arial, sans-serif; font-size: clamp(20px, 6.2vw, 29px); font-weight: 750; line-height: 1.22; letter-spacing: -.045em; }
+.mobileIntroTitle strong { display: block; font-family: "Noto Serif KR", serif; font-weight: 600; font-size: clamp(49px, 14vw, 68px); line-height: 1.18; letter-spacing: -.055em; }
 .mobileIntroRule { margin: 18px 0 16px; width: 35px; height: 1px; background: #ecd9be; }
 .mobileIntroDescription { margin: 0; max-width: 340px; color: #eee0d4; font-size: clamp(13px, 3.6vw, 15px); font-weight: 500; line-height: 1.6; word-break: keep-all; }
 .mobileIntroButtons { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 9px; margin-top: 22px; }
@@ -58,6 +63,7 @@
   .mobileIntroContent { padding-bottom: max(17px, env(safe-area-inset-bottom)); }
   .mobileIntroEyebrow { margin-bottom: 7px; }
   .mobileIntroTitle { font-size: clamp(24px, 6.9vw, 32px); }
+  .mobileIntroProfession { font-size: clamp(19px, 5.8vw, 26px); }
   .mobileIntroTitle strong { font-size: clamp(44px, 12vw, 58px); }
   .mobileIntroRule { margin-block: 11px; }
   .mobileIntroButtons { margin-top: 15px; }

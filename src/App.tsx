@@ -8,6 +8,7 @@ import "./components/SelectedWorkMagazine/mobile.css";
 import "./mobile.polish.css";
 import "./portfolio.content.css";
 import "./brand-png.css";
+import "./components/YoojinHero/MobileGrowthEditorial.css";
 
 function App() {
   return (

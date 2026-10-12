@@ -512,11 +512,11 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
         <header className="heroHeader">
           <div className="headerBrand">
             <a href="#top" aria-label="이유진 포트폴리오 맨 위로">
-              <img src="/brand/yj-horizontal-dark.png" className="headerBrandLogo" alt="YOOJIN — Frontend Developer" width="563" height="165" decoding="async" />
+              <img src={mobileMode ? "/brand/yj-monogram-light.png" : "/brand/yj-horizontal-dark.png"} className="headerBrandLogo" alt="YOOJIN — Frontend Developer" width={mobileMode ? 161 : 563} height={165} decoding="async" />
             </a>
           </div>
 
-          {mobileMode && <MobileMenu />}
+          {mobileMode && <MobileMenu light />}
           <nav aria-label="주요 메뉴">
             <a href="#about">
               ABOUT

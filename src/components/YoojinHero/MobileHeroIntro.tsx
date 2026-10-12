@@ -26,7 +26,7 @@ export default function MobileHeroIntro({ onStartJourney, onViewProjects }: Prop
       </header>
       <div className="mobileIntroContent">
         <p className="mobileIntroEyebrow">LEE YOOJIN / PORTFOLIO</p>
-        <h1 className="mobileIntroTitle">프론트엔드 개발자<strong>이유진</strong></h1>
+        <h1 className="mobileIntroTitle"><span className="mobileIntroProfession">FRONTEND DEVELOPER</span><strong>이유진</strong></h1>
         <div className="mobileIntroRule" aria-hidden="true" />
         <p className="mobileIntroDescription">대표 작업과 다섯 단계의 성장 기록을 소개합니다.</p>
         <div className="mobileIntroButtons">

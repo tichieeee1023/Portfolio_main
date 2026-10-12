@@ -1,7 +1,7 @@
 @media (max-width: 768px) {
   .heroStage[data-mobile-journey="true"] .heroFooter {
-    background: rgba(38, 33, 29, .76);
-    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    background: transparent;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
   }
   .heroStage[data-mobile-journey="true"][data-transitioning="true"] .navigationControl {
     opacity: 1; visibility: visible; transition: none;
