@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -12,6 +12,7 @@ import { pad2, prefersReducedMotion } from "./heroUtils";
 import { useAmbientMotion, useDialogueMotion, useKineticTypography } from "./useHeroAnimations";
 import { navigateToChapter } from "../PortfolioChapters/chapterNavigation";
 import MobileHeroIntro from "./MobileHeroIntro";
+import DesktopOpening from "./DesktopOpening";
 import MobileMenu from "../common/MobileMenu";
 import { MOBILE_SCENES } from "./mobileScenes";
 import { useMobileLevelUpFeedback } from "./useMobileLevelUpFeedback";
@@ -46,6 +47,9 @@ const pickSceneIndex = (progress: number, direction: number, current: number) =>
 export default function YoojinHero() {
   const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
   const [journeyStarted, setJourneyStarted] = useState(false);
+  const [openingDone, setOpeningDone] = useState(() =>
+    window.scrollY > 20 || Boolean(window.location.hash) || prefersReducedMotion()
+  );
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 768px)");
@@ -53,6 +57,8 @@ export default function YoojinHero() {
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
+
+  const finishDesktopOpening = useCallback(() => setOpeningDone(true), []);
 
   const startMobileJourney = () => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -67,14 +73,15 @@ export default function YoojinHero() {
 
   return (
     <div className="heroEntry">
+      {!openingDone && <DesktopOpening onComplete={finishDesktopOpening} />}
       {isMobile && !journeyStarted
         ? <MobileHeroIntro onStartJourney={startMobileJourney} onViewProjects={() => navigateToChapter("projects")} />
-        : <HeroJourney key={isMobile ? "mobile" : "desktop"} mobileMode={isMobile} />}
+        : <HeroJourney key={isMobile ? "mobile" : "desktop"} mobileMode={isMobile} openingReady={openingDone} />}
     </div>
   );
 }
 
-function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
+function HeroJourney({ mobileMode, openingReady }: { mobileMode: boolean; openingReady: boolean }) {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const motionRef = useRef<HTMLDivElement>(null);
@@ -726,6 +733,13 @@ function HeroJourney({ mobileMode }: { mobileMode: boolean }) {
               <strong>아래로 스크롤해 소개 보기</strong>
             </span>
             <span className="scrollAboutHint__arrow" aria-hidden="true">↓</span>
+          </div>
+        )}
+
+        {!mobileMode && openingReady && sceneIndex === 0 && !isTransitioning && (
+          <div className="desktopGrowthScrollHint">
+            <span className="desktopGrowthScrollHintArrow" aria-hidden="true">↓</span>
+            <span>스크롤하면 다음 단계로 성장합니다</span>
           </div>
         )}
 
