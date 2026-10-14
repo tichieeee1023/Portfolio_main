@@ -9,6 +9,7 @@ import './PortfolioChapters.css';
 import SelectedWorkMagazine from '../SelectedWorkMagazine/SelectedWorkMagazine';
 import PlayGallery from '../PlayGallery/PlayGallery';
 import MobileMenu from '../common/MobileMenu';
+import ContactForm from './ContactForm';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -848,7 +849,7 @@ export default function PortfolioChapters() {
         <h2 id="contact-title" data-reveal>함께 만들<br /><em>화면이 있나요?</em></h2>
         <div className="contactBottom">
           <div className="contactActions">
-            <a className="contactMail" href="mailto:curencandy001@gmail.com">이메일 보내기 <span aria-hidden="true">↗</span></a>
+            <ContactForm />
             <button className="contactCopyButton" type="button" onClick={copyEmail}>
               {emailCopyStatus === 'copied' ? '복사 완료' : '이메일 복사'}
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" focusable="false">
