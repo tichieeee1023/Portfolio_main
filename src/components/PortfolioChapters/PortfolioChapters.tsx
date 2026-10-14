@@ -58,6 +58,20 @@ export default function PortfolioChapters() {
   const [activeAboutScreen, setActiveAboutScreen] = useState(0);
   const [showAboutPager, setShowAboutPager] = useState(false);
   const [showTopButton, setShowTopButton] = useState(false);
+  const [mobileTopReveal, setMobileTopReveal] = useState(false);
+
+  useEffect(() => {
+    let anchor = window.scrollY;
+    const onScroll = () => {
+      const current = window.scrollY;
+      const delta = current - anchor;
+      if (current < 120) setMobileTopReveal(false);
+      else if (Math.abs(delta) >= 40) setMobileTopReveal(delta < 0);
+      if (Math.abs(delta) >= 40 || current < 120) anchor = current;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const [emailCopyStatus, setEmailCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const emailCopyTimer = useRef<number | null>(null);
@@ -623,6 +637,7 @@ export default function PortfolioChapters() {
       className={'topButton' + (showTopButton ? ' is-visible' : '')}
       data-tone={DARK_CHAPTERS.has(active) ? 'dark' : 'light'}
       data-section={active}
+      data-mobile-reveal={mobileTopReveal}
       onClick={scrollToTop}
       aria-label="포트폴리오 맨 위로 이동"
     >
@@ -800,9 +815,15 @@ export default function PortfolioChapters() {
               <p className="skillCardEnglish">{group.english}</p>
               <h3>{group.title}</h3>
               <p className="skillCardDescription">{group.description}</p>
-              <ul className="skillApplications">{group.applications.map(application => <li key={application.project}>
+              <ul className="skillApplications">{group.applications.map((application, index) => <li key={application.project} className={index > 0 ? 'skillApplicationExtra' : undefined}>
                 <strong>{application.project}</strong><p>{application.detail}</p>
               </li>)}</ul>
+              {group.applications.length > 1 && <details className="skillMore">
+                <summary>추가 적용 사례 <span aria-hidden="true">＋</span></summary>
+                <ul className="skillApplications">{group.applications.slice(1).map(application => <li key={application.project}>
+                  <strong>{application.project}</strong><p>{application.detail}</p>
+                </li>)}</ul>
+              </details>}
               <div className="skillTags">{group.tools.map((tool) => <span key={tool}>{tool}</span>)}</div>
             </div>
             <a href={group.href} className="skillEvidence">작업에서 보기 <span>{group.evidence}</span><span aria-hidden="true">↗</span></a>

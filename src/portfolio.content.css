@@ -272,3 +272,40 @@
 @media (prefers-reduced-motion: reduce) {
   .chapterBrandLogo, .headerBrandLogo, .brandMarkStar { transition: none !important; }
 }
+
+/* Mobile reading flow: lead with one example, expand the supporting cases. */
+.skillMore, .playGallery .tile-action, .playGallery .play-back-to-list { display: none; }
+@media (max-width: 768px) {
+  .chapterSkills .skillApplicationExtra { display: none; }
+  .chapterSkills .skillMore { display: block; margin: 0 0 20px; border-top: 1px solid #49362b26; border-bottom: 1px solid #49362b26; }
+  .chapterSkills .skillMore summary { min-height: 48px; padding: 13px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #554a3f; font-size: 14px; font-weight: 600; cursor: pointer; list-style: none; }
+  .chapterSkills .skillMore summary::-webkit-details-marker { display: none; }
+  .chapterSkills .skillMore summary span { font-size: 20px; line-height: 1; transition: transform .2s; }
+  .chapterSkills .skillMore[open] summary span { transform: rotate(45deg); }
+  .chapterSkills .skillMore summary:focus-visible { outline: 2px solid var(--skill-accent); outline-offset: 3px; }
+  .chapterSkills .skillMore .skillApplications { margin: 0 0 16px; }
+  .chapterSkills .skillCard { min-height: 0; }
+  .chapterSkills .skillCardEnglish { margin-top: 18px; }
+  .topButton.is-visible[data-mobile-reveal="false"] { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(12px); }
+  .mobileIntroButtons button { column-gap: 4px; }
+}
+@media (max-width: 900px) {
+  .playGallery .tile-action { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 13px; font-weight: 600; color: #fff4e5; }
+  .playGallery .tile-content { gap: 5px; }
+  .playGallery .play-back-to-list { display: flex; align-items: center; gap: 10px; width: fit-content; min-height: 48px; margin: 0 0 14px; padding: 0 12px; border: 1px solid #cfc5b8; background: #f5f0e7; border-radius: 3px; color: #554a3f; font-size: 14px; font-weight: 600; }
+  .playGallery .mosaic { scroll-margin-top: 78px; }
+  .playGallery .detail:focus { outline: none; }
+  .selectedWorkMagazine .preview-switch button { min-height: 44px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chapterSkills .skillMore summary span { transition: none; }
+}
+
+@media (max-width: 760px) {
+  .chapterSkills .chapterHeading { margin-bottom: 28px; }
+  .chapterSkills .skillCard { padding: 22px 20px; }
+  .chapterSkills .skillCardDescription { margin-bottom: 16px; }
+  .chapterSkills .skillApplications { margin-bottom: 16px; }
+  .chapterSkills .skillMore { margin-bottom: 16px; }
+  .chapterSkills .skillEvidence { margin-top: 18px; padding-top: 14px; }
+}

@@ -165,3 +165,11 @@
   .desktopOpeningStatementReveal { margin-top: 10px; }
   .desktopOpeningHintReveal { margin-top: 12px; }
 }
+
+.openingMobileHint { display: none; }
+@media (max-width: 768px) {
+  .desktopOpeningHint .openingDesktopHint { display: none; }
+  .desktopOpeningHint .openingMobileHint { display: inline; font: inherit; flex-shrink: 1; }
+}
+
+.desktopOpeningHint .openingDesktopHint { font: inherit; flex-shrink: 1; }

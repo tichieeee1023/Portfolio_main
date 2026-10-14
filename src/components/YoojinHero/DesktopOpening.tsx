@@ -225,7 +225,7 @@ export default function DesktopOpening({ onComplete }: { onComplete: () => void 
           </p>
         </div>
         <div className="desktopOpeningReveal desktopOpeningHintReveal">
-          <p className="desktopOpeningHint desktopOpeningMotionText">스크롤할 때마다 한 단계씩 성장합니다 <span aria-hidden="true">↓</span></p>
+          <p className="desktopOpeningHint desktopOpeningMotionText"><span className="openingDesktopHint">스크롤할 때마다 한 단계씩 성장합니다</span><span className="openingMobileHint">다섯 단계의 성장 기록을 만나보세요</span> <span aria-hidden="true">↓</span></p>
         </div>
       </div>
       <footer className="desktopOpeningFooter">
