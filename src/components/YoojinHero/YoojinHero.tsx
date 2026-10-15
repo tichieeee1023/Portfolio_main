@@ -14,6 +14,7 @@ import { navigateToChapter } from "../PortfolioChapters/chapterNavigation";
 import MobileHeroIntro from "./MobileHeroIntro";
 import DesktopOpening from "./DesktopOpening";
 import MobileMenu from "../common/MobileMenu";
+import HeaderClock from '../common/HeaderClock';
 import { MOBILE_SCENES } from "./mobileScenes";
 import { useMobileLevelUpFeedback } from "./useMobileLevelUpFeedback";
 import "./MobileLevelUpFeedback.css";
@@ -525,6 +526,7 @@ function HeroJourney({ mobileMode, openingReady }: { mobileMode: boolean; openin
 
           {mobileMode && <MobileMenu light />}
           <nav aria-label="주요 메뉴">
+            <HeaderClock />
             <a href="#about">
               ABOUT
             </a>

@@ -9,6 +9,7 @@ import './PortfolioChapters.css';
 import SelectedWorkMagazine from '../SelectedWorkMagazine/SelectedWorkMagazine';
 import PlayGallery from '../PlayGallery/PlayGallery';
 import MobileMenu from '../common/MobileMenu';
+import HeaderClock from '../common/HeaderClock';
 import ContactForm from './ContactForm';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -658,6 +659,7 @@ export default function PortfolioChapters() {
         />
       </a>
       <div className="chapterNavLinks">
+        <HeaderClock />
         {chapters.map((chapter, index) => <a key={chapter.id} href={'#' + chapter.id} aria-current={active === chapter.id ? 'location' : undefined}><span>{pad(index + 1)}</span>{chapter.label}</a>)}
       </div>
       <div className="chapterMobileMenu"><MobileMenu light={active === 'projects'} active={active} /></div>
